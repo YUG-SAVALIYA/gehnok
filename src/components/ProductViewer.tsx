@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Product } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
@@ -15,6 +15,71 @@ import bisHallmarkImg from '../assets/BIS_Hallmark.svg';
 import easyReturnImg from '../assets/Easy_Return_Exchange.svg';
 import secureDeliveryImg from '../assets/Secure_Delivery.svg';
 import skinFriendlyImg from '../assets/skin_friendly.svg';
+
+const PreloadedVideo = ({ 
+  src, 
+  posterImg,
+  isActive, 
+  shouldPreload,
+  onReady,
+  className 
+}: { 
+  src: string; 
+  posterImg?: string;
+  isActive: boolean; 
+  shouldPreload?: boolean;
+  onReady?: () => void;
+  className?: string; 
+}) => {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isDownloaded, setIsDownloaded] = useState(false);
+  
+  useEffect(() => {
+    if (isActive && videoRef.current) {
+      if (isDownloaded) {
+        videoRef.current.play().catch(() => {});
+      }
+    } else if (!isActive && videoRef.current) {
+      videoRef.current.pause();
+    }
+  }, [isActive, isDownloaded]);
+
+  // Reset state if src changes
+  useEffect(() => {
+    setIsDownloaded(false);
+  }, [src]);
+
+  return (
+    <>
+      {/* Elegant static image placeholder that seamlessly crossfades into the video once downloaded */}
+      {posterImg && (
+        <img 
+          src={posterImg}
+          alt="Loading masterpiece..."
+          className={`absolute inset-0 w-full h-full object-contain mix-blend-multiply z-20 transition-opacity duration-1000 ${isActive && !isDownloaded ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        />
+      )}
+      <video 
+        ref={videoRef}
+        src={src} 
+        loop 
+        muted 
+        playsInline 
+        autoPlay={isActive} 
+        preload={isActive || shouldPreload ? "auto" : "none"} 
+        onCanPlayThrough={() => {
+          if (!isDownloaded) {
+            setIsDownloaded(true);
+            if (isActive && onReady) {
+              onReady();
+            }
+          }
+        }}
+        className={`${className} ${!posterImg && isActive && !isDownloaded ? 'opacity-0' : 'opacity-100'}`} 
+      />
+    </>
+  );
+};
 
 interface ProductViewerProps {
   product: Product;
@@ -389,6 +454,9 @@ export default function ProductViewer({
 
   // Copied coupon indicator state
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
+  
+  // Track when active video is ready so we can progressively load the others
+  const [videosReadyToPreload, setVideosReadyToPreload] = useState(false);
 
   // Set initial selections based on product properties
   useEffect(() => {
@@ -493,51 +561,72 @@ export default function ProductViewer({
     maximumFractionDigits: 0
   }).format(variantPriceAmount);
 
-  // Compute filtered photo list whenever selectedMetal or product data changes.
-  // Uses useMemo so React definitively recalculates on every dependency change.
-  const productPhotos = useMemo(() => {
+  // Compute filtered photo list and specific video for the selected metal
+  const { productPhotos, currentMetalVideo, allMetalVideos } = useMemo(() => {
     const allImages =
       product.images && product.images.length > 0
         ? product.images
         : getProductPhotos(product.collection);
 
-    if (!selectedMetal || !product.variants?.length || !allImages.length) {
-      return allImages;
+    if (!selectedMetal || !product.media || product.media.length === 0 || !allImages.length) {
+      return { productPhotos: allImages, currentMetalVideo: null, allMetalVideos: [] };
     }
 
-    // Strip query param only — UUID filenames have no size suffixes
-    const base = (url: string) => url.split('?')[0].split('/').pop() || '';
+    // Group images by Video delimiters as requested by user
+    // A video marks the end of a metal's image gallery
+    const groups: { images: string[], video: string | null }[] = [];
+    let currentImages: string[] = [];
+    let imageIndex = 0;
 
-    // Build map: metalOptionValue -> first index in gallery where that metal's anchor image appears
-    const anchorMap = new Map<string, number>();
-    for (const v of product.variants) {
-      if (!v.image) continue;
-      const metalOpt = v.selectedOptions.find(o =>
-        o.name.toLowerCase().includes('metal') ||
-        o.name.toLowerCase().includes('material') ||
-        o.name.toLowerCase().includes('color')
-      );
-      if (!metalOpt || anchorMap.has(metalOpt.value)) continue;
-      const vBase = base(v.image);
-      const idx = allImages.findIndex(img => base(img) === vBase);
-      if (idx !== -1) anchorMap.set(metalOpt.value, idx);
+    for (const m of product.media) {
+      if (m.mediaContentType === 'IMAGE' || !m.mediaContentType || m.mediaContentType === 'MEDIA_IMAGE') {
+        if (imageIndex < allImages.length) {
+          currentImages.push(allImages[imageIndex]);
+          imageIndex++;
+        }
+      } else if (m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO') {
+        const vidUrl = m.url || m.embeddedUrl || null;
+        groups.push({ images: [...currentImages], video: vidUrl });
+        currentImages = []; // reset for next metal
+      }
+    }
+    
+    // Add any remaining images that didn't have a trailing video
+    if (currentImages.length > 0) {
+      groups.push({ images: currentImages, video: null });
     }
 
-    // Sort anchor positions ascending — gives group boundaries [0, 5, 10 ...]
-    const sortedAnchors = [...new Set(anchorMap.values())].sort((a, b) => a - b);
-    const myAnchor = anchorMap.get(selectedMetal.name);
-
-    if (myAnchor === undefined || !sortedAnchors.includes(myAnchor)) {
-      // No anchor found for this metal — show full gallery as safe fallback
-      return allImages;
+    // Determine the color category of the selected metal
+    const metalName = selectedMetal.name.toLowerCase();
+    let category = 'yellow'; // Default to Yellow Gold
+    if (metalName.includes('rose')) {
+      category = 'rose';
+    } else if (metalName.includes('white') || metalName.includes('silver') || metalName.includes('platinum')) {
+      category = 'white';
     }
 
-    const pos = sortedAnchors.indexOf(myAnchor);
-    const start = myAnchor;
-    const end = pos + 1 < sortedAnchors.length ? sortedAnchors[pos + 1] : allImages.length;
-    const sliced = allImages.slice(start, end);
-    return sliced.length > 0 ? sliced : allImages;
-  }, [selectedMetal, product.variants, product.images, product.collection]);
+    // Map category to the group index. 
+    // Standard upload order assumed: [0] Yellow Gold, [1] Rose Gold, [2] White Gold / Silver
+    let safeIndex = 0;
+    if (groups.length >= 3) {
+      if (category === 'yellow') safeIndex = 0;
+      else if (category === 'rose') safeIndex = 1;
+      else if (category === 'white') safeIndex = 2;
+    } else if (groups.length === 2) {
+      if (category === 'yellow') safeIndex = 0;
+      else safeIndex = 1; // If only 2 groups, assume [0] Yellow, [1] White/Rose
+    }
+
+    const selectedGroup = groups[safeIndex] || { images: allImages, video: null };
+    
+    const allVideos = Array.from(new Set(groups.map(g => g.video).filter(Boolean) as string[]));
+
+    return {
+      productPhotos: selectedGroup.images.length > 0 ? selectedGroup.images : allImages,
+      currentMetalVideo: selectedGroup.video,
+      allMetalVideos: allVideos
+    };
+  }, [selectedMetal, product.media, product.images, product.collection, availableMetals]);
 
   // Clamp activePhotoIndex to valid range after productPhotos changes
   const safePhotoIndex = Math.min(activePhotoIndex, productPhotos.length - 1);
@@ -621,20 +710,32 @@ export default function ProductViewer({
               {activeMediaTab === '3d' ? (
                 <div className="space-y-2">
                   {(() => {
-                    const videoMedia = product.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
+                    const activeUrl = currentMetalVideo || extractedVideoUrl || (product.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO')?.url);
+                    const urlsToRender = allMetalVideos.length > 0 ? allMetalVideos : (activeUrl ? [activeUrl] : []);
                     
-                    if (extractedVideoUrl || (videoMedia && videoMedia.url)) {
-                      const finalUrl = extractedVideoUrl || videoMedia?.url;
-                      return (
-                        <div className="w-full h-[340px] bg-transparent overflow-hidden flex items-center justify-center relative">
-                          <video src={finalUrl} autoPlay loop muted playsInline className="w-full h-full object-contain mix-blend-multiply" />
-                        </div>
-                      );
-                    }
-                    if (videoMedia && videoMedia.embeddedUrl) {
+                    if (urlsToRender.length > 0) {
                       return (
                         <div className="w-full h-[340px] bg-transparent overflow-hidden relative">
-                          <iframe src={videoMedia.embeddedUrl} className="w-full h-full mix-blend-multiply" frameBorder="0" allowFullScreen allow="autoplay; fullscreen" />
+                          {urlsToRender.map(url => {
+                            const isYoutube = url.includes('youtube') || url.includes('vimeo');
+                            const isActive = url === activeUrl;
+                            
+                            return (
+                              <div key={url} className={`absolute inset-0 transition-opacity duration-300 flex items-center justify-center ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+                                {isYoutube ? (
+                                  <iframe src={isActive ? url : ''} className="w-full h-full mix-blend-multiply" frameBorder="0" allowFullScreen allow="autoplay; fullscreen" />
+                                ) : (
+                                  <PreloadedVideo 
+                                    src={url} 
+                                    isActive={isActive} 
+                                    shouldPreload={videosReadyToPreload}
+                                    onReady={() => setVideosReadyToPreload(true)}
+                                    className="w-full h-full object-contain mix-blend-multiply" 
+                                  />
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       );
                     }
@@ -663,6 +764,8 @@ export default function ProductViewer({
                       containerClassName="absolute inset-0 z-0"
                       referrerPolicy="no-referrer"
                       draggable={false}
+                      loading="eager" // Main image should load instantly
+                      fetchPriority="high"
                     />
                     
                     {/* Protective transparent overlay to block right-click and save */}
@@ -691,6 +794,8 @@ export default function ProductViewer({
                             containerClassName="absolute inset-0 z-0"
                             referrerPolicy="no-referrer"
                             draggable={false}
+                            loading="lazy" // Thumbnails must be lazy loaded so they don't block the network
+                            decoding="async"
                           />
 
                           {/* Protective overlay for thumbnail */}
@@ -1320,20 +1425,32 @@ export default function ProductViewer({
 
             {/* 3D Video / CAD Model Container */}
             {activeMediaTab !== '3d' && (() => {
-              const videoMedia = product.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
+              const activeUrl = currentMetalVideo || extractedVideoUrl || (product.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO')?.url);
+              const urlsToRender = allMetalVideos.length > 0 ? allMetalVideos : (activeUrl ? [activeUrl] : []);
               
-              if (extractedVideoUrl || (videoMedia && videoMedia.url)) {
-                const finalUrl = extractedVideoUrl || videoMedia?.url;
-                return (
-                  <div className="w-full aspect-square md:aspect-[4/5] bg-transparent overflow-hidden flex items-center justify-center relative mt-8">
-                    <video src={finalUrl} autoPlay loop muted playsInline className="w-full h-full object-contain mix-blend-multiply" />
-                  </div>
-                );
-              }
-              if (videoMedia && videoMedia.embeddedUrl) {
+              if (urlsToRender.length > 0) {
                 return (
                   <div className="w-full aspect-square md:aspect-[4/5] bg-transparent overflow-hidden relative mt-8">
-                    <iframe src={videoMedia.embeddedUrl} className="w-full h-full mix-blend-multiply" frameBorder="0" allowFullScreen allow="autoplay; fullscreen" />
+                    {urlsToRender.map(url => {
+                      const isYoutube = url.includes('youtube') || url.includes('vimeo');
+                      const isActive = url === activeUrl;
+                      
+                      return (
+                        <div key={url} className={`absolute inset-0 transition-opacity duration-300 flex items-center justify-center ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+                          {isYoutube ? (
+                            <iframe src={isActive ? url : ''} className="w-full h-full mix-blend-multiply" frameBorder="0" allowFullScreen allow="autoplay; fullscreen" />
+                          ) : (
+                            <PreloadedVideo 
+                              src={url} 
+                              isActive={isActive} 
+                              shouldPreload={videosReadyToPreload}
+                              onReady={() => setVideosReadyToPreload(true)}
+                              className="w-full h-full object-contain mix-blend-multiply" 
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 );
               }
@@ -1588,7 +1705,7 @@ export default function ProductViewer({
                     <span className="text-[8px] tracking-[0.2em] font-sans font-bold uppercase text-[#381932]/40">
                       {item.collection}
                     </span>
-                    <h3 className="text-sm font-serif text-[#381932] group-hover:text-amber-700 transition-colors duration-300">
+                    <h3 className="text-sm font-serif font-bold text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
                       {item.name}
                     </h3>
                     <p className="text-xs font-mono font-bold text-[#381932]">

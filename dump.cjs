@@ -3,11 +3,28 @@ dotenv.config();
 
 const query = `
 {
-  collections(first: 10) {
+  products(first: 5) {
     edges {
       node {
-        title
         handle
+        title
+        images(first: 10) {
+          edges {
+            node {
+              url(transform: { maxWidth: 1200 })
+            }
+          }
+        }
+        variants(first: 10) {
+          edges {
+            node {
+              title
+              image {
+                url(transform: { maxWidth: 1200 })
+              }
+            }
+          }
+        }
       }
     }
   }

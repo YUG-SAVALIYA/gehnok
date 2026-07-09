@@ -328,6 +328,8 @@ export default function CollectionViewer({
               skeletonClassName="bg-transparent"
               referrerPolicy="no-referrer"
               noFade={true}
+              loading="eager"
+              fetchPriority="high"
             />
             {/* Soft gradient to ensure text readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70" />
@@ -512,7 +514,7 @@ export default function CollectionViewer({
                       </span>
                     )}
                   </div>
-                  <h3 className="text-lg font-serif-luxury font-bold tracking-tight text-[#381932] group-hover:line-through transition-all duration-300">
+                  <h3 className="text-lg font-serif-luxury font-bold tracking-tight text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
                     {product.name}
                   </h3>
                   <p className="text-xs font-mono text-[#381932]/70">

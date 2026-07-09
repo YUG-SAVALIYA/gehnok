@@ -78,6 +78,8 @@ export default function HoverVideo({
         className={`${imageClassName} ${isHovered ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`}
         containerClassName={`${isPlaying ? 'opacity-0' : 'opacity-100'}`}
         draggable={false}
+        loading="lazy"
+        decoding="async"
       />
       {inView && videoUrl && (
         <video 
@@ -86,7 +88,7 @@ export default function HoverVideo({
           loop 
           muted 
           playsInline 
-          preload="none"
+          preload="metadata"
           onPlaying={() => setIsPlaying(true)}
           className={`${videoClassName} ${isPlaying ? 'opacity-100' : 'opacity-0'} ${isHovered ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`} 
         />

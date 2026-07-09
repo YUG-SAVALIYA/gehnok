@@ -174,14 +174,14 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
                       <span className="text-[9px] tracking-widest font-sans uppercase font-bold text-[#381932] opacity-60">
                         {article.blog?.title || 'Journal'} • {new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                       </span>
-                      <h3 className="text-xl font-serif-luxury text-[#381932] font-bold group-hover:line-through transition-all duration-300">
+                      <h3 className="text-xl font-serif-luxury text-[#381932] font-bold group-hover:text-[#D4AF37] transition-colors duration-500">
                         {article.title}
                       </h3>
                       <div 
                         className="text-xs text-[#381932]/70 leading-relaxed line-clamp-3 font-sans"
                         dangerouslySetInnerHTML={{ __html: article.excerptHtml || article.contentHtml }}
                       />
-                      <div className="pt-2 flex items-center space-x-2 text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932] group-hover:line-through">
+                      <div className="pt-2 flex items-center space-x-2 text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
                         <span>Examine Story</span>
                         <ArrowRight size={10} className="transform group-hover:translate-x-1.5 transition-transform" />
                       </div>
