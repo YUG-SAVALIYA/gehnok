@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
-import { GoogleGenAI, Type } from '@google/genai';
 import dotenv from 'dotenv';
 import dns from 'dns';
 
@@ -795,28 +794,6 @@ app.delete('/api/profile/wishlist/:id', (req, res) => {
   res.json(clientProfile);
 });
 
-// Lazy-initialized Gemini AI Client
-let aiClient: GoogleGenAI | null = null;
-
-function getGeminiClient(): GoogleGenAI | null {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey || apiKey === 'MY_GEMINI_API_KEY' || apiKey.trim() === '') {
-    console.warn('GEMINI_API_KEY is not defined or is a placeholder. Concierge will use boutique simulated elegance.');
-    return null;
-  }
-  if (!aiClient) {
-    aiClient = new GoogleGenAI({
-      apiKey,
-      httpOptions: {
-        headers: {
-          'User-Agent': 'aistudio-build',
-        }
-      }
-    });
-  }
-  return aiClient;
-}
-
 // Fallback elegant responses for the AI Concierge when API key is missing
 const SIMULATED_CONCIERGE_RESPONSES = [
   {
@@ -841,107 +818,30 @@ const SIMULATED_CONCIERGE_RESPONSES = [
   }
 ];
 
-// API: AI Concierge (Gemini Integration)
-app.post('/api/gemini/concierge', async (req, res) => {
-  const { message, history } = req.body;
+// API: Concierge
+app.post('/api/concierge', async (req, res) => {
+  const { message } = req.body;
   if (!message) {
     return res.status(400).json({ error: 'Client message is required' });
   }
 
-  const client = getGeminiClient();
+  // Elegant fallback simulator
+  const normalizedMessage = message.toLowerCase();
+  let selectedSim = SIMULATED_CONCIERGE_RESPONSES.find(sim => 
+    sim.keywords.some(keyword => normalizedMessage.includes(keyword))
+  );
 
-  if (!client) {
-    // Elegant fallback simulator
-    const normalizedMessage = message.toLowerCase();
-    let selectedSim = SIMULATED_CONCIERGE_RESPONSES.find(sim => 
-      sim.keywords.some(keyword => normalizedMessage.includes(keyword))
-    );
-
-    if (!selectedSim) {
-      selectedSim = {
-        keywords: [],
-        response: "Welcome to the GEHNOK private chambers. It is an honor to guide your gaze. Tell me of the occasion you seek to mark, the metals that speak to your touch, or whether you desire the warm embrace of our hand-formulated Champagne Gold or the crystalline permanence of Platinum.",
-        recommendedProductIds: ['aeterna-gold-band', 'atelier-cuff']
-      };
-    }
-
-    // Add a slight delay to mimic boutique reflection
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    return res.json(selectedSim);
+  if (!selectedSim) {
+    selectedSim = {
+      keywords: [],
+      response: "Welcome to the GEHNOK private chambers. It is an honor to guide your gaze. Tell me of the occasion you seek to mark, the metals that speak to your touch, or whether you desire the warm embrace of our hand-formulated Champagne Gold or the crystalline permanence of Platinum.",
+      recommendedProductIds: ['aeterna-gold-band', 'atelier-cuff']
+    };
   }
 
-  try {
-    const systemInstruction = `You are the Private Concierge of GEHNOK, an ultra-luxury jewelry maison of haute joaillerie.
-Your voice is measured, confident, poetic, and highly precise. You represent silence, warmth, and heirloom quality.
-Avoid cheap ecommerce language, exclamation marks, emojis, discount pitches, or urgent sales phrases (e.g., do NOT say "Don't miss out!", "Shop now!", or "Hurry!").
-You are highly knowledgeable about fine materials (18k Champagne Gold, Pt950 Platinum, proprietary 18k Amethyst Purple Gold), GIA diamond metrics, and gemstone provenance.
-
-Here is the exclusive GEHNOK catalog available for consultation:
-1. Aeterna Gold Band (ID: "aeterna-gold-band") - $4,200. 18k Champagne Gold, set with 0.65ct round brilliant VVS1 colorless diamonds.
-2. Amethyst Sovereign Ring (ID: "amethyst-sovereign") - $8,500. 18k Amethyst Purple Gold, cushion-cut 4.5ct violet amethyst.
-3. The Solitaire Luminary (ID: "solitaire-luminary") - $18,000. Pt950 Platinum, flawless 1.8ct colorless diamond.
-4. Siren's Tear Pendant (ID: "sirens-tear-pendant") - $11,200. 18k Champagne Gold, 2.1ct pear brilliant Paraiba tourmaline.
-5. Plum Velvet Collar (ID: "plum-velvet-collar") - $15,600. 18k Amethyst Purple Gold choker, baguette-cut amethysts.
-6. Elysian Emerald Studs (ID: "elysian-studs") - $6,800. 18k Champagne Gold, 1.4ct hexagonal Zambian emerald studs.
-7. Chandelier Arc Drops (ID: "chandelier-arc") - $14,500. Pt950 Platinum drops, 2.4ct pear & round brilliant colorless diamonds.
-8. Atelier Cuff No. I (ID: "atelier-cuff") - $9,800. Asymmetrical hand-sculpted solid 18k Champagne Gold cuff.
-
-Clients consult you for recommendations based on occasion, recipient, style, metal or gemstone. Respond with meticulous elegance, explaining the spirit, metallurgy, or gemological merit of 1-2 suggested pieces.
-
-You MUST respond strictly in the requested JSON structure. Do not include markdown formatting except inside the JSON properties.
-Return JSON with the exact schema:
-{
-  "response": "The beautifully phrased, highly poetic and helpful recommendation text from the concierge...",
-  "recommendedProductIds": ["id1", "id2"] // Only include IDs that exactly match the catalog list above. Leave empty array if no specific products are relevant.
-}`;
-
-    const formattedHistory = (history || []).map((msg: any) => ({
-      role: msg.sender === 'client' ? 'user' : 'model',
-      parts: [{ text: msg.text }]
-    }));
-
-    // Add current user prompt
-    formattedHistory.push({
-      role: 'user',
-      parts: [{ text: message }]
-    });
-
-    const response = await client.models.generateContent({
-      model: 'gemini-3.5-flash',
-      contents: formattedHistory,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-        responseMimeType: 'application/json',
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            response: {
-              type: Type.STRING,
-              description: 'The elegant, poetic text of the private concierge.'
-            },
-            recommendedProductIds: {
-              type: Type.ARRAY,
-              items: { type: Type.STRING },
-              description: 'List of matching product IDs from the curated GEHNOK inventory.'
-            }
-          },
-          required: ['response', 'recommendedProductIds']
-        }
-      }
-    });
-
-    const resultText = response.text || '';
-    const parsedResult = JSON.parse(resultText.trim());
-    res.json(parsedResult);
-  } catch (err: any) {
-    console.error('Error in Gemini Concierge API:', err);
-    res.status(500).json({
-      error: 'The private concierge has stepped away momentarily.',
-      response: 'Forgive me, the quiet of the atelier has been interrupted. Let us resume our dialogue shortly.',
-      recommendedProductIds: []
-    });
-  }
+  // Add a slight delay to mimic boutique reflection
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  return res.json(selectedSim);
 });
 
 // Configure Vite or Serve static site

@@ -3,13 +3,13 @@ import { ChatMessage, Product } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { Compass, Send, X, Eye } from 'lucide-react';
 
-interface AIConciergeProps {
+interface ConciergeProps {
   isOpen: boolean;
   onClose: () => void;
   onExamineProduct: (product: Product) => void;
 }
 
-export default function AIConcierge({ isOpen, onClose, onExamineProduct }: AIConciergeProps) {
+export default function Concierge({ isOpen, onClose, onExamineProduct }: ConciergeProps) {
   const { products: LUXURY_PRODUCTS } = useShopifyProducts();
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -51,14 +51,13 @@ export default function AIConcierge({ isOpen, onClose, onExamineProduct }: AICon
     setIsTyping(true);
 
     try {
-      const response = await fetch('/api/gemini/concierge', {
+      const response = await fetch('/api/concierge', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          message: userMsgText,
-          history: messages
+          message: userMsgText
         })
       });
 

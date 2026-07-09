@@ -9,7 +9,7 @@ import ProductViewer from './components/ProductViewer';
 import ContactUs from './components/ContactUs';
 import Journal from './components/Journal';
 import PolicyPage from './components/PolicyPage';
-import AIConcierge from './components/AIConcierge';
+import Concierge from './components/Concierge';
 import Cart from './components/Cart';
 import { Heart, Eye, X, Compass } from 'lucide-react';
 import { useShopifyCart } from './hooks/useShopifyCart';
@@ -39,7 +39,7 @@ export default function App() {
     if (path === '/policies/refund-policy') return 'refundPolicy';
     return null;
   });
-  const [lastViewBeforeDetail, setLastViewBeforeDetail] = useState<'home' | 'all-product' | 'ring' | 'braclet' | 'earings' | 'nackles' | 'contact-us' | 'journal'>('home');
+  const [lastViewBeforeDetail, setLastViewBeforeDetail] = useState<'home' | 'all-product' | 'ring' | 'braclet' | 'earings' | 'nackles' | 'contact-us' | 'journal' | 'policy'>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   
   // Track if we need to load a product from the URL once data arrives
@@ -465,7 +465,7 @@ export default function App() {
       />
 
       {/* 2. Secure AI Concierge Chat Room Drawer */}
-      <AIConcierge
+      <Concierge
         isOpen={isConciergeOpen}
         onClose={() => setIsConciergeOpen(false)}
         onExamineProduct={handleExamineProduct}
