@@ -17,7 +17,7 @@ import slide2 from '../assets/First_Web_baner_2.webp';
 import slide3 from '../assets/third_Web_baner.webp';
 import slide4 from '../assets/fourth_web_baner.webp';
 import slide5 from '../assets/fifth_Web_baner.webp';
-import slide6 from '../assets/sixth_Web_baner.webp';
+import slide6 from '../assets/sixth_web_baner.webp';
 import ringBannerUrl from '../assets/ring category banner.jpg';
 import earringBannerUrl from '../assets/EARING category banner.jpg';
 import necklaceBannerUrl from '../assets/nacles category banner.jpg';
