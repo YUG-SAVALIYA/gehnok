@@ -1,8 +1,10 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { Product } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { useShopifyCollections } from '../hooks/useShopifyCollections';
 import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
+import { lenis } from '../lib/lenis';
 import { Sparkles, Eye, Filter, SlidersHorizontal } from 'lucide-react';
 import HoverVideo from './HoverVideo';
 import ImageWithSkeleton from './ImageWithSkeleton';
@@ -32,9 +34,55 @@ export default function CollectionViewer({
   );
   const { collections } = useShopifyCollections();
   const { data: bannerMetaobject } = useShopifyMetaobject('collection_banner', 'main');
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  
+  // Synchronously initialize the category to prevent frame-0 flashes
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => {
+    if (forcedCategory) return forcedCategory;
+    if (collectionHandle && collectionHandle !== 'all') {
+      const handleLower = collectionHandle.toLowerCase();
+      if (handleLower === 'rings' || handleLower === 'ring') return 'Rings';
+      if (handleLower === 'necklaces' || handleLower === 'necklace' || handleLower === 'nackles') return 'Necklaces';
+      if (handleLower === 'earrings' || handleLower === 'earing' || handleLower === 'earings') return 'Earrings';
+      if (handleLower === 'bracelets' || handleLower === 'bracelet' || handleLower === 'braclet') return 'Bracelets';
+    }
+    return 'All';
+  });
+
+  const [maxPrice, setMaxPrice] = useState<number>(35000);
   const [sortBy, setSortBy] = useState<string>('default');
-  const [maxPrice, setMaxPrice] = useState<number>(200000);
+  
+  // Cinematic Animation State
+  const [mounted, setMounted] = useState(false);
+  const [animPhase, setAnimPhase] = useState<'full' | 'animating' | 'done'>('full');
+
+  useEffect(() => {
+    // Start text animations immediately on mount
+    const frame = requestAnimationFrame(() => setMounted(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  useEffect(() => {
+    // Lock lenis scrolling without hiding scrollbar during cinematic animation
+    if (animPhase === 'full' || animPhase === 'animating') {
+      lenis.stop();
+    } else {
+      lenis.start();
+    }
+
+    if (animPhase === 'full') {
+      const t1 = setTimeout(() => setAnimPhase('animating'), 1000); // 1.2s pause for text to reveal
+      return () => {
+        clearTimeout(t1);
+        lenis.start();
+      };
+    } else if (animPhase === 'animating') {
+      const t2 = setTimeout(() => setAnimPhase('done'), 1200); // 1.2s transition matches CSS
+      return () => {
+        clearTimeout(t2);
+        lenis.start();
+      };
+    }
+  }, [animPhase]);
 
   const getHeaderBgImage = (category?: string) => {
     switch (category) {
@@ -68,13 +116,6 @@ export default function CollectionViewer({
   if (activeCategoryName === 'earrings') metaobjectKey = 'earing';
 
   const bgImg = (bannerMetaobject && bannerMetaobject[metaobjectKey]) || getHeaderBgImage(forcedCategory || selectedCategory);
-
-  useEffect(() => {
-    console.log('[CollectionViewer Debug] Active Category:', activeCategoryName);
-    console.log('[CollectionViewer Debug] Metaobject Key:', metaobjectKey);
-    console.log('[CollectionViewer Debug] Banner Metaobject:', bannerMetaobject);
-    console.log('[CollectionViewer Debug] Final Rendered bgImg:', bgImg);
-  }, [activeCategoryName, metaobjectKey, bannerMetaobject, bgImg]);
 
   const categories = ['All', 'Rings', 'Necklaces', 'Earrings', 'Bracelets'];
 
@@ -269,26 +310,38 @@ export default function CollectionViewer({
   };
 
   return (
-    <section className="pb-16 bg-[#F9F7F2] animate-fade-in">
+    <section className="animate-fade-in bg-[#381932] relative">
       
         {/* Full-Width Segment Title & Subtext with Luxury Background Image Banner */}
-        <div className="relative w-full h-96 flex items-center justify-center border-b border-[#381932] mb-12 overflow-hidden bg-[#381932]">
+        <div 
+          className={`relative w-full flex items-center justify-center border-b border-[#381932] overflow-hidden bg-[#381932] transition-[height] duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${
+            animPhase === 'full' ? 'h-[100vh]' : 'h-96'
+          }`}
+        >
           {/* Background image */}
-          <div className="absolute inset-0 z-0 bg-black">
+          <div className="absolute inset-0 z-0 bg-[#381932]">
             <ImageWithSkeleton
               src={bgImg}
               alt={pageTitle}
               className="object-cover opacity-85 transition-transform duration-1000"
               containerClassName="absolute inset-0 z-0"
+              skeletonClassName="bg-transparent"
               referrerPolicy="no-referrer"
+              noFade={true}
             />
             {/* Soft gradient to ensure text readability */}
             <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/70" />
           </div>
   
           {/* Editorial Content - Direct Overlay without separate card (fully transparent background) */}
-          <div className="relative z-10 max-w-2xl mx-auto px-6 py-8 text-center space-y-4 animate-fade-in mx-4">
-            <div className="flex items-center justify-center gap-3">
+          <div 
+            className={`relative z-10 max-w-2xl mx-auto px-6 py-8 text-center space-y-4 mx-4 transition-all duration-[1200ms] ease-out ${
+              mounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-12 scale-95'
+            }`}
+          >
+            <div className={`flex items-center justify-center gap-3 transition-opacity duration-1000 delay-300 ${
+              mounted ? 'opacity-100' : 'opacity-0'
+            }`}>
               <span className="h-[1px] w-8 bg-[#F9F7F2]/60"></span>
               <span className="text-[10px] tracking-[0.3em] font-sans uppercase font-bold text-[#F9F7F2]/90">
                 Haute Joaillerie
@@ -298,13 +351,26 @@ export default function CollectionViewer({
             <h2 className="text-3xl sm:text-5.5xl font-serif-luxury tracking-wide text-[#F9F7F2] font-bold drop-shadow-md">
               {pageTitle}
             </h2>
-            <p className="max-w-lg mx-auto text-xs sm:text-sm text-[#F9F7F2]/90 font-sans leading-relaxed drop-shadow-sm font-medium">
+            <p className={`max-w-lg mx-auto text-xs sm:text-sm text-[#F9F7F2]/90 font-sans leading-relaxed drop-shadow-sm font-medium transition-opacity duration-1000 delay-500 ${
+              mounted ? 'opacity-100' : 'opacity-0'
+            }`}>
               {pageDesc}
             </p>
           </div>
         </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* GPU Accelerated Content Wrapper */}
+      <div 
+        className={`w-full bg-[#F9F7F2] ${
+          animPhase === 'done'
+            ? 'relative z-20 pt-12 pb-16'
+            : `absolute left-0 right-0 z-20 pt-12 pb-16 transition-transform duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] top-[100vh] ${
+                animPhase === 'animating' ? '-translate-y-[calc(100vh-24rem)]' : 'translate-y-0'
+              }`
+        }`}
+        style={animPhase !== 'done' ? { height: 'calc(100vh - 24rem)', overflow: 'hidden' } : {}}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Curated Filter Bar System */}
         <div className="border-t border-b border-[#381932] py-6 mb-12 space-y-6">
@@ -419,8 +485,14 @@ export default function CollectionViewer({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10">
-            {filteredProducts.map(product => (
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10"
+          >
+            {filteredProducts.map((product) => (
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
@@ -453,9 +525,10 @@ export default function CollectionViewer({
                 </div>
               </div>
             ))}
-          </div>
+          </motion.div>
         )}
 
+        </div>
       </div>
     </section>
   );

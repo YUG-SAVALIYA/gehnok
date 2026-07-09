@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'motion/react';
 import { useShopifyArticles, ShopifyArticle } from '../hooks/useShopifyArticles';
 import { BookOpen, Calendar, Clock, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
 import ImageWithSkeleton from './ImageWithSkeleton';
@@ -155,9 +156,13 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
                   </div>
                 ))
               ) : (
-                JOURNAL_ARTICLES.map((article) => (
-                  <div
+                JOURNAL_ARTICLES.map((article, idx) => (
+                  <motion.div
                     key={article.id}
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.6, delay: (idx % 3) * 0.1, ease: "easeOut" }}
                     onClick={() => setSelectedArticle(article)}
                     className="group cursor-pointer space-y-4"
                   >
@@ -181,7 +186,7 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
                         <ArrowRight size={10} className="transform group-hover:translate-x-1.5 transition-transform" />
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 ))
               )}
             </div>

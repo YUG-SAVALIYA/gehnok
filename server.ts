@@ -132,7 +132,7 @@ async function shopifyFetch<T = unknown>(options: ShopifyFetchOptions): Promise<
 // ─── GraphQL fragments (inline for server-side use) ──────────────────────────
 
 const MONEY_FRAG = `fragment Money on MoneyV2 { amount currencyCode }`;
-const IMAGE_FRAG = `fragment Img on Image { id url altText width height }`;
+const IMAGE_FRAG = `fragment Img on Image { id url(transform: { maxWidth: 1200 }) altText width height }`;
 const META_FRAG = `fragment Meta on Metafield { id namespace key value type }`;
 
 const VARIANT_FRAG = `

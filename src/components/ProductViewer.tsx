@@ -5,6 +5,7 @@ import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
 import Gemstone3DViewer from './Gemstone3DViewer';
 import HoverVideo from './HoverVideo';
 import ImageWithSkeleton from './ImageWithSkeleton';
+import { motion } from 'motion/react';
 import { 
   Heart, Sparkles, Shield, Gift, Calendar, ArrowLeft, 
   ChevronDown, ChevronUp, Truck, Star, MessageSquare, CheckCircle, Image, Scissors
@@ -14,7 +15,6 @@ import bisHallmarkImg from '../assets/BIS_Hallmark.svg';
 import easyReturnImg from '../assets/Easy_Return_Exchange.svg';
 import secureDeliveryImg from '../assets/Secure_Delivery.svg';
 import skinFriendlyImg from '../assets/skin_friendly.svg';
-import { div } from 'motion/react-client';
 
 interface ProductViewerProps {
   product: Product;
@@ -617,7 +617,7 @@ export default function ProductViewer({
             </div>
 
             {/* Media Window Render */}
-            <div className="animate-fade-in">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="animate-fade-in">
               {activeMediaTab === '3d' ? (
                 <div className="space-y-2">
                   {(() => {
@@ -701,10 +701,10 @@ export default function ProductViewer({
                   </div>
                 </div>
               )}
-            </div>
+            </motion.div>
 
             {/* In-depth story card */}
-            <div className="bg-[#FAF7F2] border border-[#381932] p-8 rounded-none space-y-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-[#FAF7F2] border border-[#381932] p-8 rounded-none space-y-4">
               <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932] opacity-60">
                 Provenance & Story
               </span>
@@ -732,7 +732,7 @@ export default function ProductViewer({
                   </span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
             {/* Luxury Information Accordion */}
             <div className="border-t border-b border-[#381932] divide-y divide-[#381932]">
@@ -817,7 +817,7 @@ export default function ProductViewer({
             </div>
 
             {/* Form: Add Signature Appraisal as requested */}
-            <div className="border border-[#381932] bg-[#FAF7F2] p-8 rounded-none">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-[#381932] bg-[#FAF7F2] p-8 rounded-none">
               <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block mb-2">
                 Leave a Statement
               </span>
@@ -908,7 +908,7 @@ export default function ProductViewer({
                   </button>
                 </form>
               )}
-            </div>
+            </motion.div>
 
           </div>
 
@@ -1391,7 +1391,13 @@ export default function ProductViewer({
         </div>
 
         {/* ----------------- SECTOR: SIGNATURE CLIENT REVIEWS ----------------- */}
-        <section className="mt-8 border-t border-[#381932] pt-8 pb-8">
+        <motion.section 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="mt-8 border-t border-[#381932] pt-8 pb-8"
+        >
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             
             {/* Review Header Panel */}
@@ -1480,14 +1486,20 @@ export default function ProductViewer({
               )}
             </div>
           </div>
-        </section>
+        </motion.section>
       </div>
     </div>
 
         {/* OTHER PRODUCTS SECTION ("You May Also Like") */}
         <section className="py-20 bg-white w-full overflow-hidden">
           <div className="w-full px-4 sm:px-8 lg:px-12">
-            <div className="text-center space-y-2 mb-12">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center space-y-2 mb-12"
+            >
               <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
                 ATELIER RECOMMENDATIONS
               </span>
@@ -1495,9 +1507,15 @@ export default function ProductViewer({
                 Explore {product.collection === 'Bespoke' ? 'Other Masterpieces' : `More ${product.collection}`}
               </h2>
               <div className="w-12 h-[1px] bg-[#381932] mx-auto mt-3" />
-            </div>
+            </motion.div>
 
-            <div className={relatedGridClass}>
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className={relatedGridClass}
+            >
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`rel-skel-${idx}`} className="group flex flex-col justify-between cursor-pointer animate-pulse">
@@ -1583,7 +1601,7 @@ export default function ProductViewer({
                   </div>
                 </div>
               )))}
-            </div>
+            </motion.div>
           </div>
         </section>
 

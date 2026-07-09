@@ -13,6 +13,7 @@ import Concierge from './components/Concierge';
 import Cart from './components/Cart';
 import { Heart, Eye, X, Compass } from 'lucide-react';
 import { useShopifyCart } from './hooks/useShopifyCart';
+import './lib/lenis'; // Initialize Lenis smooth scrolling globally
 
 export type View = 'home' | 'all-product' | 'collection' | 'contact-us' | 'journal' | 'policy';
 export type PolicyType = 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy';
@@ -377,6 +378,7 @@ export default function App() {
             {/* DYNAMIC COLLECTION VIEW */}
             {currentView === 'collection' && activeCollectionHandle && (
               <CollectionViewer
+                key={activeCollectionHandle}
                 collectionHandle={activeCollectionHandle}
                 onSelectProduct={handleExamineProduct}
                 searchQuery={searchQuery}

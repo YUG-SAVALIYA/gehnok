@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion } from 'motion/react';
 import { 
   ArrowRight, Compass, Sparkles, ChevronLeft, ChevronRight, 
   RotateCcw, Globe, Shield, ChevronDown, ChevronUp, Star, BookOpen 
@@ -217,7 +218,13 @@ export default function HeroSection({
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           {/* Header */}
-          <div className="text-center space-y-2">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center space-y-2"
+          >
             <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
               Atelier Vault
             </span>
@@ -225,22 +232,28 @@ export default function HeroSection({
               Explore Available Collections
             </h2>
             <div className="w-16 h-[1px] bg-[#381932] mx-auto mt-4" />
-          </div>
+          </motion.div>
 
           {/* Categories Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          {/* Mobile View: Continuous CSS Grid */}
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="grid grid-cols-2 gap-4 sm:hidden"
+          >
             {collectionsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
-                <div key={`col-skel-${idx}`} className="h-56 sm:h-80 bg-[#EAE8E3]/50 animate-pulse border border-[#381932]/10" />
+                <div key={`col-skel-mob-${idx}`} className="h-56 bg-[#EAE8E3]/50 animate-pulse border border-[#381932]/10" />
               ))
             ) : (
-              collections.map((cat) => (
+              collections.map((cat, idx) => (
                 <div
-                  key={cat.handle}
+                  key={`mob-${cat.handle}`}
                   onClick={() => onNavigate('collection', cat.handle)}
-                  className="group relative h-56 sm:h-80 bg-[#EAE8E3] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="group relative h-56 bg-[#EAE8E3] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
                 >
-                  {/* Background Image with Hover Zoom */}
                   <ImageWithSkeleton
                     src={cat.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80'}
                     alt={cat.title}
@@ -248,22 +261,82 @@ export default function HeroSection({
                     containerClassName="absolute inset-0 z-0"
                     referrerPolicy="no-referrer"
                   />
-  
-                  {/* Info Overlay */}
                   <div className="relative z-[2] space-y-1.5 text-[#F9F7F2] transition-transform duration-300 transform group-hover:translate-y-[-4px]">
-                    <h3 className="text-2xl font-serif font-bold tracking-wide drop-shadow-md">
+                    <h3 className="text-xl font-serif font-bold tracking-wide drop-shadow-md">
                       {cat.title}
                     </h3>
-                    <p className="text-[10px] font-sans uppercase tracking-widest font-semibold opacity-80 drop-shadow-md">
+                    <p className="text-[9px] font-sans uppercase tracking-widest font-semibold opacity-80 drop-shadow-md">
                       {cat.description || 'Exclusive Atelier Collection'}
                     </p>
-                    <div className="pt-2 text-[8px] font-mono uppercase tracking-[0.2em] flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[#D4AF37] drop-shadow-md">
-                      <span>Open Collection</span>
-                      <span>→</span>
-                    </div>
                   </div>
                 </div>
               ))
+            )}
+          </motion.div>
+
+          {/* Desktop View: Chunked Flex Rows */}
+          <div className="hidden sm:flex flex-col space-y-6 w-full items-center">
+            {collectionsLoading ? (
+              <div className="flex flex-row justify-center gap-6 w-full">
+                {Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={`col-skel-desk-${idx}`} className="h-80 w-64 bg-[#EAE8E3]/50 animate-pulse border border-[#381932]/10" />
+                ))}
+              </div>
+            ) : (
+              (() => {
+                const n = collections.length;
+                let rows: typeof collections[] = [];
+                if (n <= 5) {
+                  rows = [collections];
+                } else if (n === 6) {
+                  rows = [collections.slice(0, 3), collections.slice(3, 6)];
+                } else if (n === 7) {
+                  rows = [collections.slice(0, 3), collections.slice(3, 7)];
+                } else {
+                  for (let i = 0; i < n; i += 4) {
+                    rows.push(collections.slice(i, i + 4));
+                  }
+                }
+                
+                return rows.map((row, rIdx) => (
+                  <motion.div 
+                    key={`row-${rIdx}`} 
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: "-50px" }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="flex flex-row justify-center gap-6 w-full"
+                  >
+                    {row.map((cat, cIdx) => (
+                      <div
+                        key={`desk-${cat.handle}`}
+                        onClick={() => onNavigate('collection', cat.handle)}
+                        className="flex-1 min-w-[200px] max-w-[300px] shrink-0 group relative h-80 bg-[#EAE8E3] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
+                      >
+                        <ImageWithSkeleton
+                          src={cat.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80'}
+                          alt={cat.title}
+                          className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                          containerClassName="absolute inset-0 z-0"
+                          referrerPolicy="no-referrer"
+                        />
+                        <div className="relative z-[2] space-y-1.5 text-[#F9F7F2] transition-transform duration-300 transform group-hover:translate-y-[-4px]">
+                          <h3 className="text-xl lg:text-2xl font-serif font-bold tracking-wide drop-shadow-md">
+                            {cat.title}
+                          </h3>
+                          <p className="text-[9px] font-sans uppercase tracking-widest font-semibold opacity-80 drop-shadow-md">
+                            {cat.description || 'Exclusive Atelier Collection'}
+                          </p>
+                          <div className="pt-2 text-[8px] font-mono uppercase tracking-[0.2em] flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-[#D4AF37] drop-shadow-md">
+                            <span>Open Collection</span>
+                            <span>→</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </motion.div>
+                ));
+              })()
             )}
           </div>
 
@@ -293,7 +366,13 @@ export default function HeroSection({
           </div>
 
           {/* Best Sellers Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
+          >
             {productsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
                 <div key={`bs-skel-${idx}`} className="space-y-4 animate-pulse">
@@ -306,7 +385,7 @@ export default function HeroSection({
                 </div>
               ))
             ) : (
-              bestSellers.slice(0, 4).map((product) => (
+              bestSellers.slice(0, 4).map((product, idx) => (
                 <div 
                   key={product.id}
                   className="group bg-transparent flex flex-col justify-between overflow-hidden cursor-pointer"
@@ -355,7 +434,7 @@ export default function HeroSection({
                 </div>
               ))
             )}
-          </div>
+          </motion.div>
 
         </div>
       </section>
@@ -375,7 +454,13 @@ export default function HeroSection({
           />
 
           <div className="absolute inset-0 z-[2] flex items-center justify-center text-center">
-            <div className="max-w-3xl mx-auto px-4 space-y-6">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 40 }}
+              whileInView={{ opacity: 1, scale: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="max-w-3xl mx-auto px-4 space-y-6"
+            >
               <span className="text-[9px] tracking-[0.4em] font-sans font-bold uppercase text-[#FAF8F4]/80 block">
                 Exclusive Season Release
               </span>
@@ -393,7 +478,7 @@ export default function HeroSection({
                   Explore Full Catalog
                 </button>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 
@@ -402,7 +487,13 @@ export default function HeroSection({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             
             {/* Header */}
-            <div className="text-center space-y-2">
+            <motion.div 
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center space-y-2"
+            >
               <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
                 Fresh From The Atelier Forge
               </span>
@@ -410,10 +501,16 @@ export default function HeroSection({
                 Newly Launched Designs
               </h2>
               <div className="w-12 h-[1px] bg-[#381932] mx-auto mt-3" />
-            </div>
+            </motion.div>
 
             {/* Newly Launched Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+            <motion.div 
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
+            >
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`nl-skel-${idx}`} className="space-y-4 animate-pulse">
@@ -475,7 +572,7 @@ export default function HeroSection({
                   </div>
                 ))
               )}
-            </div>
+            </motion.div>
 
           </div>
         </div>
@@ -711,7 +808,13 @@ export default function HeroSection({
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           {/* Header */}
-          <div className="text-center space-y-2">
+          <motion.div 
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-center space-y-2"
+          >
             <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
               Concierge Answers
             </span>
@@ -719,7 +822,7 @@ export default function HeroSection({
               Frequently Asked Questions
             </h2>
             <div className="w-12 h-[1px] bg-[#381932] mx-auto mt-3" />
-          </div>
+          </motion.div>
 
           {/* Interactive Accordion List */}
           <div className="border-t border-b border-[#381932] divide-y divide-[#381932]/30">
