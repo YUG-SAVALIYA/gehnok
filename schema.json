@@ -1,0 +1,97 @@
+{
+  "data": {
+    "__type": {
+      "fields": [
+        {
+          "name": "availableForSale"
+        },
+        {
+          "name": "barcode"
+        },
+        {
+          "name": "compareAtPrice"
+        },
+        {
+          "name": "components"
+        },
+        {
+          "name": "currentlyNotInStock"
+        },
+        {
+          "name": "groupedBy"
+        },
+        {
+          "name": "id"
+        },
+        {
+          "name": "image"
+        },
+        {
+          "name": "metafield"
+        },
+        {
+          "name": "metafields"
+        },
+        {
+          "name": "price"
+        },
+        {
+          "name": "product"
+        },
+        {
+          "name": "quantityAvailable"
+        },
+        {
+          "name": "quantityPriceBreaks"
+        },
+        {
+          "name": "quantityRule"
+        },
+        {
+          "name": "requiresComponents"
+        },
+        {
+          "name": "requiresShipping"
+        },
+        {
+          "name": "selectedOptions"
+        },
+        {
+          "name": "sellingPlanAllocations"
+        },
+        {
+          "name": "shopPayInstallmentsPricing"
+        },
+        {
+          "name": "sku"
+        },
+        {
+          "name": "storeAvailability"
+        },
+        {
+          "name": "taxable"
+        },
+        {
+          "name": "title"
+        },
+        {
+          "name": "unitPrice"
+        },
+        {
+          "name": "unitPriceMeasurement"
+        },
+        {
+          "name": "weight"
+        },
+        {
+          "name": "weightUnit"
+        }
+      ]
+    }
+  },
+  "extensions": {
+    "cost": {
+      "requestedQueryCost": 3
+    }
+  }
+}

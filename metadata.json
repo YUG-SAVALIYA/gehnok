@@ -1,0 +1,6 @@
+{
+  "name": "GEHNOK Digital Atelier",
+  "description": "GEHNOK is a premium digital luxury jewelry experience. Explore hand-crafted collections, deep storytelling, and consult with our private AI Luxury Concierge.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
