@@ -8,7 +8,6 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Product } from '../types';
-import { LUXURY_PRODUCTS } from '../data';
 import { mapShopifyProducts } from '../shopify/mappers';
 import { ShopifyProduct } from '../shopify/types';
 
@@ -39,11 +38,19 @@ export function useShopifyProducts(
   const { collection, first = 50, sortKey = 'CREATED_AT', reverse = false } = options;
   const cacheKey = `${collection || 'all'}:${first}:${sortKey}:${reverse}`;
   
-  const [products, setProducts] = useState<Product[]>(globalProductsCache[cacheKey] || LUXURY_PRODUCTS);
-  const [loading, setLoading] = useState(true);
+  const hasCache = !!globalProductsCache[cacheKey];
+  const [products, setProducts] = useState<Product[]>(globalProductsCache[cacheKey] || []);
+  const [loading, setLoading] = useState(!hasCache);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProducts = useCallback(async () => {
+    // If it's cached, ensure the state matches the cache for this cacheKey
+    if (globalProductsCache[cacheKey]) {
+      setProducts(globalProductsCache[cacheKey]);
+      setLoading(false);
+      return; // Already cached, avoid re-fetching
+    }
+    
     setLoading(true);
     setError(null);
     try {
@@ -70,13 +77,13 @@ export function useShopifyProducts(
       }
 
       const mapped = mapShopifyProducts(data.products as ShopifyProduct[]);
-      const result = mapped.length > 0 ? mapped : LUXURY_PRODUCTS;
+      const result = mapped;
       globalProductsCache[cacheKey] = result;
       setProducts(result);
     } catch (err) {
-      console.warn('[useShopifyProducts] Failed to fetch from Shopify, using static fallback:', err);
+      console.warn('[useShopifyProducts] Failed to fetch from Shopify:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
-      setProducts(LUXURY_PRODUCTS); // graceful fallback
+      setProducts([]); // Show empty state on error instead of dummy data
     } finally {
       setLoading(false);
     }
@@ -103,8 +110,13 @@ interface UseShopifyProductResult {
  * Falls back to matching static product on error.
  */
 export function useShopifyProduct(handle: string): UseShopifyProductResult {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+  const cacheKey = `product:${handle}`;
+  const hasCache = !!globalProductsCache[cacheKey];
+  
+  const [product, setProduct] = useState<Product | null>(
+    hasCache ? globalProductsCache[cacheKey][0] : null
+  );
+  const [loading, setLoading] = useState(!hasCache);
   const [error, setError] = useState<string | null>(null);
 
   const fetchProduct = useCallback(async () => {
@@ -112,6 +124,12 @@ export function useShopifyProduct(handle: string): UseShopifyProductResult {
       setLoading(false);
       return;
     }
+    
+    if (globalProductsCache[cacheKey]) {
+      setLoading(false);
+      return;
+    }
+    
     setLoading(true);
     setError(null);
     try {
@@ -122,13 +140,13 @@ export function useShopifyProduct(handle: string): UseShopifyProductResult {
       if (!data.product) throw new Error('Product not found');
 
       const { mapShopifyProductToProduct } = await import('../shopify/mappers');
-      setProduct(mapShopifyProductToProduct(data.product));
+      const finalProduct = mapShopifyProductToProduct(data.product);
+      globalProductsCache[cacheKey] = [finalProduct];
+      setProduct(finalProduct);
     } catch (err) {
-      console.warn('[useShopifyProduct] Fallback to static data:', err);
+      console.warn('[useShopifyProduct] Failed to fetch from Shopify:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
-      // Fallback: find in static data by handle
-      const fallback = LUXURY_PRODUCTS.find(p => p.id === handle) ?? null;
-      setProduct(fallback);
+      setProduct(null);
     } finally {
       setLoading(false);
     }

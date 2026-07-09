@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { JOURNAL_ARTICLES } from '../data';
-import { JournalArticle } from '../types';
+import { useShopifyArticles, ShopifyArticle } from '../hooks/useShopifyArticles';
 import { BookOpen, Calendar, Clock, ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import ImageWithSkeleton from './ImageWithSkeleton';
 
 interface JournalProps {
   onBackToAtelier: () => void;
 }
 
 export default function Journal({ onBackToAtelier }: JournalProps) {
-  const [selectedArticle, setSelectedArticle] = useState<JournalArticle | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<ShopifyArticle | null>(null);
+  const { articles: JOURNAL_ARTICLES, loading } = useShopifyArticles(10);
 
   // Custom vector illustrations for the articles with Editorial Aesthetic
   const renderArticleIllustration = (articleId: string) => {
@@ -77,21 +78,26 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
             </button>
 
             {/* Illustration frame inside full view */}
-            {renderArticleIllustration(selectedArticle.id)}
+            {selectedArticle.image ? (
+              <div className="w-full h-80 flex items-center justify-center bg-[#EAE8E3] border border-[#381932] rounded-none relative overflow-hidden group">
+                <ImageWithSkeleton
+                  src={selectedArticle.image.url}
+                  alt={selectedArticle.title}
+                  className="object-cover opacity-80"
+                />
+              </div>
+            ) : (
+              renderArticleIllustration(selectedArticle.id)
+            )}
 
             {/* Title and metadata */}
             <div className="space-y-3 border-b border-[#381932] pb-6">
               <div className="flex items-center space-x-3 text-[9px] tracking-widest font-sans uppercase font-bold text-[#381932] opacity-60">
-                <span>{selectedArticle.category}</span>
+                <span>{selectedArticle.blog?.title || 'Journal'}</span>
                 <span>•</span>
                 <span className="flex items-center space-x-1 font-mono">
                   <Calendar size={10} />
-                  <span>{selectedArticle.date}</span>
-                </span>
-                <span>•</span>
-                <span className="flex items-center space-x-1 font-mono">
-                  <Clock size={10} />
-                  <span>{selectedArticle.readTime}</span>
+                  <span>{new Date(selectedArticle.publishedAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                 </span>
               </div>
 
@@ -100,14 +106,11 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
               </h1>
             </div>
 
-            {/* Content paragraph stream */}
-            <div className="space-y-6 text-[#381932]/80 text-sm leading-relaxed font-light font-sans">
-              {selectedArticle.content.map((paragraph, index) => (
-                <p key={index} className="first-of-type:text-base first-of-type:text-[#381932] first-of-type:font-medium">
-                  {paragraph}
-                </p>
-              ))}
-            </div>
+            {/* Content Paragraphs */}
+            <div 
+              className="prose prose-stone max-w-none text-[#381932]/80 leading-loose font-serif text-lg space-y-6"
+              dangerouslySetInnerHTML={{ __html: selectedArticle.contentHtml }}
+            />
 
             {/* Elegant visual line divider */}
             <div className="pt-12 border-t border-[#381932] flex items-center justify-between">
@@ -139,33 +142,48 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
 
             {/* Articles List */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {JOURNAL_ARTICLES.map((article) => (
-                <div
-                  key={article.id}
-                  onClick={() => setSelectedArticle(article)}
-                  className="group cursor-pointer space-y-4"
-                >
-                  {/* Visual block */}
-                  {renderArticleIllustration(article.id)}
-
-                  {/* Article descriptions */}
-                  <div className="space-y-2">
-                    <span className="text-[9px] tracking-widest font-sans uppercase font-bold text-[#381932] opacity-60">
-                      {article.category} • {article.date}
-                    </span>
-                    <h3 className="text-xl font-serif-luxury text-[#381932] font-bold group-hover:line-through transition-all duration-300">
-                      {article.title}
-                    </h3>
-                    <p className="text-xs text-[#381932]/70 leading-relaxed line-clamp-3 font-sans">
-                      {article.excerpt}
-                    </p>
-                    <div className="pt-2 flex items-center space-x-2 text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932] group-hover:line-through">
-                      <span>Examine Story</span>
-                      <ArrowRight size={10} className="transform group-hover:translate-x-1.5 transition-transform" />
+              {loading ? (
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={`j-skel-${idx}`} className="space-y-4 animate-pulse">
+                    <div className="w-full h-80 bg-[#EAE8E3]/50 border border-[#381932]/10" />
+                    <div className="space-y-2">
+                      <div className="h-2 w-1/4 bg-[#EAE8E3]" />
+                      <div className="h-5 w-3/4 bg-[#EAE8E3]" />
+                      <div className="h-12 w-full bg-[#EAE8E3]" />
+                      <div className="h-2 w-1/5 bg-[#EAE8E3] pt-2" />
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              ) : (
+                JOURNAL_ARTICLES.map((article) => (
+                  <div
+                    key={article.id}
+                    onClick={() => setSelectedArticle(article)}
+                    className="group cursor-pointer space-y-4"
+                  >
+                    {/* Visual block */}
+                    {renderArticleIllustration(article.id)}
+  
+                    {/* Article descriptions */}
+                    <div className="space-y-2">
+                      <span className="text-[9px] tracking-widest font-sans uppercase font-bold text-[#381932] opacity-60">
+                        {article.blog?.title || 'Journal'} • {new Date(article.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                      </span>
+                      <h3 className="text-xl font-serif-luxury text-[#381932] font-bold group-hover:line-through transition-all duration-300">
+                        {article.title}
+                      </h3>
+                      <div 
+                        className="text-xs text-[#381932]/70 leading-relaxed line-clamp-3 font-sans"
+                        dangerouslySetInnerHTML={{ __html: article.excerptHtml || article.contentHtml }}
+                      />
+                      <div className="pt-2 flex items-center space-x-2 text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932] group-hover:line-through">
+                        <span>Examine Story</span>
+                        <ArrowRight size={10} className="transform group-hover:translate-x-1.5 transition-transform" />
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
           </div>

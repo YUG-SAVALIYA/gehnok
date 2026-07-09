@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Product } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
+import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
 import Gemstone3DViewer from './Gemstone3DViewer';
+import HoverVideo from './HoverVideo';
+import ImageWithSkeleton from './ImageWithSkeleton';
 import { 
   Heart, Sparkles, Shield, Gift, Calendar, ArrowLeft, 
   ChevronDown, ChevronUp, Truck, Star, MessageSquare, CheckCircle, Image, Scissors
@@ -156,7 +159,8 @@ export default function ProductViewer({
   isInWishlist,
   onSelectProduct
 }: ProductViewerProps) {
-  const { products: LUXURY_PRODUCTS } = useShopifyProducts();
+  const { products: LUXURY_PRODUCTS, loading: productsLoading } = useShopifyProducts();
+  const { data: metalAssets } = useShopifyMetaobject('metal_colors', 'main');
   const [activeAccordion, setActiveAccordion] = useState<string | null>('materials');
   const [isAdded, setIsAdded] = useState(false);
 
@@ -240,6 +244,8 @@ export default function ProductViewer({
           if (mLower.includes('platinum')) {
             label = 'PT';
             priceFactor = 1.25;
+          } else if (mLower.includes('silver') || mLower === 'ss' || mLower.includes('sterling')) {
+            label = 'SS';
           }
 
           if (mLower.includes('9k')) label = '9K';
@@ -649,11 +655,12 @@ export default function ProductViewer({
                 <div className="space-y-4">
                   {/* Active main photograph frame */}
                   <div className="w-full h-[400px] bg-transparent relative overflow-hidden flex items-center justify-center group">
-                    <img
+                    <ImageWithSkeleton
                       src={productPhotos[safePhotoIndex]}
                       alt={`${product.name} Studio Photography`}
                       style={getMetalFilterStyle(selectedMetal?.id || '')}
-                      className="w-full h-full object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
+                      className="object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
+                      containerClassName="absolute inset-0 z-0"
                       referrerPolicy="no-referrer"
                       draggable={false}
                     />
@@ -676,11 +683,12 @@ export default function ProductViewer({
                           onClick={() => setActivePhotoIndex(index)}
                           className="flex-shrink-0 w-[calc(33.333%-10.66px)] aspect-square bg-transparent overflow-hidden relative cursor-pointer group transition-all duration-300 opacity-50 hover:opacity-100 snap-center"
                         >
-                          <img
+                          <ImageWithSkeleton
                             src={photo}
                             alt={`${product.name} Angle ${index + 1}`}
                             style={getMetalFilterStyle(selectedMetal?.id || '')}
-                            className="w-full h-full object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02]"
+                            className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02]"
+                            containerClassName="absolute inset-0 z-0"
                             referrerPolicy="no-referrer"
                             draggable={false}
                           />
@@ -966,6 +974,41 @@ export default function ProductViewer({
                   <div className="flex flex-wrap gap-4 py-1">
                     {availableMetals.map(metal => {
                       const isActive = selectedMetal?.id === metal.id;
+                      
+                      const mLower = metal.name.toLowerCase();
+                      let metaImageUrl = null;
+                      
+                      const isRose = mLower.includes('rose');
+                      const isWhite = mLower.includes('white') || mLower.includes('platinum');
+                      const isYellow = mLower.includes('yellow') || (!isRose && !isWhite && mLower.includes('gold'));
+                      
+                      const has18k = mLower.includes('18k');
+                      const has14k = mLower.includes('14k');
+                      const has9k = mLower.includes('9k');
+                      const hasSilver = mLower.includes('silver') || mLower.includes('ss') || mLower.includes('si');
+
+                      if (metalAssets) {
+                        for (const key of Object.keys(metalAssets)) {
+                          if (!metalAssets[key]) continue;
+                          
+                          const formattedKey = key.toLowerCase().replace(/_/g, ' ');
+                          const keyIsRose = formattedKey.includes('rose');
+                          const keyIsWhite = formattedKey.includes('white') || formattedKey.includes('platinum');
+                          const keyIsYellow = formattedKey.includes('yellow') || (!keyIsRose && !keyIsWhite && formattedKey.includes('gold'));
+                          
+                          const keyHas18k = formattedKey.includes('18k');
+                          const keyHas14k = formattedKey.includes('14k');
+                          const keyHas9k = formattedKey.includes('9k');
+                          const keyHasSilver = formattedKey.includes('silver') || formattedKey.includes('ss') || formattedKey.includes('si');
+                          
+                          if (isRose === keyIsRose && isWhite === keyIsWhite && isYellow === keyIsYellow &&
+                              has18k === keyHas18k && has14k === keyHas14k && has9k === keyHas9k && hasSilver === keyHasSilver) {
+                            metaImageUrl = metalAssets[key];
+                            break;
+                          }
+                        }
+                      }
+
                       return (
                         <button
                           key={metal.id}
@@ -984,9 +1027,13 @@ export default function ProductViewer({
                           >
                             {/* Inner flat metallic disc */}
                             <div 
-                              style={{ background: metal.metallicStyle }}
-                              className="w-full h-full rounded-full relative overflow-hidden"
+                              style={{ background: metaImageUrl ? 'none' : metal.metallicStyle }}
+                              className="w-full h-full rounded-full relative overflow-hidden flex items-center justify-center bg-white"
                             >
+                              {metaImageUrl && (
+                                <img src={metaImageUrl} alt={metal.name} className="absolute inset-0 w-full h-full object-cover" />
+                              )}
+                              
                               {/* Subtle brushed metal texture */}
                               <div className="absolute inset-0 opacity-[0.08] mix-blend-overlay pointer-events-none bg-[repeating-linear-gradient(45deg,_transparent,_transparent_1px,_rgba(0,0,0,0.1)_1px,_rgba(0,0,0,0.1)_2px)]"></div>
 
@@ -994,7 +1041,7 @@ export default function ProductViewer({
                               <div className="absolute inset-0 rounded-full shadow-[inset_0_0_0_1px_rgba(255,255,255,0.2),_inset_0_1px_2px_rgba(0,0,0,0.1)] pointer-events-none"></div>
                               
                               {/* Engraved text */}
-                              <span className={`absolute inset-0 flex items-center justify-center text-[11px] font-sans font-bold tracking-tighter opacity-90 ${metal.textClass} pointer-events-none select-none`}>
+                              <span className={`absolute inset-0 flex items-center justify-center text-[11px] font-sans font-bold tracking-tighter opacity-90 ${metal.textClass} pointer-events-none select-none z-10`}>
                                 {metal.label}
                               </span>
                             </div>
@@ -1451,9 +1498,21 @@ export default function ProductViewer({
             </div>
 
             <div className={relatedGridClass}>
-              {displayRelatedProducts.map((item) => (
-                <div 
-                  key={item.id}
+              {productsLoading ? (
+                Array.from({ length: 4 }).map((_, idx) => (
+                  <div key={`rel-skel-${idx}`} className="group flex flex-col justify-between cursor-pointer animate-pulse">
+                    <div className="aspect-[4/5] bg-[#EAE8E3]/50 border border-[#381932]/10 flex items-center justify-center mb-6" />
+                    <div className="space-y-2 text-center px-4">
+                      <div className="h-2 w-1/3 bg-[#EAE8E3] mx-auto" />
+                      <div className="h-4 w-3/4 bg-[#EAE8E3] mx-auto" />
+                      <div className="h-3 w-1/4 bg-[#EAE8E3] mx-auto" />
+                    </div>
+                  </div>
+                ))
+              ) : (
+                displayRelatedProducts.map((item) => (
+                  <div 
+                    key={item.id}
                   onClick={() => {
                     if (onSelectProduct) {
                       onSelectProduct(item);
@@ -1523,7 +1582,7 @@ export default function ProductViewer({
                     </p>
                   </div>
                 </div>
-              ))}
+              )))}
             </div>
           </div>
         </section>

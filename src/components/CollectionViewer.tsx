@@ -1,16 +1,19 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Product } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
+import { useShopifyCollections } from '../hooks/useShopifyCollections';
+import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
 import { Sparkles, Eye, Filter, SlidersHorizontal } from 'lucide-react';
 import HoverVideo from './HoverVideo';
+import ImageWithSkeleton from './ImageWithSkeleton';
 import ringBannerUrl from '../assets/ring category banner.jpg';
 import earringBannerUrl from '../assets/EARING category banner.jpg';
 import necklaceBannerUrl from '../assets/nacles category banner.jpg';
 
 interface CollectionViewerProps {
   onSelectProduct: (product: Product) => void;
-  forcedCategory?: string; // e.g., 'Rings' | 'Bracelets' | 'Earrings' | 'Necklaces'
-
+  forcedCategory?: string; // Legacy: 'Rings' | 'Bracelets'
+  collectionHandle?: string; // New: dynamic shopify collection handle
   title?: string;
   description?: string;
   searchQuery?: string;
@@ -19,12 +22,16 @@ interface CollectionViewerProps {
 export default function CollectionViewer({
   onSelectProduct,
   forcedCategory,
-
+  collectionHandle,
   title,
   description,
   searchQuery = ''
 }: CollectionViewerProps) {
-  const { products: LUXURY_PRODUCTS } = useShopifyProducts();
+  const { products: LUXURY_PRODUCTS, loading } = useShopifyProducts(
+    collectionHandle ? { collection: collectionHandle } : {}
+  );
+  const { collections } = useShopifyCollections();
+  const { data: bannerMetaobject } = useShopifyMetaobject('collection_banner', 'main');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [sortBy, setSortBy] = useState<string>('default');
   const [maxPrice, setMaxPrice] = useState<number>(200000);
@@ -44,25 +51,61 @@ export default function CollectionViewer({
     }
   };
 
-  const bgImg = getHeaderBgImage(forcedCategory || selectedCategory);
+  const activeCollection = collections.find(c => 
+    c.handle === collectionHandle || 
+    c.title === forcedCategory || 
+    c.title === selectedCategory
+  );
+
+  // 1. Shopify Metafield (custom.banner_image)
+  // 2. Local fallback image based on category
+  const activeCategoryName = (forcedCategory || selectedCategory).toLowerCase();
+  
+  let metaobjectKey = activeCategoryName;
+  if (activeCategoryName === 'necklaces') metaobjectKey = 'necklace';
+  if (activeCategoryName === 'rings') metaobjectKey = 'ring';
+  if (activeCategoryName === 'bracelets') metaobjectKey = 'bracelet';
+  if (activeCategoryName === 'earrings') metaobjectKey = 'earing';
+
+  const bgImg = (bannerMetaobject && bannerMetaobject[metaobjectKey]) || getHeaderBgImage(forcedCategory || selectedCategory);
+
+  useEffect(() => {
+    console.log('[CollectionViewer Debug] Active Category:', activeCategoryName);
+    console.log('[CollectionViewer Debug] Metaobject Key:', metaobjectKey);
+    console.log('[CollectionViewer Debug] Banner Metaobject:', bannerMetaobject);
+    console.log('[CollectionViewer Debug] Final Rendered bgImg:', bgImg);
+  }, [activeCategoryName, metaobjectKey, bannerMetaobject, bgImg]);
 
   const categories = ['All', 'Rings', 'Necklaces', 'Earrings', 'Bracelets'];
 
 
-  // Reset category selection when forced category changes
+  // Sync category selection when props change
   useEffect(() => {
     if (forcedCategory) {
       setSelectedCategory(forcedCategory);
+    } else if (collectionHandle && collectionHandle !== 'all') {
+      const handleLower = collectionHandle.toLowerCase();
+      if (handleLower === 'rings' || handleLower === 'ring') setSelectedCategory('Rings');
+      else if (handleLower === 'necklaces' || handleLower === 'necklace' || handleLower === 'nackles') setSelectedCategory('Necklaces');
+      else if (handleLower === 'earrings' || handleLower === 'earing' || handleLower === 'earings') setSelectedCategory('Earrings');
+      else if (handleLower === 'bracelets' || handleLower === 'bracelet' || handleLower === 'braclet') setSelectedCategory('Bracelets');
+      else setSelectedCategory('All');
     } else {
       setSelectedCategory('All');
     }
-  }, [forcedCategory]);
+  }, [forcedCategory, collectionHandle]);
 
   // Filter and Sort products based on selections
   const filteredProducts = useMemo(() => {
     let result = LUXURY_PRODUCTS.filter(product => {
-      const targetCategory = forcedCategory || selectedCategory;
-      const matchCategory = targetCategory === 'All' || product.collection === targetCategory;
+      // If collectionHandle is present, we already fetched ONLY that collection, so no need to filter by product.collection.
+      // If forcedCategory is present, filter by that.
+      // Otherwise use selectedCategory dropdown.
+      let matchCategory = true;
+      if (!collectionHandle) {
+        const targetCategory = forcedCategory || selectedCategory;
+        matchCategory = targetCategory === 'All' || product.collection === targetCategory;
+      }
       
       // Price range filter
       const matchPrice = product.price <= maxPrice;
@@ -90,12 +133,17 @@ export default function CollectionViewer({
     // old-new keeps default array order
 
     return result;
-  }, [forcedCategory, selectedCategory, maxPrice, searchQuery, sortBy]);
+  }, [forcedCategory, collectionHandle, selectedCategory, maxPrice, searchQuery, sortBy, LUXURY_PRODUCTS]);
 
   // Dynamic headlines
-  const pageTitle = title || (forcedCategory ? `The ${forcedCategory} Collection` : 'Atelier Curated Collections');
-  const pageDesc = description || (forcedCategory 
-    ? `Explore our patient, bespoke hand-cast ${forcedCategory.toLowerCase()} forged to high-luxury museum standards.` 
+  const pageTitle = title || (collectionHandle 
+    ? `The ${collectionHandle.charAt(0).toUpperCase() + collectionHandle.slice(1).replace(/-/g, ' ')} Collection`
+    : forcedCategory 
+      ? `The ${forcedCategory} Collection` 
+      : 'Atelier Curated Collections');
+
+  const pageDesc = description || (collectionHandle || forcedCategory 
+    ? `Explore our patient, bespoke hand-cast pieces forged to high-luxury museum standards.` 
     : 'Patiently forged in limited numbers. Filter below by category or composition to inspect our archive.');
 
   // Generate beautiful geometric stylized jewel representations using CSS and inline SVGs
@@ -227,10 +275,11 @@ export default function CollectionViewer({
         <div className="relative w-full h-96 flex items-center justify-center border-b border-[#381932] mb-12 overflow-hidden bg-[#381932]">
           {/* Background image */}
           <div className="absolute inset-0 z-0 bg-black">
-            <img 
-              src={bgImg} 
-              alt={pageTitle} 
-              className="w-full h-full object-cover opacity-85 transition-transform duration-1000"
+            <ImageWithSkeleton
+              src={bgImg}
+              alt={pageTitle}
+              className="object-cover opacity-85 transition-transform duration-1000"
+              containerClassName="absolute inset-0 z-0"
               referrerPolicy="no-referrer"
             />
             {/* Soft gradient to ensure text readability */}
@@ -271,7 +320,15 @@ export default function CollectionViewer({
                 {categories.map(cat => (
                   <button
                     key={cat}
-                    onClick={() => setSelectedCategory(cat)}
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      let newHandle = 'all';
+                      if (cat === 'Rings') newHandle = 'ring';
+                      else if (cat === 'Necklaces') newHandle = 'nackles';
+                      else if (cat === 'Earrings') newHandle = 'earings';
+                      else if (cat === 'Bracelets') newHandle = 'braclet';
+                      window.history.pushState({}, '', `/collections/${newHandle}`);
+                    }}
                     className={`px-3.5 py-1.5 text-[10px] tracking-wider font-sans uppercase font-bold transition-all duration-300 rounded-none border border-[#381932] cursor-pointer ${
                       selectedCategory === cat
                         ? 'bg-[#381932] text-[#F9F7F2]'
@@ -342,7 +399,20 @@ export default function CollectionViewer({
         </div>
 
         {/* Product Grid of Masterworks */}
-        {filteredProducts.length === 0 ? (
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-4 animate-pulse">
+                <div className="w-full h-48 sm:h-72 bg-[#EAE8E3]/50 border border-[#381932]/10" />
+                <div className="space-y-2 pl-1">
+                  <div className="h-3 w-1/3 bg-[#EAE8E3]" />
+                  <div className="h-5 w-3/4 bg-[#EAE8E3]" />
+                  <div className="h-4 w-1/4 bg-[#EAE8E3]" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredProducts.length === 0 ? (
           <div className="text-center py-24 border border-[#381932] rounded-none bg-white">
             <p className="text-sm text-[#381932] font-sans opacity-60 italic">
               No bespoke masterworks matching this specific metallurgy filter are currently resting in our vaults.

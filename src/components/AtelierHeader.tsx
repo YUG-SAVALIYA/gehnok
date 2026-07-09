@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Heart, Menu, X, ChevronDown, Search } from 'lucide-react';
+import { useShopifyCollections } from '../hooks/useShopifyCollections';
 import logoUrl from '../assets/png_logo.avif';
 
 interface AtelierHeaderProps {
-  onNavigate: (view: 'home' | 'all-product' | 'ring' | 'braclet' | 'earings' | 'nackles' | 'contact-us' | 'journal', subFilter?: string) => void;
+  onNavigate: (view: any, collectionHandle?: string) => void;
   currentView: string;
+  activeCollectionHandle?: string | null;
   cartCount: number;
   onOpenCart: () => void;
   wishlistCount: number;
@@ -16,6 +18,7 @@ interface AtelierHeaderProps {
 export default function AtelierHeader({
   onNavigate,
   currentView,
+  activeCollectionHandle,
   cartCount,
   onOpenCart,
   wishlistCount,
@@ -43,19 +46,22 @@ export default function AtelierHeader({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [lastScrollY]);
 
-  const navItems = [
-    { label: 'Home', view: 'home' as const },
-    { label: 'All Product', view: 'all-product' as const },
-    { label: 'Ring', view: 'ring' as const },
-    { label: 'Braclet', view: 'braclet' as const },
-    { label: 'Earings', view: 'earings' as const },
-    { label: 'Nackles', view: 'nackles' as const },
-    { label: 'Contact Us', view: 'contact-us' as const }
+  const { collections } = useShopifyCollections(4); // Fetch top 4 for header
+
+  const navItems: Array<{ label: string; view: any; handle?: string }> = [
+    { label: 'Home', view: 'home' },
+    { label: 'All Product', view: 'all-product' },
+    ...collections.map(c => ({
+      label: c.title,
+      view: 'collection',
+      handle: c.handle
+    })),
+    { label: 'Contact Us', view: 'contact-us' }
   ];
 
   return (
     <header className={`sticky top-0 z-40 w-full bg-[#F9F7F2]/95 backdrop-blur-md border-b border-[#381932] transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
-      
+
       {/* Gliding Ticker of Luxury Promises */}
       <div className="w-full bg-[#381932] text-[#FAF7F2] overflow-hidden py-1.5 border-b border-[#381932]">
         <div className="scrolling-ticker text-[8px] tracking-[0.25em] font-sans font-bold uppercase">
@@ -84,7 +90,7 @@ export default function AtelierHeader({
 
       <div className="w-full px-4 sm:px-8 lg:px-12 xl:px-16">
         <div className="flex items-center justify-between h-20">
-          
+
           {/* Left: Brand Identity */}
           <div className="flex flex-col items-center shrink-0">
             <button
@@ -97,19 +103,24 @@ export default function AtelierHeader({
 
           {/* Center Navigation: Main Links (Desktop) */}
           <nav className="hidden lg:flex items-center gap-6 xl:gap-8 justify-center">
-            {navItems.map((item) => (
-              <button
-                key={item.view}
-                onClick={() => onNavigate(item.view)}
-                className={`text-[11px] uppercase tracking-widest font-sans font-bold transition-all duration-300 py-2 cursor-pointer ${
-                  currentView === item.view
-                    ? 'text-[#381932] underline decoration-2 underline-offset-4'
-                    : 'text-[#8A7F7A] hover:text-[#381932]'
-                }`}
-              >
-                {item.label}
-              </button>
-            ))}
+            {navItems.map((item) => {
+              const isActive = item.view === 'collection'
+                ? currentView === 'collection' && item.handle === activeCollectionHandle
+                : currentView === item.view;
+
+              return (
+                <button
+                  key={item.label}
+                  onClick={() => onNavigate(item.view, item.handle)}
+                  className={`text-[11px] uppercase tracking-widest font-sans font-bold transition-all duration-300 py-2 cursor-pointer ${isActive
+                      ? 'text-[#381932] underline decoration-2 underline-offset-4'
+                      : 'text-[#8A7F7A] hover:text-[#381932]'
+                    }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
           </nav>
 
           {/* Right Action Icons: Wishlist, Cart */}
@@ -127,10 +138,10 @@ export default function AtelierHeader({
                         onSearchChange(e.target.value);
                       }
                       if (
-                        currentView !== 'all-product' && 
-                        currentView !== 'ring' && 
-                        currentView !== 'braclet' && 
-                        currentView !== 'earings' && 
+                        currentView !== 'all-product' &&
+                        currentView !== 'ring' &&
+                        currentView !== 'braclet' &&
+                        currentView !== 'earings' &&
                         currentView !== 'nackles'
                       ) {
                         onNavigate('all-product');
@@ -203,15 +214,14 @@ export default function AtelierHeader({
       {mobileMenuOpen && (
         <div className="lg:hidden bg-[#F9F7F2] border-b border-[#381932] px-4 py-6 space-y-4">
           {navItems.map((item) => (
-            <div key={item.view} className="space-y-1">
+            <div key={item.label} className="space-y-1">
               <button
                 onClick={() => {
-                  onNavigate(item.view);
+                  onNavigate(item.view, item.handle);
                   setMobileMenuOpen(false);
                 }}
-                className={`flex justify-between items-center w-full text-left text-xs uppercase tracking-widest font-sans font-bold py-2 ${
-                  currentView === item.view ? 'text-[#381932] underline decoration-2' : 'text-[#8A7F7A]'
-                }`}
+                className={`flex justify-between items-center w-full text-left text-xs uppercase tracking-widest font-sans font-bold py-2 ${currentView === item.view ? 'text-[#381932] underline decoration-2' : 'text-[#8A7F7A]'
+                  }`}
               >
                 <span>{item.label}</span>
               </button>

@@ -1,5 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 
+import ImageWithSkeleton from './ImageWithSkeleton';
+
 interface HoverVideoProps {
   videoUrl?: string | null;
   imageUrl: string;
@@ -70,11 +72,11 @@ export default function HoverVideo({
       onTouchStart={() => setIsHovered(true)}
       onTouchEnd={() => setIsHovered(false)}
     >
-      <img
+      <ImageWithSkeleton
         src={imageUrl}
         alt={alt}
-        className={`${imageClassName} ${isPlaying ? 'opacity-0' : 'opacity-100'} ${isHovered ? 'scale-105' : 'scale-100'} transition-all duration-700 ease-out`}
-        referrerPolicy="no-referrer"
+        className={`${imageClassName} ${isHovered ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`}
+        containerClassName={`${isPlaying ? 'opacity-0' : 'opacity-100'}`}
         draggable={false}
       />
       {inView && videoUrl && (
@@ -86,7 +88,7 @@ export default function HoverVideo({
           playsInline 
           preload="none"
           onPlaying={() => setIsPlaying(true)}
-          className={`${videoClassName} ${isPlaying ? 'opacity-100' : 'opacity-0'} ${isHovered ? 'scale-105' : 'scale-100'} transition-all duration-700 ease-out`} 
+          className={`${videoClassName} ${isPlaying ? 'opacity-100' : 'opacity-0'} ${isHovered ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`} 
         />
       )}
     </div>

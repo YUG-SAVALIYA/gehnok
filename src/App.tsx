@@ -14,24 +14,30 @@ import Cart from './components/Cart';
 import { Heart, Eye, X, Compass } from 'lucide-react';
 import { useShopifyCart } from './hooks/useShopifyCart';
 
+export type View = 'home' | 'all-product' | 'collection' | 'contact-us' | 'journal' | 'policy';
+export type PolicyType = 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy';
+
 export default function App() {
   const { products: LUXURY_PRODUCTS } = useShopifyProducts();
-  
+
   // Views & Product Selection
-  const [currentView, setCurrentView] = useState<'home' | 'all-product' | 'ring' | 'braclet' | 'earings' | 'nackles' | 'contact-us' | 'journal' | 'policy'>(() => {
+  const [currentView, setCurrentView] = useState<View>(() => {
     const path = window.location.pathname;
     if (path === '/collections/all') return 'all-product';
-    if (path === '/collections/rings') return 'ring';
-    if (path === '/collections/bracelets') return 'braclet';
-    if (path === '/collections/earrings') return 'earings';
-    if (path === '/collections/necklaces') return 'nackles';
+    if (path.startsWith('/collections/')) return 'collection';
     if (path === '/pages/contact') return 'contact-us';
     if (path === '/pages/journal') return 'journal';
     if (path.startsWith('/policies')) return 'policy';
     return 'home';
   });
 
-  const [activePolicyType, setActivePolicyType] = useState<'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy' | null>(() => {
+  const [activeCollectionHandle, setActiveCollectionHandle] = useState<string | null>(() => {
+    const path = window.location.pathname;
+    if (path.startsWith('/collections/')) return path.replace('/collections/', '');
+    return null;
+  });
+
+  const [activePolicyType, setActivePolicyType] = useState<PolicyType | null>(() => {
     const path = window.location.pathname;
     if (path === '/policies/privacy-policy') return 'privacyPolicy';
     if (path === '/policies/shipping-policy') return 'shippingPolicy';
@@ -39,9 +45,9 @@ export default function App() {
     if (path === '/policies/refund-policy') return 'refundPolicy';
     return null;
   });
-  const [lastViewBeforeDetail, setLastViewBeforeDetail] = useState<'home' | 'all-product' | 'ring' | 'braclet' | 'earings' | 'nackles' | 'contact-us' | 'journal' | 'policy'>('home');
+  const [lastViewBeforeDetail, setLastViewBeforeDetail] = useState<View>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-  
+
   // Track if we need to load a product from the URL once data arrives
   const [pendingProductId, setPendingProductId] = useState<string | null>(() => {
     const path = window.location.pathname;
@@ -68,7 +74,7 @@ export default function App() {
     }
   }, [LUXURY_PRODUCTS]);
 
-  
+
 
   // Search Query State
   const [searchQuery, setSearchQuery] = useState('');
@@ -78,7 +84,7 @@ export default function App() {
   const [inquiryProduct, setInquiryProduct] = useState<Product | null>(null);
 
   // ── Browser URL Routing (History API) ───────────────────────────────────────
-  
+
   // 1. Sync State -> URL
   useEffect(() => {
     // If we haven't resolved the initial product URL yet, don't overwrite the URL!
@@ -91,13 +97,13 @@ export default function App() {
       switch (currentView) {
         case 'home': path = '/'; break;
         case 'all-product': path = '/collections/all'; break;
-        case 'ring': path = '/collections/rings'; break;
-        case 'braclet': path = '/collections/bracelets'; break;
-        case 'earings': path = '/collections/earrings'; break;
-        case 'nackles': path = '/collections/necklaces'; break;
+        case 'collection':
+          if (activeCollectionHandle) path = `/collections/${activeCollectionHandle}`;
+          else path = '/collections/all';
+          break;
         case 'contact-us': path = '/pages/contact'; break;
         case 'journal': path = '/pages/journal'; break;
-        case 'policy': 
+        case 'policy':
           if (activePolicyType === 'privacyPolicy') path = '/policies/privacy-policy';
           else if (activePolicyType === 'shippingPolicy') path = '/policies/shipping-policy';
           else if (activePolicyType === 'termsOfService') path = '/policies/terms-of-service';
@@ -106,19 +112,19 @@ export default function App() {
           break;
       }
     }
-    
+
     // Only push if the URL actually changed to avoid infinite loops
     if (window.location.pathname + window.location.search !== path) {
       window.history.pushState({}, '', path);
     }
-  }, [currentView, selectedProduct]);
+  }, [currentView, selectedProduct, activeCollectionHandle, activePolicyType]);
 
   // 2. Sync URL -> State (Initial Load & Back/Forward buttons)
   useEffect(() => {
     const handlePopState = () => {
       const path = window.location.pathname;
       const params = new URLSearchParams(window.location.search);
-      
+
       if (path.startsWith('/products/')) {
         const id = path.replace('/products/', '');
         const prod = LUXURY_PRODUCTS.find(p => p.id === id);
@@ -131,10 +137,10 @@ export default function App() {
         setSelectedProduct(null);
         if (path === '/') setCurrentView('home');
         else if (path === '/collections/all') setCurrentView('all-product');
-        else if (path === '/collections/rings') setCurrentView('ring');
-        else if (path === '/collections/bracelets') setCurrentView('braclet');
-        else if (path === '/collections/earrings') setCurrentView('earings');
-        else if (path === '/collections/necklaces') setCurrentView('nackles');
+        else if (path.startsWith('/collections/')) {
+          setCurrentView('collection');
+          setActiveCollectionHandle(path.replace('/collections/', ''));
+        }
         else if (path === '/pages/contact') setCurrentView('contact-us');
         else if (path === '/pages/journal') setCurrentView('journal');
         else if (path.startsWith('/policies')) {
@@ -145,7 +151,7 @@ export default function App() {
           else if (path === '/policies/refund-policy') setActivePolicyType('refundPolicy');
           else setActivePolicyType(null);
         }
-        
+
       }
     };
 
@@ -194,8 +200,8 @@ export default function App() {
     const handleContextMenu = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (
-        target.tagName === 'IMG' || 
-        target.closest('img') || 
+        target.tagName === 'IMG' ||
+        target.closest('img') ||
         target.classList.contains('photo-protected') ||
         target.style.backgroundImage
       ) {
@@ -224,10 +230,10 @@ export default function App() {
 
   // Cart operations — delegated to Shopify hook (with automatic localStorage fallback)
   const handleAddToCollection = (
-    product: Product, 
-    quantity: number = 1, 
-    metalName?: string, 
-    priceFactor: number = 1.0, 
+    product: Product,
+    quantity: number = 1,
+    metalName?: string,
+    priceFactor: number = 1.0,
     size?: string
   ) => {
     const finalMetal = metalName || product.metal;
@@ -276,7 +282,7 @@ export default function App() {
     setCurrentView('contact-us');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-  
+
   const handleOpenPolicy = (type: 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy') => {
     let path = '/policies';
     if (type === 'privacyPolicy') path = '/policies/privacy-policy';
@@ -293,15 +299,19 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F9F7F2] text-[#381932] relative selection:bg-[#381932]/10">
-      
+
       {/* Exquisite Brand Header */}
       <AtelierHeader
-        onNavigate={(view, subFilter) => {
+        onNavigate={(view, collectionHandle) => {
+          if (view === 'collection' && collectionHandle) {
+            setActiveCollectionHandle(collectionHandle);
+          }
           setCurrentView(view);
           setSelectedProduct(null); // Clear active item detail on navigation
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         currentView={currentView}
+        activeCollectionHandle={activeCollectionHandle}
         cartCount={cartCount}
         onOpenCart={() => setIsCartOpen(true)}
         wishlistCount={wishlist.length}
@@ -312,7 +322,7 @@ export default function App() {
 
       {/* Main Content Router */}
       <main className="flex-1">
-        
+
         {/* Render loading state if resolving a direct product URL */}
         {pendingProductId ? (
           <div className="flex-1 flex items-center justify-center min-h-[60vh]">
@@ -364,46 +374,11 @@ export default function App() {
               />
             )}
 
-            {/* 3. RING VIEW */}
-            {currentView === 'ring' && (
+            {/* DYNAMIC COLLECTION VIEW */}
+            {currentView === 'collection' && activeCollectionHandle && (
               <CollectionViewer
-                forcedCategory="Rings"
+                collectionHandle={activeCollectionHandle}
                 onSelectProduct={handleExamineProduct}
-                title="The Ring Collection"
-                description="Seals of intent and permanent memories. Forged in 18k Champagne Gold, Pt950 Platinum, or rare Purple Gold alloys."
-                searchQuery={searchQuery}
-              />
-            )}
-
-            {/* 4. BRACLET VIEW */}
-            {currentView === 'braclet' && (
-              <CollectionViewer
-                forcedCategory="Bracelets"
-                onSelectProduct={handleExamineProduct}
-                title="The Bracelet Collection"
-                description="Sculptural wrist cuffs that mirror fluid metal frozen in time, designed to flow organically with your movement."
-                searchQuery={searchQuery}
-              />
-            )}
-
-            {/* 5. EARINGS VIEW */}
-            {currentView === 'earings' && (
-              <CollectionViewer
-                forcedCategory="Earrings"
-                onSelectProduct={handleExamineProduct}
-                title="The Earring Collection"
-                description="Exquisite droplets and brilliant-cut studs designed to frame your posture and filter direct light."
-                searchQuery={searchQuery}
-              />
-            )}
-
-            {/* 6. NACKLES VIEW */}
-            {currentView === 'nackles' && (
-              <CollectionViewer
-                forcedCategory="Necklaces"
-                onSelectProduct={handleExamineProduct}
-                title="The Necklace Collection"
-                description="Fine chains and collars carrying rare Paraiba-type tourmalines and royal amethysts to adorn the collarbone."
                 searchQuery={searchQuery}
               />
             )}
@@ -430,12 +405,12 @@ export default function App() {
 
             {/* 9. POLICY VIEW */}
             {currentView === 'policy' && (
-              <PolicyPage 
-                policyType={activePolicyType} 
+              <PolicyPage
+                policyType={activePolicyType}
                 onBackToHome={() => {
                   window.history.pushState({}, '', '/');
                   setCurrentView('home');
-                }} 
+                }}
               />
             )}
           </>
@@ -443,9 +418,12 @@ export default function App() {
       </main>
 
       {/* Elegant Brand Footer */}
-      <AtelierFooter 
-        onOpenPolicy={handleOpenPolicy} 
-        onNavigate={(view) => {
+      <AtelierFooter
+        onOpenPolicy={handleOpenPolicy}
+        onNavigate={(view, collectionHandle) => {
+          if (view === 'collection' && collectionHandle) {
+            setActiveCollectionHandle(collectionHandle);
+          }
           setCurrentView(view);
           setSelectedProduct(null);
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -453,7 +431,7 @@ export default function App() {
       />
 
       {/* Slide-over Drawers */}
-      
+
       {/* 1. Collection Cart Drawer */}
       <Cart
         isOpen={isCartOpen}
@@ -476,7 +454,7 @@ export default function App() {
         <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity duration-500">
           <div className="absolute inset-0 cursor-pointer" onClick={() => setIsWishlistOpen(false)} />
           <div className="relative w-full max-w-md h-full bg-[#F9F7F2] text-[#381932] flex flex-col border-l border-[#381932] shadow-2xl p-6 font-sans">
-            
+
             {/* Header */}
             <div className="flex items-center justify-between border-b border-[#381932] pb-4 mb-6">
               <div className="flex items-center space-x-2">
@@ -559,7 +537,7 @@ export default function App() {
         title="Consult private concierge"
       >
         <Compass size={22} className="group-hover:rotate-45 transition-transform duration-700" />
-        
+
         {/* Help tip pop */}
         <span className="absolute right-16 scale-0 group-hover:scale-100 transition-transform bg-[#381932] text-white border border-[#381932] text-[9px] font-sans uppercase tracking-widest px-3 py-1.5 rounded-none whitespace-nowrap shadow-lg font-bold">
           Consult Concierge

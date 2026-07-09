@@ -245,6 +245,42 @@ function shopifyGuard(req: express.Request, res: express.Response, next: express
 const shopifyRouter = express.Router();
 shopifyRouter.use(shopifyGuard);
 
+/** GET /api/shopify/metaobjects/:type/:handle - fetch metaobject fields */
+shopifyRouter.get('/metaobjects/:type/:handle', async (req, res) => {
+  try {
+    const { type, handle } = req.params;
+    const data = await shopifyFetch<{ metaobject: any }>({
+      query: `query GetMetaobject($handle: MetaobjectHandleInput!) {
+        metaobject(handle: $handle) {
+          id
+          handle
+          type
+          fields {
+            key
+            value
+            reference {
+              ... on MediaImage {
+                image {
+                  url
+                  altText
+                }
+              }
+              ... on GenericFile {
+                url
+              }
+            }
+          }
+        }
+      }`,
+      variables: { handle: { type, handle } }
+    });
+    console.log(`[Shopify] Metaobject fetched:`, JSON.stringify(data, null, 2));
+    res.json(data);
+  } catch (err: unknown) {
+    res.status(500).json({ error: err instanceof Error ? err.message : 'Unknown error' });
+  }
+});
+
 /** GET /api/shopify/policies - fetch shop policies */
 shopifyRouter.get('/policies', async (req, res) => {
   try {
@@ -403,6 +439,40 @@ shopifyRouter.get('/collections/:handle/products', async (req, res) => {
     if (!data.collection) return res.status(404).json({ error: 'Collection not found' });
     const products = data.collection.products.edges.map((e: any) => e.node);
     res.json({ collection: data.collection, products, pageInfo: data.collection.products.pageInfo });
+  } catch (err: any) {
+    res.status(502).json({ error: err.message });
+  }
+});
+
+// ── Articles / Blogs ────────────────────────────────────────────────────────────
+
+/** GET /api/shopify/articles — fetch recent blog articles */
+shopifyRouter.get('/articles', async (req, res) => {
+  try {
+    const first = parseInt(req.query.first as string ?? '3', 10);
+    const data = await shopifyFetch<{ articles: { edges: any[] } }>({
+      query: `query Articles($first: Int!) {
+        articles(first: $first, sortKey: PUBLISHED_AT, reverse: true) {
+          edges {
+            node {
+              id
+              handle
+              title
+              publishedAt
+              contentHtml
+              excerptHtml
+              image { url altText }
+              authorV2 { name }
+              blog { title }
+            }
+          }
+        }
+      }`,
+      variables: { first },
+      cacheKey: `articles:${first}`,
+    });
+    const articles = data.articles?.edges?.map(e => e.node) || [];
+    res.json({ articles });
   } catch (err: any) {
     res.status(502).json({ error: err.message });
   }
