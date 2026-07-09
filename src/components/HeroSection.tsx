@@ -6,12 +6,13 @@ import {
 import { JOURNAL_ARTICLES } from '../data';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { Product } from '../types';
+import HoverVideo from './HoverVideo';
 import slide1 from '../assets/First_Web_baner_jpg.webp';
 import slide2 from '../assets/First_Web_baner_2.webp';
 import slide3 from '../assets/third_Web_baner.webp';
 import slide4 from '../assets/fourth_web_baner.webp';
 import slide5 from '../assets/fifth_Web_baner.webp';
-import slide6 from '../assets/sixth_web_baner.webp';
+import slide6 from '../assets/sixth_Web_baner.webp';
 import ringBannerUrl from '../assets/ring category banner.jpg';
 import earringBannerUrl from '../assets/EARING category banner.jpg';
 import necklaceBannerUrl from '../assets/nacles category banner.jpg';
@@ -323,55 +324,31 @@ export default function HeroSection({
             {bestSellers.map((product) => (
               <div 
                 key={product.id}
-                onClick={() => onSelectProduct(product)}
-                onMouseEnter={(e) => {
-                  const video = e.currentTarget.querySelector('video');
-                  if (video) video.play().catch(() => {});
-                }}
-                onMouseLeave={(e) => {
-                  const video = e.currentTarget.querySelector('video');
-                  if (video) {
-                    video.pause();
-                    video.currentTime = 0;
-                  }
-                }}
                 className="group bg-transparent flex flex-col justify-between overflow-hidden cursor-pointer"
               >
                 {/* Product Image Panel */}
-                <div className="aspect-square bg-[#FAF8F4] relative overflow-hidden flex items-center justify-center">
-                  {(() => {
-                    const videoMedia = (product as any).media?.find((m: any) => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
-                    let videoUrl = videoMedia?.url;
-                    if (!videoUrl && product.descriptionHtml) {
-                      const match = product.descriptionHtml.match(/<video[^>]*>.*?<source[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is) || product.descriptionHtml.match(/<video[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is);
-                      if (match && match[1]) {
-                        videoUrl = match[1];
-                      }
+                {(() => {
+                  const videoMedia = (product as any).media?.find((m: any) => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
+                  let videoUrl = videoMedia?.url;
+                  if (!videoUrl && product.descriptionHtml) {
+                    const match = product.descriptionHtml.match(/<video[^>]*>.*?<source[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is) || product.descriptionHtml.match(/<video[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is);
+                    if (match && match[1]) {
+                      videoUrl = match[1];
                     }
-                    
-                    return (
-                      <>
-                        <img
-                          src={product.images[0]}
-                          alt={product.name}
-                          className={`w-full h-full object-contain p-6 transition-all duration-700 ease-out group-hover:scale-105 relative z-10 ${videoUrl ? 'group-hover:opacity-0' : ''}`}
-                          referrerPolicy="no-referrer"
-                          draggable={false}
-                        />
-                        {videoUrl && (
-                          <video 
-                            src={videoUrl} 
-                            loop 
-                            muted 
-                            playsInline 
-                            preload="metadata"
-                            className="absolute inset-0 m-auto w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0 pointer-events-none" 
-                          />
-                        )}
-                      </>
-                    );
-                  })()}
-                </div>
+                  }
+                  
+                  return (
+                    <HoverVideo
+                      videoUrl={videoUrl}
+                      imageUrl={product.images[0]}
+                      alt={product.name}
+                      containerClassName="aspect-square bg-[#FAF8F4] flex items-center justify-center"
+                      imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
+                      videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
+                      onClick={() => onSelectProduct(product)}
+                    />
+                  );
+                })()}
 
                 {/* Product Details Panel - Elegant & Compact */}
                 <div className="pt-4 px-2 space-y-1.5 text-center bg-transparent">
@@ -453,54 +430,31 @@ export default function HeroSection({
               {newlyLaunched.map((product) => (
                 <div 
                   key={product.id}
-                  onClick={() => onSelectProduct(product)}
-                  onMouseEnter={(e) => {
-                    const video = e.currentTarget.querySelector('video');
-                    if (video) video.play().catch(() => {});
-                  }}
-                  onMouseLeave={(e) => {
-                    const video = e.currentTarget.querySelector('video');
-                    if (video) {
-                      video.pause();
-                      video.currentTime = 0;
-                    }
-                  }}
                   className="group bg-transparent flex flex-col justify-between overflow-hidden cursor-pointer"
                 >
-                  <div className="aspect-square bg-[#FAF8F4] relative overflow-hidden flex items-center justify-center">
-                    {(() => {
-                      const videoMedia = (product as any).media?.find((m: any) => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
-                      let videoUrl = videoMedia?.url;
-                      if (!videoUrl && product.descriptionHtml) {
-                        const match = product.descriptionHtml.match(/<video[^>]*>.*?<source[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is) || product.descriptionHtml.match(/<video[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is);
-                        if (match && match[1]) {
-                          videoUrl = match[1];
-                        }
+                  {/* Product Image Panel */}
+                  {(() => {
+                    const videoMedia = (product as any).media?.find((m: any) => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
+                    let videoUrl = videoMedia?.url;
+                    if (!videoUrl && product.descriptionHtml) {
+                      const match = product.descriptionHtml.match(/<video[^>]*>.*?<source[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is) || product.descriptionHtml.match(/<video[^>]*src="([^"]+)"[^>]*>.*?<\/video>/is);
+                      if (match && match[1]) {
+                        videoUrl = match[1];
                       }
-                      
-                      return (
-                        <>
-                          <img
-                            src={product.images[0]}
-                            alt={product.name}
-                            className={`w-full h-full object-contain p-6 transition-all duration-700 ease-out group-hover:scale-105 relative z-10 ${videoUrl ? 'group-hover:opacity-0' : ''}`}
-                            referrerPolicy="no-referrer"
-                            draggable={false}
-                          />
-                          {videoUrl && (
-                            <video 
-                              src={videoUrl} 
-                              loop 
-                              muted 
-                              playsInline 
-                              preload="metadata"
-                              className="absolute inset-0 m-auto w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-700 z-0 pointer-events-none" 
-                            />
-                          )}
-                        </>
-                      );
-                    })()}
-                  </div>
+                    }
+                    
+                    return (
+                      <HoverVideo
+                        videoUrl={videoUrl}
+                        imageUrl={product.images[0]}
+                        alt={product.name}
+                        containerClassName="aspect-square bg-[#FAF8F4] flex items-center justify-center"
+                        imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
+                        videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
+                        onClick={() => onSelectProduct(product)}
+                      />
+                    );
+                  })()}
 
                   {/* Compact Product Details Panel */}
                   <div className="pt-4 px-2 space-y-1.5 text-center bg-transparent">

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Product } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { Sparkles, Eye, Filter, SlidersHorizontal } from 'lucide-react';
+import HoverVideo from './HoverVideo';
 import ringBannerUrl from '../assets/ring category banner.jpg';
 import earringBannerUrl from '../assets/EARING category banner.jpg';
 import necklaceBannerUrl from '../assets/nacles category banner.jpg';
@@ -116,40 +117,14 @@ export default function CollectionViewer({
     // If Shopify has provided real studio photography, prioritize it over the CAD draft!
     if (product.images && product.images.length > 0) {
       return (
-        <div 
-          className="w-full h-48 sm:h-72 bg-transparent relative overflow-hidden group"
-          onMouseEnter={(e) => {
-            const video = e.currentTarget.querySelector('video');
-            if (video) video.play().catch(() => {});
-          }}
-          onMouseLeave={(e) => {
-            const video = e.currentTarget.querySelector('video');
-            if (video) {
-              video.pause();
-              video.currentTime = 0;
-            }
-          }}
-        >
-          <img 
-            src={product.images[0]} 
-            alt={product.name} 
-            className={`w-full h-full object-contain mix-blend-multiply transition-all duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-2 relative z-10 ${videoUrl ? 'group-hover:opacity-0' : ''}`}
-            referrerPolicy="no-referrer"
-          />
-          
-          {/* Video on Hover */}
-          {videoUrl && (
-            <video
-              src={videoUrl}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-              className="absolute inset-0 m-auto w-[90%] h-[90%] object-contain mix-blend-multiply opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0 pointer-events-none"
-            />
-          )}
-
-        </div>
+        <HoverVideo
+          videoUrl={videoUrl}
+          imageUrl={product.images[0]}
+          alt={product.name}
+          containerClassName="w-full h-48 sm:h-72 bg-transparent group"
+          imageClassName="absolute inset-0 m-auto w-full h-full object-contain mix-blend-multiply z-10"
+          videoClassName="absolute inset-0 m-auto w-[90%] h-[90%] object-contain mix-blend-multiply z-0 pointer-events-none"
+        />
       );
     }
 
