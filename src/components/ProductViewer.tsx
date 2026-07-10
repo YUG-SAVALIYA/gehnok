@@ -7,8 +7,9 @@ import HoverVideo from './HoverVideo';
 import ImageWithSkeleton from './ImageWithSkeleton';
 import { motion } from 'motion/react';
 import { 
-  Heart, Sparkles, Shield, Gift, Calendar, ArrowLeft, 
-  ChevronDown, ChevronUp, Truck, Star, MessageSquare, CheckCircle, Image, Scissors, PlayCircle
+  Heart, Sparkles, Calendar, ArrowLeft, 
+  ChevronDown, ChevronUp, Star, CheckCircle, Image, Scissors, PlayCircle,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 import paymentGatewayImg from '../assets/payment_gateway.svg';
 import bisHallmarkImg from '../assets/BIS_Hallmark.svg';
@@ -453,6 +454,17 @@ export default function ProductViewer({
 
   // Copied coupon indicator state
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
+  const couponScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollCoupons = (direction: 'left' | 'right') => {
+    const container = couponScrollRef.current;
+    if (!container) return;
+
+    container.scrollBy({
+      left: direction === 'left' ? -container.clientWidth * 0.85 : container.clientWidth * 0.85,
+      behavior: 'smooth'
+    });
+  };
   
   // Track when active video is ready so we can progressively load the others
   const [videosReadyToPreload, setVideosReadyToPreload] = useState(false);
@@ -861,168 +873,6 @@ export default function ProductViewer({
               </div>
             </motion.div>
 
-            {/* Luxury Information Accordion */}
-            <div className="border-t border-b border-[#381932] divide-y divide-[#381932]">
-
-              {/* Accordion 2: Payment Gateways */}
-              <div className="py-4">
-                <button
-                  onClick={() => toggleAccordion('craftsmanship')}
-                  className="w-full flex justify-between items-center text-xs uppercase tracking-widest font-sans font-bold text-[#381932] py-2 text-left cursor-pointer"
-                >
-                  <span>Payment Gateways</span>
-                  {activeAccordion === 'craftsmanship' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                </button>
-                {activeAccordion === 'craftsmanship' && (
-                  <div className="mt-4 pl-1">
-                    <img 
-                      src={paymentGatewayImg} 
-                      alt="Secure Payment Gateways: Mastercard, Visa, PayPal, MobiKwik, GPay, PhonePe, Paytm" 
-                      className="w-full max-w-[400px] h-auto object-contain mix-blend-multiply opacity-90"
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion 3: Certifications & Hallmark */}
-              <div className="py-4">
-                <button
-                  onClick={() => toggleAccordion('certification')}
-                  className="w-full flex justify-between items-center text-xs uppercase tracking-widest font-sans font-bold text-[#381932] py-2 text-left cursor-pointer"
-                >
-                  <span>Certification & Hallmark</span>
-                  {activeAccordion === 'certification' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                </button>
-                {activeAccordion === 'certification' && (
-                  <div className="mt-4 space-y-3 pl-1 text-xs text-[#381932]/80 leading-relaxed">
-                    <div className="flex items-start space-x-3">
-                      <Shield size={16} className="text-[#381932] shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-bold text-[#381932]">Ethical Integrity Guarantee</p>
-                        <p>{product.certification}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 pt-2">
-                      <Sparkles size={16} className="text-[#381932] shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-bold text-[#381932]">Official Hallmarking</p>
-                        <p>{product.hallmark}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Accordion 5: White Glove Delivery */}
-              <div className="py-4">
-                <button
-                  onClick={() => toggleAccordion('shipping')}
-                  className="w-full flex justify-between items-center text-xs uppercase tracking-widest font-sans font-bold text-[#381932] py-2 text-left cursor-pointer"
-                >
-                  <span>White-Glove Shipping & Returns</span>
-                  {activeAccordion === 'shipping' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                </button>
-                {activeAccordion === 'shipping' && (
-                  <div className="mt-4 space-y-3 pl-1 text-xs text-[#381932]/80 leading-relaxed">
-                    <div className="flex items-start space-x-3">
-                      <Truck size={16} className="text-[#381932] shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-bold text-[#381932]">Complimentary Courier Carriage</p>
-                        <p>{product.deliveryInfo}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3 pt-2">
-                      <Gift size={16} className="text-[#381932] shrink-0 mt-0.5" />
-                      <div>
-                        <p className="font-bold text-[#381932]">Secure Returns & Exchange</p>
-                        <p>{product.returnsInfo}</p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Form: Add Signature Appraisal as requested */}
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-[#381932] bg-[#FAF7F2] p-8 rounded-none">
-              <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block mb-2">
-                Leave a Statement
-              </span>
-              <h4 className="text-xl font-serif-luxury text-[#381932] font-bold mb-4">
-                Log a Signature Review
-              </h4>
-
-              {reviewSuccessMsg ? (
-                <div className="p-4 bg-[#EAE8E3] border border-[#381932] text-xs text-[#381932] flex items-center space-x-2 font-bold uppercase font-sans tracking-wide">
-                  <CheckCircle size={14} />
-                  <span>Appraisal successfully committed to our registers.</span>
-                </div>
-              ) : (
-                <form onSubmit={handleReviewSubmit} className="space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                        Collector Name
-                      </label>
-                      <input
-                        type="text"
-                        value={reviewFormName}
-                        onChange={(e) => setReviewFormName(e.target.value)}
-                        required
-                        placeholder="e.g. Charlotte M."
-                        className="w-full bg-[#F9F7F2] text-[#381932] border border-[#381932] rounded-none px-3.5 py-2 text-xs focus:ring-1 focus:ring-[#381932] outline-none font-mono"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                        Commit Star Rating
-                      </label>
-                      <div className="flex min-h-[35px] items-center space-x-2 bg-[#F9F7F2] px-3.5 py-2 border border-[#381932]">
-                        {[1, 2, 3, 4, 5].map((s) => (
-                          <button
-                            key={s}
-                            type="button"
-                            onClick={() => setReviewFormRating(s)}
-                            className="text-[#381932] hover:scale-110 transition-transform focus:outline-none"
-                            aria-label={`Set rating to ${s} star${s === 1 ? '' : 's'}`}
-                          >
-                            <Star
-                              size={16}
-                              className={s <= reviewFormRating ? 'fill-amber-500 text-amber-500' : 'text-[#381932]/30'}
-                            />
-                          </button>
-                        ))}
-                        <span className="text-[10px] font-mono font-bold text-[#381932] pl-2 uppercase">
-                          {reviewFormRating} Stars
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                      Your Appraisal Content
-                    </label>
-                    <textarea
-                      value={reviewFormContent}
-                      onChange={(e) => setReviewFormContent(e.target.value)}
-                      required
-                      rows={4}
-                      placeholder="Share your raw assessment of the gemstone, metallurgy, or boutique courier experience..."
-                      className="w-full bg-[#F9F7F2] text-[#381932] border border-[#381932] rounded-none p-3.5 text-xs focus:ring-1 focus:ring-[#381932] outline-none"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="px-6 py-3 text-[10px] uppercase tracking-widest font-sans font-bold bg-[#381932] text-white border border-[#381932] hover:bg-transparent hover:text-[#381932] transition-all rounded-none cursor-pointer"
-                  >
-                    Commit Review
-                  </button>
-                </form>
-              )}
-            </motion.div>
-
           </div>
 
           {/* Right Column: Configuration Options, Title, Core Actions */}
@@ -1279,11 +1129,34 @@ export default function ProductViewer({
 
               {/* Luxury Coupon Section (Exact Image Replica) */}
               <div className="space-y-4 pt-5 border-t border-[#381932]/10">
-                <span className="block text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
-                  Available Privileges & Coupons:
-                </span>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="block text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
+                    Available Privileges & Coupons:
+                  </span>
+                  <div className="hidden md:flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => scrollCoupons('left')}
+                      className="h-8 w-8 border border-[#381932]/70 rounded-full flex items-center justify-center text-[#381932] hover:bg-[#381932] hover:text-white transition-colors cursor-pointer"
+                      aria-label="Previous coupon"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollCoupons('right')}
+                      className="h-8 w-8 border border-[#381932]/70 rounded-full flex items-center justify-center text-[#381932] hover:bg-[#381932] hover:text-white transition-colors cursor-pointer"
+                      aria-label="Next coupon"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+                  </div>
+                </div>
 
-                <div className="flex space-x-4 overflow-x-auto pb-4 pt-1 px-1 snap-x snap-mandatory scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div
+                  ref={couponScrollRef}
+                  className="flex space-x-4 overflow-x-auto pb-4 pt-1 px-1 snap-x snap-mandatory scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                >
                   {[
                     { code: 'FIRST10', label: 'On Your First Order', rate: '10%', sub: 'OFF' },
                     { code: 'GEHKNOKVIP', label: 'VIP Loyalty Benefit', rate: '15%', sub: 'OFF' },
@@ -1293,6 +1166,7 @@ export default function ProductViewer({
                       <div 
                         className="flex items-stretch min-h-[105px] w-full h-full bg-gradient-to-r from-[#FDF8F0] to-white rounded-xl"
                         style={{
+                          boxShadow: 'inset 0 0 0 1.5px rgba(56, 25, 50, 0.28), 0 10px 24px rgba(56, 25, 50, 0.08)',
                           WebkitMaskImage: 'radial-gradient(circle at 0 50%, transparent 12px, black 12.5px), radial-gradient(circle at 100% 50%, transparent 12px, black 12.5px)',
                           WebkitMaskSize: '51% 100%',
                           WebkitMaskRepeat: 'no-repeat',
@@ -1418,6 +1292,14 @@ export default function ProductViewer({
                   <span className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#381932]/70 text-center leading-[1.2]">Skin Friendly</span>
                 </div>
               </div>
+
+              <div className="mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#F9F7F2]/70 flex items-center justify-center">
+                <img
+                  src={paymentGatewayImg}
+                  alt="Secure payment options"
+                  className="w-full max-w-[420px] h-auto object-contain mix-blend-multiply opacity-90"
+                />
+              </div>
             </div>
 
             {/* Gemstone Details Accordion (Moved back to right column) */}
@@ -1468,7 +1350,7 @@ export default function ProductViewer({
           transition={{ duration: 0.8, ease: "easeOut" }}
           className="mt-8 border-t border-[#381932] pt-8 pb-8"
         >
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             
             {/* Review Header Panel */}
             <div className="flex flex-col md:flex-row items-center md:items-start justify-between border border-[#381932] p-8 bg-[#EAE8E3]/30 gap-6">
@@ -1476,9 +1358,6 @@ export default function ProductViewer({
                 <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block">
                   Client Diaries
                 </span>
-                <h3 className="text-2xl font-serif-luxury tracking-wide text-[#381932] font-bold">
-                  Signature Appraisals
-                </h3>
                 <p className="text-xs text-[#381932]/70 leading-relaxed max-w-sm">
                   Patient verified reports logged directly by registered collectors. Evaluated strictly on cut, luster, alloy consistency, and delivery standards.
                 </p>
@@ -1500,15 +1379,96 @@ export default function ProductViewer({
               </div>
             </div>
 
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+              {/* Form: Add Signature Review */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-[#381932] bg-[#FAF7F2] p-6 sm:p-8 rounded-none">
+                <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block mb-2">
+                  Leave a Statement
+                </span>
+                <h4 className="text-xl font-serif-luxury text-[#381932] font-bold mb-4">
+                  Log a Signature Review
+                </h4>
+
+                {reviewSuccessMsg ? (
+                  <div className="p-4 bg-[#EAE8E3] border border-[#381932] text-xs text-[#381932] flex items-center space-x-2 font-bold uppercase font-sans tracking-wide">
+                    <CheckCircle size={14} />
+                    <span>Appraisal successfully committed to our registers.</span>
+                  </div>
+                ) : (
+                  <form onSubmit={handleReviewSubmit} className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
+                          Collector Name
+                        </label>
+                        <input
+                          type="text"
+                          value={reviewFormName}
+                          onChange={(e) => setReviewFormName(e.target.value)}
+                          required
+                          placeholder="e.g. Charlotte M."
+                          className="w-full bg-[#F9F7F2] text-[#381932] border border-[#381932] rounded-none px-3.5 py-2 text-xs focus:ring-1 focus:ring-[#381932] outline-none font-mono"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
+                          Commit Star Rating
+                        </label>
+                        <div className="flex min-h-[35px] items-center space-x-2 bg-[#F9F7F2] px-3.5 py-2 border border-[#381932]">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <button
+                              key={s}
+                              type="button"
+                              onClick={() => setReviewFormRating(s)}
+                              className="text-[#381932] hover:scale-110 transition-transform focus:outline-none"
+                              aria-label={`Set rating to ${s} star${s === 1 ? '' : 's'}`}
+                            >
+                              <Star
+                                size={16}
+                                className={s <= reviewFormRating ? 'fill-amber-500 text-amber-500' : 'text-[#381932]/30'}
+                              />
+                            </button>
+                          ))}
+                          <span className="text-[10px] font-mono font-bold text-[#381932] pl-2 uppercase">
+                            {reviewFormRating} Stars
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
+                        Your Appraisal Content
+                      </label>
+                      <textarea
+                        value={reviewFormContent}
+                        onChange={(e) => setReviewFormContent(e.target.value)}
+                        required
+                        rows={4}
+                        placeholder="Share your raw assessment of the gemstone, metallurgy, or boutique courier experience..."
+                        className="w-full bg-[#F9F7F2] text-[#381932] border border-[#381932] rounded-none p-3.5 text-xs focus:ring-1 focus:ring-[#381932] outline-none"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="px-6 py-3 text-[10px] uppercase tracking-widest font-sans font-bold bg-[#381932] text-white border border-[#381932] hover:bg-transparent hover:text-[#381932] transition-all rounded-none cursor-pointer"
+                    >
+                      Commit Review
+                    </button>
+                  </form>
+                )}
+              </motion.div>
+
             {/* List of Verified Appraisals */}
-            <div className="space-y-6">
+            <div className="space-y-6 border border-[#381932] bg-[#FAF7F2] p-6 sm:p-8">
               <h4 className="text-[10px] tracking-widest font-sans font-bold uppercase text-[#381932] border-b border-[#381932]/30 pb-2">
                 Logged Registers ({totalReviewsCount})
               </h4>
 
               {reviews.length === 0 ? (
                 <div className="text-center py-8 text-xs italic text-[#381932]/60">
-                  No verified appraisals exist yet. Be the first to leave a signature review below.
+                  No verified appraisals exist yet. Use the form beside this register to leave a signature review.
                 </div>
               ) : (
                 <div className="divide-y divide-[#381932]/30 space-y-6">
@@ -1554,6 +1514,7 @@ export default function ProductViewer({
                   ))}
                 </div>
               )}
+            </div>
             </div>
           </div>
         </motion.section>
