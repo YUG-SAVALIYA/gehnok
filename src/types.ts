@@ -16,6 +16,7 @@ export interface ProductMedia {
   mediaContentType: 'VIDEO' | 'MODEL_3D' | 'EXTERNAL_VIDEO' | 'IMAGE' | string;
   url?: string;
   format?: string;
+  sources?: Array<{ url: string; format?: string }>;
   embeddedUrl?: string;
 }
 

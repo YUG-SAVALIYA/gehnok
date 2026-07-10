@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { lazy, Suspense, useState, useEffect, useMemo, useRef } from 'react';
 import { Product } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
@@ -81,6 +81,8 @@ const PreloadedVideo = ({
     </>
   );
 };
+
+const Model3DViewer = lazy(() => import('./Model3DViewer'));
 
 interface ProductViewerProps {
   product: Product;
@@ -654,9 +656,47 @@ export default function ProductViewer({
     return items;
   }, [activeGalleryVideo, productPhotos]);
 
+  const model3DUrl = useMemo(() => {
+    const media = product.media || [];
+    const modelMedia = [...media].reverse().find(item => {
+      const mediaType = item.mediaContentType?.toUpperCase() || '';
+      const format = item.format?.toLowerCase() || '';
+      const url = item.url?.toLowerCase() || '';
+      const hasGlbSource = item.sources?.some(source => {
+        const sourceFormat = source.format?.toLowerCase() || '';
+        const sourceUrl = source.url?.toLowerCase() || '';
+        return sourceFormat === 'glb' || sourceUrl.includes('.glb');
+      });
+
+      return mediaType === 'MODEL_3D' || format === 'glb' || url.includes('.glb') || hasGlbSource;
+    });
+
+    if (!modelMedia) return null;
+
+    const preferredSource =
+      modelMedia.sources?.find(source => {
+        const format = source.format?.toLowerCase() || '';
+        const url = source.url?.toLowerCase() || '';
+        return format === 'glb' || url.includes('.glb');
+      }) ||
+      modelMedia.sources?.[0];
+
+    return preferredSource?.url || modelMedia.url || null;
+  }, [product.media]);
+
   // Clamp activePhotoIndex to valid range after productPhotos/video changes
   const safePhotoIndex = galleryItems.length > 0 ? Math.min(activePhotoIndex, galleryItems.length - 1) : 0;
   const activeGalleryItem = galleryItems[safePhotoIndex];
+
+  const showPreviousGalleryItem = () => {
+    if (galleryItems.length <= 1) return;
+    setActivePhotoIndex(prev => (prev - 1 + galleryItems.length) % galleryItems.length);
+  };
+
+  const showNextGalleryItem = () => {
+    if (galleryItems.length <= 1) return;
+    setActivePhotoIndex(prev => (prev + 1) % galleryItems.length);
+  };
 
   // Removed the artificial CSS tinting because it tinted the entire photograph (including skin and backgrounds)
   const getMetalFilterStyle = (metalId: string): React.CSSProperties => {
@@ -736,12 +776,24 @@ export default function ProductViewer({
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="animate-fade-in">
               {activeMediaTab === '3d' ? (
                 <div className="space-y-2">
-                  <Gemstone3DViewer
-                    color={getGemstoneColorProfile(product)}
-                    cut={product.gemstone?.cut || 'Round Brilliant'}
-                  />
+                  {model3DUrl ? (
+                    <Suspense
+                      fallback={
+                        <div className="h-[400px] w-full border border-[#381932]/10 bg-[#FAF7F2] rounded-md flex items-center justify-center text-[9px] font-mono uppercase tracking-[0.18em] text-[#381932]/60">
+                          Preparing 3D studio
+                        </div>
+                      }
+                    >
+                      <Model3DViewer src={model3DUrl} poster={productPhotos[0]} title={product.name} />
+                    </Suspense>
+                  ) : (
+                    <Gemstone3DViewer
+                      color={getGemstoneColorProfile(product)}
+                      cut={product.gemstone?.cut || 'Round Brilliant'}
+                    />
+                  )}
                   <p className="text-[9px] text-[#381932]/60 font-mono text-center uppercase tracking-wider">
-                    Drag around model to explore facets
+                    Drag to rotate and inspect the model
                   </p>
                 </div>
               ) : (
@@ -783,6 +835,27 @@ export default function ProductViewer({
                     
                     {/* Protective transparent overlay to block right-click and save */}
                     <div className="absolute inset-0 z-15" onContextMenu={(e) => e.preventDefault()} />
+
+                    {galleryItems.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={showPreviousGalleryItem}
+                          className="hidden md:flex absolute left-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#F9F7F2]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
+                          aria-label="Previous product media"
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={showNextGalleryItem}
+                          className="hidden md:flex absolute right-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#F9F7F2]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
+                          aria-label="Next product media"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                      </>
+                    )}
                   </div>
 
                   {/* Thumbnail Row */}

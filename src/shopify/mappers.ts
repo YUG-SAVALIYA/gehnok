@@ -226,12 +226,23 @@ export function mapShopifyProductToProduct(shopifyProduct: ShopifyProduct): Prod
   }));
 
   // Map media
-  const media = shopifyProduct.media?.edges.map(e => ({
-    mediaContentType: e.node.mediaContentType,
-    url: e.node.sources?.[0]?.url,
-    format: e.node.sources?.[0]?.format,
-    embeddedUrl: e.node.embeddedUrl
-  })) || [];
+  const media = shopifyProduct.media?.edges.map(e => {
+    const preferredSource =
+      e.node.sources?.find(source => {
+        const format = source.format?.toLowerCase() || '';
+        const url = source.url?.toLowerCase() || '';
+        return format === 'glb' || url.includes('.glb');
+      }) ||
+      e.node.sources?.[0];
+
+    return {
+      mediaContentType: e.node.mediaContentType,
+      url: preferredSource?.url,
+      format: preferredSource?.format,
+      sources: e.node.sources,
+      embeddedUrl: e.node.embeddedUrl
+    };
+  }) || [];
 
   return {
     id: shopifyProduct.handle, // use handle as stable ID for UI (matches existing pattern)
