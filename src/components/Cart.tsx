@@ -48,6 +48,18 @@ export default function Cart({
   };
 
   const renderProductThumbnail = (product: Product) => {
+    if (product.images && product.images.length > 0) {
+      return (
+        <div className="w-16 h-16 rounded-none bg-[#EAE8E3] border border-[#381932] flex items-center justify-center shrink-0 relative overflow-hidden">
+          <img 
+            src={product.images[0]} 
+            alt={product.name} 
+            className="w-full h-full object-cover mix-blend-multiply" 
+          />
+        </div>
+      );
+    }
+
     let jewelColor = '#381932';
     if (product.gemstone) {
       const gColor = product.gemstone.color.toLowerCase();

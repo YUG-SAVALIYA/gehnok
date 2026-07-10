@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useState, useEffect, useMemo, useRef } from 'react';
-import { Product } from '../types';
+import { Product, CartItem } from '../types';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
 import Gemstone3DViewer from './Gemstone3DViewer';
@@ -68,7 +68,15 @@ const PreloadedVideo = ({
         playsInline 
         autoPlay={isActive} 
         preload={isActive || shouldPreload ? "auto" : "none"} 
-        onCanPlayThrough={() => {
+        onCanPlay={() => {
+          if (!isDownloaded) {
+            setIsDownloaded(true);
+            if (isActive && onReady) {
+              onReady();
+            }
+          }
+        }}
+        onPlaying={() => {
           if (!isDownloaded) {
             setIsDownloaded(true);
             if (isActive && onReady) {
@@ -86,6 +94,8 @@ const Model3DViewer = lazy(() => import('./Model3DViewer'));
 
 interface ProductViewerProps {
   product: Product;
+  cartItems?: CartItem[];
+  onUpdateQuantity?: (productId: string, quantity: number, metal?: string, size?: string) => void;
   onBack: () => void;
   onAddToCollection: (product: Product, quantity: number, metalName: string, priceFactor: number, size: string) => void;
   onAddToWishlist: (product: Product) => void;
@@ -220,6 +230,8 @@ const getProductPhotos = (collection: string): string[] => {
 
 export default function ProductViewer({
   product,
+  cartItems,
+  onUpdateQuantity,
   onBack,
   onAddToCollection,
   onAddToWishlist,
@@ -916,7 +928,7 @@ export default function ProductViewer({
             </motion.div>
 
             {/* In-depth story card */}
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="bg-[#FAF7F2] border border-[#381932] p-8 rounded-none space-y-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="hidden lg:block bg-[#FAF7F2] border border-[#381932] p-8 rounded-none space-y-4">
               <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932] opacity-60">
                 Provenance & Story
               </span>
@@ -1169,36 +1181,80 @@ export default function ProductViewer({
                 </div>
               ))}
 
-              {/* 3. Quantity selector as requested */}
-              <div className="space-y-3">
-                <span className="block text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
-                  Select Quantity:
+              {/* 3. Quantity Adjuster (Only if in collection) */}
+              {(() => {
+                const currentCartItem = cartItems?.find(item => 
+                  item.product.id === product.id && 
+                  (item.selectedMetal === (selectedMetal?.name || product.metal) || (!item.selectedMetal)) && 
+                  (item.selectedSize === (selectedSize || 'Standard') || (!item.selectedSize))
+                );
+
+                if (currentCartItem && onUpdateQuantity) {
+                  return (
+                    <div className="space-y-3">
+                      <span className="block text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/80 bg-[#381932]/10 px-3 py-1.5 inline-block rounded-none border border-[#381932]/20">
+                        {currentCartItem.quantity} ITEM(S) ALREADY IN COLLECTION
+                      </span>
+                      <div className="flex items-center space-x-3 mt-2">
+                        <div className="flex items-center border border-[#381932] bg-white">
+                          <button
+                            type="button"
+                            onClick={() => onUpdateQuantity(product.id, Math.max(0, currentCartItem.quantity - 1), selectedMetal?.name || product.metal, selectedSize || 'Standard')}
+                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-r border-[#381932] cursor-pointer"
+                          >
+                            -
+                          </button>
+                          <span className="px-5 text-xs font-mono font-bold text-[#381932]">
+                            {currentCartItem.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => onUpdateQuantity(product.id, currentCartItem.quantity + 1, selectedMetal?.name || product.metal, selectedSize || 'Standard')}
+                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-l border-[#381932] cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="text-[9px] font-mono text-[#381932]/60 uppercase">
+                          Adjust Collection Quantity
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
+
+              {/* In-depth story card (Mobile Only, moved below Qty) */}
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="block lg:hidden bg-[#FAF7F2] border border-[#381932] p-6 sm:p-8 rounded-none space-y-4 mt-6">
+                <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932] opacity-60">
+                  Provenance & Story
                 </span>
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center border border-[#381932] bg-white">
-                    <button
-                      type="button"
-                      onClick={() => setSelectedQuantity(prev => Math.max(1, prev - 1))}
-                      className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-r border-[#381932] cursor-pointer"
-                    >
-                      -
-                    </button>
-                    <span className="px-5 text-xs font-mono font-bold text-[#381932]">
-                      {selectedQuantity}
+                <h3 className="text-xl font-serif-luxury text-[#381932] font-bold italic">
+                  "{product.name}"
+                </h3>
+                <p className="text-sm text-[#381932]/80 leading-relaxed italic">
+                  {product.story}
+                </p>
+                <div className="pt-4 border-t border-[#381932] grid grid-cols-2 gap-4">
+                  <div>
+                    <span className="block text-[8px] tracking-[0.15em] font-sans font-bold text-[#381932]/60 uppercase">
+                      Handcrafted For
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedQuantity(prev => prev + 1)}
-                      className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-l border-[#381932] cursor-pointer"
-                    >
-                      +
-                    </button>
+                    <span className="text-xs text-[#381932] font-bold font-mono">
+                      {product.craftsmanship.artisanHours} Atelier Hours
+                    </span>
                   </div>
-                  <span className="text-[9px] font-mono text-[#381932]/60 uppercase">
-                    Perfectly balanced order
-                  </span>
+                  <div>
+                    <span className="block text-[8px] tracking-[0.15em] font-sans font-bold text-[#381932]/60 uppercase">
+                      Metallurgy Composition
+                    </span>
+                    <span className="text-xs text-[#381932] font-bold">
+                      {product.purity} {product.metal}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </motion.div>
 
               {/* Luxury Coupon Section (Exact Image Replica) */}
               <div className="space-y-4 pt-5 border-t border-[#381932]/10">
@@ -1322,28 +1378,18 @@ export default function ProductViewer({
               </button>
 
               {/* Secondary Boutique Actions */}
-              <div className="grid grid-cols-2 gap-4">
-                
+              <div className="block mt-4">
                 <button
                   onClick={() => onAddToWishlist(product)}
-                  className={`py-3.5 text-[10px] uppercase tracking-widest font-sans font-bold border rounded-none flex items-center justify-center space-x-2 transition-colors cursor-pointer ${
+                  className={`w-full py-3.5 text-[10px] uppercase tracking-widest font-sans font-bold border rounded-none flex items-center justify-center space-x-2 transition-colors cursor-pointer ${
                     isInWishlist
                       ? 'border-[#381932] text-[#381932] bg-[#381932]/10'
                       : 'border-[#381932] text-[#381932] hover:bg-[#381932] hover:text-white'
                   }`}
                 >
                   <Heart size={12} className={isInWishlist ? 'fill-[#381932]' : ''} />
-                  <span>{isInWishlist ? 'Saved' : 'Wishlist'}</span>
+                  <span>{isInWishlist ? 'Saved to Wishlist' : 'Save to Wishlist'}</span>
                 </button>
-
-                <button
-                  onClick={() => onBookPrivateViewing(product)}
-                  className="py-3.5 text-[10px] uppercase tracking-widest font-sans font-bold border border-[#381932] text-[#381932] hover:bg-[#381932] hover:text-white flex items-center justify-center space-x-2 transition-colors cursor-pointer"
-                >
-                  <Calendar size={12} />
-                  <span>Reserve View</span>
-                </button>
-
               </div>
 
               {/* Trust Badges */}

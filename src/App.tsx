@@ -335,6 +335,8 @@ export default function App() {
         ) : selectedProduct ? (
           <ProductViewer
             product={selectedProduct}
+            cartItems={cartItems}
+            onUpdateQuantity={handleUpdateQuantity}
             onBack={() => {
               setSelectedProduct(null);
               setCurrentView(lastViewBeforeDetail);
@@ -358,6 +360,9 @@ export default function App() {
                 }}
                 onNavigate={(view, subFilter) => {
                   setCurrentView(view);
+                  if (view === 'collection' && subFilter) {
+                    setActiveCollectionHandle(subFilter);
+                  }
                   setSelectedProduct(null);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}

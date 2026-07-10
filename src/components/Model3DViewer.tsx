@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface Model3DViewerProps {
@@ -34,10 +35,14 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.15;
+    renderer.toneMappingExposure = 1.75;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     mount.appendChild(renderer.domElement);
+
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = environmentMap;
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -48,16 +53,24 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.8;
 
-    const ambientLight = new THREE.HemisphereLight(0xffffff, 0x381932, 2.2);
+    const ambientLight = new THREE.HemisphereLight(0xffffff, 0xeadfc8, 3.2);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.8);
-    keyLight.position.set(3, 4, 5);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 5.5);
+    keyLight.position.set(3, 5, 5);
     scene.add(keyLight);
 
-    const fillLight = new THREE.DirectionalLight(0xe8d5b0, 1.4);
+    const fillLight = new THREE.DirectionalLight(0xfff1d2, 2.8);
     fillLight.position.set(-4, 2, -3);
     scene.add(fillLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 4.2);
+    rimLight.position.set(-3, 4, 4);
+    scene.add(rimLight);
+
+    const frontSparkle = new THREE.PointLight(0xffffff, 3.5, 8);
+    frontSparkle.position.set(0, 1.2, 2.2);
+    scene.add(frontSparkle);
 
     let modelRoot: THREE.Object3D | null = null;
     let animationFrame = 0;
@@ -100,6 +113,10 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
               const materials = Array.isArray(child.material) ? child.material : [child.material];
               materials.forEach(material => {
                 material.side = THREE.DoubleSide;
+                if (material instanceof THREE.MeshStandardMaterial) {
+                  material.envMapIntensity = Math.max(material.envMapIntensity || 1, 2.4);
+                  material.roughness = Math.min(material.roughness, 0.42);
+                }
                 material.needsUpdate = true;
               });
             }
@@ -149,6 +166,8 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
         }
       });
       renderer.dispose();
+      environmentMap.dispose();
+      pmremGenerator.dispose();
       renderer.domElement.remove();
     };
   }, [src]);
