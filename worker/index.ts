@@ -1,13 +1,8 @@
-interface Env {
+type Env = {
   SHOPIFY_STORE_DOMAIN?: string;
-  SHOPIFY_STOREFRONT_ACCESS_TOKEN?: string;
   SHOPIFY_API_VERSION?: string;
-
-  // Supports your existing Vite-style variable names too.
-  VITE_SHOPIFY_STORE_DOMAIN?: string;
-  VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN?: string;
-  VITE_SHOPIFY_API_VERSION?: string;
-}
+  SHOPIFY_STOREFRONT_ACCESS_TOKEN?: string;
+};
 
 function jsonResponse(
   value: unknown,
@@ -17,6 +12,8 @@ function jsonResponse(
     status,
     headers: {
       "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Gehnok-Worker": "shopify-proxy",
     },
   });
 }
@@ -28,9 +25,16 @@ export default {
   ): Promise<Response> {
     const url = new URL(request.url);
 
-    if (url.pathname !== "/api/shopify") {
+    // Supports both /api/shopify and /api/shopify/
+    const pathname =
+      url.pathname.replace(/\/+$/, "") || "/";
+
+    if (pathname !== "/api/shopify") {
       return jsonResponse(
-        { error: "Route not found" },
+        {
+          error: "Route not found",
+          pathname,
+        },
         404,
       );
     }
@@ -41,7 +45,9 @@ export default {
         headers: {
           "Access-Control-Allow-Origin": "*",
           "Access-Control-Allow-Methods": "POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
+          "Access-Control-Allow-Headers":
+            "Content-Type, Accept",
+          "X-Gehnok-Worker": "shopify-proxy",
         },
       });
     }
@@ -54,17 +60,14 @@ export default {
     }
 
     const rawDomain =
-      env.SHOPIFY_STORE_DOMAIN ||
-      env.VITE_SHOPIFY_STORE_DOMAIN;
+      env.SHOPIFY_STORE_DOMAIN?.trim();
 
-    const storefrontToken =
-      env.SHOPIFY_STOREFRONT_ACCESS_TOKEN ||
-      env.VITE_SHOPIFY_STOREFRONT_ACCESS_TOKEN;
+    const token =
+      env.SHOPIFY_STOREFRONT_ACCESS_TOKEN?.trim();
 
     const apiVersion =
-      env.SHOPIFY_API_VERSION ||
-      env.VITE_SHOPIFY_API_VERSION ||
-      "2026-07";
+      env.SHOPIFY_API_VERSION?.trim() ||
+      "2026-01";
 
     if (!rawDomain) {
       return jsonResponse(
@@ -75,7 +78,7 @@ export default {
       );
     }
 
-    if (!storefrontToken) {
+    if (!token) {
       return jsonResponse(
         {
           error:
@@ -87,27 +90,33 @@ export default {
 
     const storeDomain = rawDomain
       .replace(/^https?:\/\//, "")
-      .replace(/\/.*$/, "")
-      .replace(/\/$/, "");
+      .split("/")[0];
+
+    const requestBody = await request.text();
+
+    if (!requestBody.trim()) {
+      return jsonResponse(
+        { error: "Request body is empty" },
+        400,
+      );
+    }
+
+    const shopifyEndpoint =
+      `https://${storeDomain}` +
+      `/api/${apiVersion}/graphql.json`;
 
     try {
-      const requestBody = await request.text();
-
-      if (!requestBody) {
-        return jsonResponse(
-          { error: "Request body is empty" },
-          400,
-        );
-      }
-
       const shopifyResponse = await fetch(
-        `https://${storeDomain}/api/${apiVersion}/graphql.json`,
+        shopifyEndpoint,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            "Accept": "application/json",
+
+            // Public Storefront token header
             "X-Shopify-Storefront-Access-Token":
-              storefrontToken,
+              token,
           },
           body: requestBody,
         },
@@ -122,8 +131,13 @@ export default {
           "Content-Type":
             shopifyResponse.headers.get(
               "Content-Type",
-            ) || "application/json; charset=utf-8",
+            ) ||
+            "application/json; charset=utf-8",
           "Cache-Control": "no-store",
+          "Access-Control-Allow-Origin": "*",
+          "X-Gehnok-Worker": "shopify-proxy",
+          "X-Shopify-Upstream-Status":
+            String(shopifyResponse.status),
         },
       });
     } catch (error) {
@@ -141,4 +155,4 @@ export default {
       );
     }
   },
-} satisfies ExportedHandler<Env>;
+};
