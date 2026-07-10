@@ -25,11 +25,11 @@ export default {
   ): Promise<Response> {
     const url = new URL(request.url);
 
-    // Supports both /api/shopify and /api/shopify/
+    // Supports both https://gehnok.gehnokjewels.workers.dev/api/shopify and https://gehnok.gehnokjewels.workers.dev/api/shopify/
     const pathname =
       url.pathname.replace(/\/+$/, "") || "/";
 
-    if (pathname !== "/api/shopify") {
+    if (pathname !== "https://gehnok.gehnokjewels.workers.dev/api/shopify") {
       return jsonResponse(
         {
           error: "Route not found",
