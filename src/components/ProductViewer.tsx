@@ -1403,7 +1403,7 @@ export default function ProductViewer({
               </div>
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-4 gap-4 pt-6 mt-2 border-t border-[#381932]/10">
+              <div className="grid grid-cols-4 gap-3 sm:gap-4 mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#F9F7F2]/70">
                 <div className="flex flex-col items-center justify-center space-y-3 opacity-80 hover:opacity-100 transition-all mix-blend-multiply group cursor-default">
                   <img src={bisHallmarkImg} alt="BIS Hallmark" className="h-12 w-auto object-contain transition-transform group-hover:scale-105" />
                   <span className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#381932]/70 text-center leading-[1.2]">BIS Hallmark</span>
