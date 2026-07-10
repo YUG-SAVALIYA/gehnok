@@ -15,12 +15,16 @@
     "SHOPIFY_API_VERSION": "2026-01"
   },
 
-  "routes": [
-    {
-      "pattern": "gehnok.com/*",
-      "zone_name": "gehnok.com"
-    }
-  ],
+ "routes": [
+  {
+    "pattern": "gehnok.com/api/shopify*",
+    "zone_name": "gehnok.com"
+  },
+  {
+    "pattern": "www.gehnok.com/api/shopify*",
+    "zone_name": "gehnok.com"
+  }
+]
 
   "assets": {
     "not_found_handling": "single-page-application",
