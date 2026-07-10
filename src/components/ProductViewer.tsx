@@ -8,7 +8,7 @@ import ImageWithSkeleton from './ImageWithSkeleton';
 import { motion } from 'motion/react';
 import { 
   Heart, Sparkles, Shield, Gift, Calendar, ArrowLeft, 
-  ChevronDown, ChevronUp, Truck, Star, MessageSquare, CheckCircle, Image, Scissors
+  ChevronDown, ChevronUp, Truck, Star, MessageSquare, CheckCircle, Image, Scissors, PlayCircle
 } from 'lucide-react';
 import paymentGatewayImg from '../assets/payment_gateway.svg';
 import bisHallmarkImg from '../assets/BIS_Hallmark.svg';
@@ -560,14 +560,14 @@ export default function ProductViewer({
   }).format(variantPriceAmount);
 
   // Compute filtered photo list and specific video for the selected metal
-  const { productPhotos, currentMetalVideo, allMetalVideos } = useMemo(() => {
+  const { productPhotos, currentMetalVideo } = useMemo(() => {
     const allImages =
       product.images && product.images.length > 0
         ? product.images
         : getProductPhotos(product.collection);
 
     if (!selectedMetal || !product.media || product.media.length === 0 || !allImages.length) {
-      return { productPhotos: allImages, currentMetalVideo: null, allMetalVideos: [] };
+      return { productPhotos: allImages, currentMetalVideo: null };
     }
 
     // Group images by Video delimiters as requested by user
@@ -617,17 +617,34 @@ export default function ProductViewer({
 
     const selectedGroup = groups[safeIndex] || { images: allImages, video: null };
     
-    const allVideos = Array.from(new Set(groups.map(g => g.video).filter(Boolean) as string[]));
-
     return {
       productPhotos: selectedGroup.images.length > 0 ? selectedGroup.images : allImages,
-      currentMetalVideo: selectedGroup.video,
-      allMetalVideos: allVideos
+      currentMetalVideo: selectedGroup.video
     };
   }, [selectedMetal, product.media, product.images, product.collection, availableMetals]);
 
-  // Clamp activePhotoIndex to valid range after productPhotos changes
-  const safePhotoIndex = Math.min(activePhotoIndex, productPhotos.length - 1);
+  const activeGalleryVideo =
+    currentMetalVideo ||
+    extractedVideoUrl ||
+    (product.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO')?.url ?? null);
+
+  const galleryItems = useMemo(() => {
+    const items: Array<{ type: 'video' | 'image'; url: string }> = [];
+
+    if (activeGalleryVideo) {
+      items.push({ type: 'video', url: activeGalleryVideo });
+    }
+
+    productPhotos.forEach(photo => {
+      items.push({ type: 'image', url: photo });
+    });
+
+    return items;
+  }, [activeGalleryVideo, productPhotos]);
+
+  // Clamp activePhotoIndex to valid range after productPhotos/video changes
+  const safePhotoIndex = galleryItems.length > 0 ? Math.min(activePhotoIndex, galleryItems.length - 1) : 0;
+  const activeGalleryItem = galleryItems[safePhotoIndex];
 
   // Removed the artificial CSS tinting because it tinted the entire photograph (including skin and backgrounds)
   const getMetalFilterStyle = (metalId: string): React.CSSProperties => {
@@ -707,64 +724,50 @@ export default function ProductViewer({
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="animate-fade-in">
               {activeMediaTab === '3d' ? (
                 <div className="space-y-2">
-                  {(() => {
-                    const activeUrl = currentMetalVideo || extractedVideoUrl || (product.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO')?.url);
-                    const urlsToRender = allMetalVideos.length > 0 ? allMetalVideos : (activeUrl ? [activeUrl] : []);
-                    
-                    if (urlsToRender.length > 0) {
-                      return (
-                        <div className="w-full h-[340px] bg-transparent overflow-hidden relative">
-                          {urlsToRender.map(url => {
-                            const isYoutube = url.includes('youtube') || url.includes('vimeo');
-                            const isActive = url === activeUrl;
-                            
-                            return (
-                              <div key={url} className={`absolute inset-0 transition-opacity duration-300 flex items-center justify-center ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-                                {isYoutube ? (
-                                  <iframe src={isActive ? url : ''} className="w-full h-full mix-blend-multiply" frameBorder="0" allowFullScreen allow="autoplay; fullscreen" />
-                                ) : (
-                                  <PreloadedVideo 
-                                    src={url} 
-                                    isActive={isActive} 
-                                    shouldPreload={videosReadyToPreload}
-                                    onReady={() => setVideosReadyToPreload(true)}
-                                    className="w-full h-full object-contain mix-blend-multiply" 
-                                  />
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      );
-                    }
-                    return (
-                      <>
-                        <Gemstone3DViewer
-                          color={getGemstoneColorProfile(product)}
-                          cut={product.gemstone?.cut || 'Round Brilliant'}
-                        />
-                        <p className="text-[9px] text-[#381932]/60 font-mono text-center uppercase tracking-wider">
-                          Drag around model to explore facets
-                        </p>
-                      </>
-                    );
-                  })()}
+                  <Gemstone3DViewer
+                    color={getGemstoneColorProfile(product)}
+                    cut={product.gemstone?.cut || 'Round Brilliant'}
+                  />
+                  <p className="text-[9px] text-[#381932]/60 font-mono text-center uppercase tracking-wider">
+                    Drag around model to explore facets
+                  </p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {/* Active main photograph frame */}
+                  {/* Active main media frame */}
                   <div className="w-full h-[400px] bg-transparent relative overflow-hidden flex items-center justify-center group">
-                    <ImageWithSkeleton
-                      src={productPhotos[safePhotoIndex]}
-                      alt={`${product.name} Studio Photography`}
-                      style={getMetalFilterStyle(selectedMetal?.id || '')}
-                      className="object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
-                      containerClassName="absolute inset-0 z-0"
-                      referrerPolicy="no-referrer"
-                      draggable={false}
-                      loading="eager" // Main image should load instantly
-                      fetchPriority="high"
-                    />
+                    {activeGalleryItem?.type === 'video' ? (
+                      activeGalleryItem.url.includes('youtube') || activeGalleryItem.url.includes('vimeo') ? (
+                        <iframe
+                          src={activeGalleryItem.url}
+                          className="absolute inset-0 w-full h-full mix-blend-multiply"
+                          frameBorder="0"
+                          allowFullScreen
+                          allow="autoplay; fullscreen"
+                        />
+                      ) : (
+                        <PreloadedVideo
+                          src={activeGalleryItem.url}
+                          posterImg={productPhotos[0]}
+                          isActive
+                          shouldPreload={videosReadyToPreload}
+                          onReady={() => setVideosReadyToPreload(true)}
+                          className="absolute inset-0 w-full h-full object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
+                        />
+                      )
+                    ) : activeGalleryItem?.type === 'image' ? (
+                      <ImageWithSkeleton
+                        src={activeGalleryItem.url}
+                        alt={`${product.name} Studio Photography`}
+                        style={getMetalFilterStyle(selectedMetal?.id || '')}
+                        className="object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
+                        containerClassName="absolute inset-0 z-0"
+                        referrerPolicy="no-referrer"
+                        draggable={false}
+                        loading="eager" // Main image should load instantly
+                        fetchPriority="high"
+                      />
+                    ) : null}
                     
                     {/* Protective transparent overlay to block right-click and save */}
                     <div className="absolute inset-0 z-15" onContextMenu={(e) => e.preventDefault()} />
@@ -776,25 +779,46 @@ export default function ProductViewer({
                     className="flex overflow-x-auto gap-4 snap-x snap-mandatory hide-scroll"
                     style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
                   >
-                    {productPhotos.map((photo, index) => {
+                    {galleryItems.map((item, index) => {
                       if (index === safePhotoIndex) return null;
                       return (
                         <button
-                          key={`${photo}-${index}`}
+                          key={`${item.type}-${item.url}-${index}`}
                           onClick={() => setActivePhotoIndex(index)}
                           className="flex-shrink-0 w-[calc(33.333%-10.66px)] aspect-square bg-transparent overflow-hidden relative cursor-pointer group transition-all duration-300 opacity-50 hover:opacity-100 snap-center"
                         >
-                          <ImageWithSkeleton
-                            src={photo}
-                            alt={`${product.name} Angle ${index + 1}`}
-                            style={getMetalFilterStyle(selectedMetal?.id || '')}
-                            className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02]"
-                            containerClassName="absolute inset-0 z-0"
-                            referrerPolicy="no-referrer"
-                            draggable={false}
-                            loading="lazy" // Thumbnails must be lazy loaded so they don't block the network
-                            decoding="async"
-                          />
+                          {item.type === 'video' ? (
+                            <>
+                              {productPhotos[0] && (
+                                <ImageWithSkeleton
+                                  src={productPhotos[0]}
+                                  alt={`${product.name} Video`}
+                                  style={getMetalFilterStyle(selectedMetal?.id || '')}
+                                  className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02]"
+                                  containerClassName="absolute inset-0 z-0"
+                                  referrerPolicy="no-referrer"
+                                  draggable={false}
+                                  loading="lazy"
+                                  decoding="async"
+                                />
+                              )}
+                              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#F9F7F2]/45">
+                                <PlayCircle size={28} className="text-[#381932]" />
+                              </div>
+                            </>
+                          ) : (
+                            <ImageWithSkeleton
+                              src={item.url}
+                              alt={`${product.name} Angle ${index + 1}`}
+                              style={getMetalFilterStyle(selectedMetal?.id || '')}
+                              className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02]"
+                              containerClassName="absolute inset-0 z-0"
+                              referrerPolicy="no-referrer"
+                              draggable={false}
+                              loading="lazy" // Thumbnails must be lazy loaded so they don't block the network
+                              decoding="async"
+                            />
+                          )}
 
                           {/* Protective overlay for thumbnail */}
                           <div className="absolute inset-0 z-15" onContextMenu={(e) => e.preventDefault()} />
@@ -1395,50 +1419,6 @@ export default function ProductViewer({
                 </div>
               </div>
             </div>
-
-            {/* 3D Video / CAD Model Container */}
-            {activeMediaTab !== '3d' && (() => {
-              const activeUrl = currentMetalVideo || extractedVideoUrl || (product.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO')?.url);
-              const urlsToRender = allMetalVideos.length > 0 ? allMetalVideos : (activeUrl ? [activeUrl] : []);
-              
-              if (urlsToRender.length > 0) {
-                return (
-                  <div className="w-full aspect-square md:aspect-[4/5] bg-transparent overflow-hidden relative mt-8">
-                    {urlsToRender.map(url => {
-                      const isYoutube = url.includes('youtube') || url.includes('vimeo');
-                      const isActive = url === activeUrl;
-                      
-                      return (
-                        <div key={url} className={`absolute inset-0 transition-opacity duration-300 flex items-center justify-center ${isActive ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-                          {isYoutube ? (
-                            <iframe src={isActive ? url : ''} className="w-full h-full mix-blend-multiply" frameBorder="0" allowFullScreen allow="autoplay; fullscreen" />
-                          ) : (
-                            <PreloadedVideo 
-                              src={url} 
-                              isActive={isActive} 
-                              shouldPreload={videosReadyToPreload}
-                              onReady={() => setVideosReadyToPreload(true)}
-                              className="w-full h-full object-contain mix-blend-multiply" 
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                );
-              }
-              return (
-                <div className="space-y-2 mt-8">
-                  <Gemstone3DViewer
-                    color={getGemstoneColorProfile(product)}
-                    cut={product.gemstone?.cut || 'Round Brilliant'}
-                  />
-                  <p className="text-[9px] text-[#381932]/60 font-mono text-center uppercase tracking-wider">
-                    Drag around model to explore facets
-                  </p>
-                </div>
-              );
-            })()}
 
             {/* Gemstone Details Accordion (Moved back to right column) */}
             {product.gemstone && (
