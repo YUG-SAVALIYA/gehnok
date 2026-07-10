@@ -447,7 +447,6 @@ export default function ProductViewer({
   // Interactive reviews state
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewFormName, setReviewFormName] = useState('');
-  const [reviewFormTitle, setReviewFormTitle] = useState('');
   const [reviewFormRating, setReviewFormRating] = useState(5);
   const [reviewFormContent, setReviewFormContent] = useState('');
   const [reviewSuccessMsg, setReviewSuccessMsg] = useState(false);
@@ -500,12 +499,12 @@ export default function ProductViewer({
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!reviewFormName.trim() || !reviewFormContent.trim() || !reviewFormTitle.trim()) return;
+    if (!reviewFormName.trim() || !reviewFormContent.trim()) return;
 
     const newReview: Review = {
       id: Date.now().toString(),
       name: reviewFormName,
-      title: reviewFormTitle,
+      title: 'Signature Review',
       rating: reviewFormRating,
       content: reviewFormContent,
       date: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
@@ -514,7 +513,6 @@ export default function ProductViewer({
 
     setReviews([newReview, ...reviews]);
     setReviewFormName('');
-    setReviewFormTitle('');
     setReviewFormRating(5);
     setReviewFormContent('');
     setReviewSuccessMsg(true);
@@ -953,41 +951,27 @@ export default function ProductViewer({
                     </div>
                     <div className="space-y-1.5">
                       <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                        Appraisal Title
+                        Commit Star Rating
                       </label>
-                      <input
-                        type="text"
-                        value={reviewFormTitle}
-                        onChange={(e) => setReviewFormTitle(e.target.value)}
-                        required
-                        placeholder="e.g. Uncompromising Proportions"
-                        className="w-full bg-[#F9F7F2] text-[#381932] border border-[#381932] rounded-none px-3.5 py-2 text-xs focus:ring-1 focus:ring-[#381932] outline-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Rating Selector using real star buttons */}
-                  <div className="space-y-1.5">
-                    <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                      Commit Star Rating
-                    </label>
-                    <div className="flex items-center space-x-2 bg-[#F9F7F2] p-2.5 border border-[#381932] inline-flex">
-                      {[1, 2, 3, 4, 5].map((s) => (
-                        <button
-                          key={s}
-                          type="button"
-                          onClick={() => setReviewFormRating(s)}
-                          className="text-[#381932] hover:scale-110 transition-transform focus:outline-none"
-                        >
-                          <Star 
-                            size={16} 
-                            className={s <= reviewFormRating ? 'fill-amber-500 text-amber-500' : 'text-[#381932]/30'} 
-                          />
-                        </button>
-                      ))}
-                      <span className="text-[10px] font-mono font-bold text-[#381932] pl-2 uppercase">
-                        {reviewFormRating} Stars
-                      </span>
+                      <div className="flex min-h-[35px] items-center space-x-2 bg-[#F9F7F2] px-3.5 py-2 border border-[#381932]">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => setReviewFormRating(s)}
+                            className="text-[#381932] hover:scale-110 transition-transform focus:outline-none"
+                            aria-label={`Set rating to ${s} star${s === 1 ? '' : 's'}`}
+                          >
+                            <Star
+                              size={16}
+                              className={s <= reviewFormRating ? 'fill-amber-500 text-amber-500' : 'text-[#381932]/30'}
+                            />
+                          </button>
+                        ))}
+                        <span className="text-[10px] font-mono font-bold text-[#381932] pl-2 uppercase">
+                          {reviewFormRating} Stars
+                        </span>
+                      </div>
                     </div>
                   </div>
 
@@ -1048,17 +1032,6 @@ export default function ProductViewer({
                   {averageRating} ({totalReviewsCount} Signature Reviews)
                 </span>
               </div>
-
-              {cleanedDescriptionHtml ? (
-                <div 
-                  className="mt-4 text-sm text-[#381932]/80 leading-relaxed space-y-4"
-                  dangerouslySetInnerHTML={{ __html: cleanedDescriptionHtml }}
-                />
-              ) : (
-                <p className="mt-4 text-sm text-[#381932]/80 leading-relaxed">
-                  {product.description}
-                </p>
-              )}
             </div>
 
             {/* Custom Interactive Configuration Form Panel */}
