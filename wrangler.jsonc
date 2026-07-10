@@ -3,29 +3,25 @@
   "name": "gehnok",
   "main": "./worker/index.ts",
   "compatibility_date": "2026-07-10",
-
   "compatibility_flags": [
     "global_fetch_strictly_public"
   ],
-
+  "workers_dev": true,
   "keep_vars": true,
-
   "vars": {
     "SHOPIFY_STORE_DOMAIN": "gehnok-jewels.myshopify.com",
     "SHOPIFY_API_VERSION": "2026-01"
   },
-
- "routes": [
-  {
-    "pattern": "gehnok.com/api/shopify*",
-    "zone_name": "gehnok.com"
-  },
-  {
-    "pattern": "www.gehnok.com/api/shopify*",
-    "zone_name": "gehnok.com"
-  }
-]
-
+  "routes": [
+    {
+      "pattern": "gehnok.com/*",
+      "zone_name": "gehnok.com"
+    },
+    {
+      "pattern": "www.gehnok.com/*",
+      "zone_name": "gehnok.com"
+    }
+  ],
   "assets": {
     "not_found_handling": "single-page-application",
     "run_worker_first": [
