@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createShopifyApiUrl } from '../shopify/api';
 
 export interface ShopifyArticle {
   id: string;
@@ -31,7 +32,7 @@ export function useShopifyArticles(first: number = 3) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/articles?first=${first}`);
+      const res = await fetch(createShopifyApiUrl(`articles?first=${first}`));
       if (!res.ok) throw new Error(`API responded with status ${res.status}`);
 
       const data = await res.json();

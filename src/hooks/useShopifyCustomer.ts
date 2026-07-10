@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { createShopifyApiUrl } from '../shopify/api';
 import { ShopifyCustomer, ShopifyOrder } from '../shopify/types';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -82,7 +83,7 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
 
   const fetchCustomer = useCallback(async (token: string): Promise<ShopifyCustomer | null> => {
     try {
-      const res = await fetch('https://gehnok.gehnokjewels.workers.dev/api/shopify/customer', {
+      const res = await fetch(createShopifyApiUrl('customer'), {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) return null;
@@ -133,7 +134,7 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
   ): Promise<{ success: boolean; message: string }> => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const res = await fetch('https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/login', {
+      const res = await fetch(createShopifyApiUrl('customer/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -172,7 +173,7 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
   ): Promise<{ success: boolean; message: string }> => {
     setState(prev => ({ ...prev, loading: true, error: null }));
     try {
-      const res = await fetch('https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/register', {
+      const res = await fetch(createShopifyApiUrl('customer/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ firstName, lastName, email, password }),
@@ -201,7 +202,7 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
     setState(prev => ({ ...prev, loading: true }));
     try {
       if (accessToken) {
-        await fetch('https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/logout', {
+        await fetch(createShopifyApiUrl('customer/logout'), {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${accessToken}` },
         });
@@ -224,7 +225,7 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
     email: string
   ): Promise<{ success: boolean; message: string }> => {
     try {
-      const res = await fetch('https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/recover', {
+      const res = await fetch(createShopifyApiUrl('customer/recover'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),

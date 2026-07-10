@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { createShopifyApiUrl } from '../shopify/api';
 
 interface MetaobjectField {
   key: string;
@@ -43,7 +44,7 @@ export function useShopifyMetaobject(type: string, handle: string) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/metaobjects/${encodeURIComponent(type)}/${encodeURIComponent(handle)}`);
+      const res = await fetch(createShopifyApiUrl(`metaobjects/${encodeURIComponent(type)}/${encodeURIComponent(handle)}`));
 
       if (!res.ok) {
         throw new Error(`API responded with status ${res.status}`);

@@ -8,6 +8,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Product } from '../types';
 import { useShopifyProducts } from './useShopifyProducts';
+import { createShopifyApiUrl } from '../shopify/api';
 import { mapShopifyProducts } from '../shopify/mappers';
 import { ShopifyProduct } from '../shopify/types';
 
@@ -60,7 +61,7 @@ export function useShopifySearch(
 
       try {
         const res = await fetch(
-          `https://gehnok.gehnokjewels.workers.dev/api/shopify/search?q=${encodeURIComponent(query.trim())}&first=10`,
+          createShopifyApiUrl(`search?q=${encodeURIComponent(query.trim())}&first=10`),
           { signal: abortRef.current.signal }
         );
 

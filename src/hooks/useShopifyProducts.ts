@@ -8,6 +8,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Product } from '../types';
+import { createShopifyApiUrl } from '../shopify/api';
 import { mapShopifyProducts } from '../shopify/mappers';
 import { ShopifyProduct } from '../shopify/types';
 
@@ -56,9 +57,9 @@ export function useShopifyProducts(
     try {
       let url: string;
       if (collection) {
-        url = `https://gehnok.gehnokjewels.workers.dev/api/shopify/collections/${encodeURIComponent(collection)}/products?first=${first}`;
+        url = createShopifyApiUrl(`collections/${encodeURIComponent(collection)}/products?first=${first}`);
       } else {
-        url = `https://gehnok.gehnokjewels.workers.dev/api/shopify/products?first=${first}&sortKey=${sortKey}&reverse=${reverse}`;
+        url = createShopifyApiUrl(`products?first=${first}&sortKey=${sortKey}&reverse=${reverse}`);
       }
 
       const res = await fetch(url);
@@ -133,7 +134,7 @@ export function useShopifyProduct(handle: string): UseShopifyProductResult {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/products/${encodeURIComponent(handle)}`);
+      const res = await fetch(createShopifyApiUrl(`products/${encodeURIComponent(handle)}`));
       if (!res.ok) throw new Error(`API responded with status ${res.status}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);
