@@ -154,7 +154,7 @@ export function useShopifyCart(): UseShopifyCartResult {
     try {
       const stored = localStorage.getItem('gehnok_cart');
       if (stored) setLocalCartItems(JSON.parse(stored));
-    } catch {}
+    } catch { }
   }, []);
 
   const saveLocal = useCallback((items: CartItem[]) => {
@@ -165,7 +165,7 @@ export function useShopifyCart(): UseShopifyCartResult {
   // ── Cart API helpers ──────────────────────────────────────────────────────
 
   const fetchCartById = useCallback(async (cartId: string): Promise<NormalizedCart | null> => {
-    const res = await fetch(`/api/shopify/cart/${encodeURIComponent(cartId)}`);
+    const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/${encodeURIComponent(cartId)}`);
     if (!res.ok) throw new Error(`Cart fetch failed: ${res.status}`);
     const data = await res.json();
     if (data.error) throw new Error(data.error);
@@ -173,7 +173,7 @@ export function useShopifyCart(): UseShopifyCartResult {
   }, []);
 
   const createCart = useCallback(async (): Promise<NormalizedCart> => {
-    const res = await fetch('/api/shopify/cart', {
+    const res = await fetch('https://gehnok.gehnokjewels.workers.dev/api/shopify/cart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ lines: [] }),
@@ -189,7 +189,7 @@ export function useShopifyCart(): UseShopifyCartResult {
       const storedId = localStorage.getItem(CART_ID_KEY);
       // Validate the stored ID isn't a string literal 'undefined', 'null', or empty
       const isValidId = storedId && storedId !== 'undefined' && storedId !== 'null' && storedId.length > 5;
-      
+
       setLoading(true);
       try {
         let activeCart: NormalizedCart;
@@ -269,14 +269,14 @@ export function useShopifyCart(): UseShopifyCartResult {
 
       // Find the matching variant for this product+options
       const variantRes = await fetch(
-        `/api/shopify/products/${encodeURIComponent(product.id)}/variant?metal=${encodeURIComponent(metalName)}&size=${encodeURIComponent(size)}`
+        `https://gehnok.gehnokjewels.workers.dev/api/shopify/products/${encodeURIComponent(product.id)}/variant?metal=${encodeURIComponent(metalName)}&size=${encodeURIComponent(size)}`
       );
       const variantData = await variantRes.json();
       const variantId = variantData.variantId;
 
       if (!variantId) throw new Error('Variant not found for options');
 
-      const res = await fetch(`/api/shopify/cart/${encodeURIComponent(cartId)}/lines`, {
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/${encodeURIComponent(cartId)}/lines`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ lines: [{ merchandiseId: variantId, quantity }] }),
@@ -326,7 +326,7 @@ export function useShopifyCart(): UseShopifyCartResult {
         return;
       }
 
-      const res = await fetch(`/api/shopify/cart/${encodeURIComponent(cartId)}/lines/${encodeURIComponent(lineId)}`, {
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/${encodeURIComponent(cartId)}/lines/${encodeURIComponent(lineId)}`, {
         method: 'DELETE',
       });
       if (!res.ok) throw new Error(`Remove failed: ${res.status}`);
@@ -378,7 +378,7 @@ export function useShopifyCart(): UseShopifyCartResult {
         return;
       }
 
-      const res = await fetch(`/api/shopify/cart/${encodeURIComponent(cartId)}/lines/${encodeURIComponent(lineId)}`, {
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/${encodeURIComponent(cartId)}/lines/${encodeURIComponent(lineId)}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ quantity }),
@@ -399,7 +399,7 @@ export function useShopifyCart(): UseShopifyCartResult {
     if (!isShopifyCart || !cart) return { success: false, message: 'Shopify cart not available' };
     setLoading(true);
     try {
-      const res = await fetch(`/api/shopify/cart/${encodeURIComponent(cart.shopifyCartId)}/discount`, {
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/${encodeURIComponent(cart.shopifyCartId)}/discount`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ discountCodes: [code] }),

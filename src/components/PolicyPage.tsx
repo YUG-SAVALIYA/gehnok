@@ -9,7 +9,7 @@ interface PolicyPageProps {
 
 export default function PolicyPage({ policyType, onBackToHome }: PolicyPageProps) {
   const { policies, loading, error } = useShopifyPolicies();
-  
+
   // Scroll to top on mount
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
@@ -20,9 +20,9 @@ export default function PolicyPage({ policyType, onBackToHome }: PolicyPageProps
   return (
     <div className="bg-[#FAF8F4] min-h-screen pt-24 pb-32">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        
+
         {/* Breadcrumb / Back button */}
-        <button 
+        <button
           onClick={onBackToHome}
           className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#8A7F7A] hover:text-[#381932] transition-colors mb-12 flex items-center gap-2 cursor-pointer"
         >
@@ -44,11 +44,11 @@ export default function PolicyPage({ policyType, onBackToHome }: PolicyPageProps
             <Shield className="mx-auto text-[#381932]/40 mb-4" size={32} />
             <h2 className="text-xl font-serif text-[#381932] font-bold">Policy Unavailable</h2>
             <p className="text-sm text-[#381932]/70 font-serif">
-              The requested policy could not be retrieved from the Shopify servers. 
+              The requested policy could not be retrieved from the Shopify servers.
             </p>
             <p className="text-xs font-mono text-red-800/80 mt-4 p-4 bg-red-50">{error}</p>
             <p className="text-[10px] text-[#381932]/50 italic pt-4">
-              Developer Note: Ensure you have completely restarted your development server (`npm run dev`) so that the new /api/shopify/policies backend route is active.
+              Developer Note: Ensure you have completely restarted your development server (`npm run dev`) so that the new https://gehnok.gehnokjewels.workers.dev/api/shopify/policies backend route is active.
             </p>
           </div>
         ) : policy ? (
@@ -59,7 +59,7 @@ export default function PolicyPage({ policyType, onBackToHome }: PolicyPageProps
               </h1>
               <div className="w-12 h-[1px] bg-[#381932] mx-auto" />
             </div>
-            <div 
+            <div
               className="policy-content w-full"
               dangerouslySetInnerHTML={{ __html: policy.body }}
             />

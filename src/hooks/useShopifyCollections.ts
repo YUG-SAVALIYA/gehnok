@@ -25,7 +25,7 @@ export function useShopifyCollections(first: number = 20) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/shopify/collections?first=${first}`);
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/collections?first=${first}`);
       if (!res.ok) throw new Error(`API responded with status ${res.status}`);
 
       const data = await res.json();

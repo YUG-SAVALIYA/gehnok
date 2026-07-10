@@ -17,7 +17,7 @@ let globalArticlesCache: Record<string, ShopifyArticle[]> = {};
 export function useShopifyArticles(first: number = 3) {
   const cacheKey = `articles:${first}`;
   const hasCache = !!globalArticlesCache[cacheKey];
-  
+
   const [articles, setArticles] = useState<ShopifyArticle[]>(globalArticlesCache[cacheKey] || []);
   const [loading, setLoading] = useState(!hasCache);
   const [error, setError] = useState<string | null>(null);
@@ -27,11 +27,11 @@ export function useShopifyArticles(first: number = 3) {
       setLoading(false);
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/shopify/articles?first=${first}`);
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/articles?first=${first}`);
       if (!res.ok) throw new Error(`API responded with status ${res.status}`);
 
       const data = await res.json();

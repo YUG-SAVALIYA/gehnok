@@ -60,7 +60,7 @@ export function useShopifySearch(
 
       try {
         const res = await fetch(
-          `/api/shopify/search?q=${encodeURIComponent(query.trim())}&first=10`,
+          `https://gehnok.gehnokjewels.workers.dev/api/shopify/search?q=${encodeURIComponent(query.trim())}&first=10`,
           { signal: abortRef.current.signal }
         );
 

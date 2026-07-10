@@ -37,7 +37,7 @@ export function useShopifyProducts(
 ): UseShopifyProductsResult {
   const { collection, first = 50, sortKey = 'CREATED_AT', reverse = false } = options;
   const cacheKey = `${collection || 'all'}:${first}:${sortKey}:${reverse}`;
-  
+
   const hasCache = !!globalProductsCache[cacheKey];
   const [products, setProducts] = useState<Product[]>(globalProductsCache[cacheKey] || []);
   const [loading, setLoading] = useState(!hasCache);
@@ -50,15 +50,15 @@ export function useShopifyProducts(
       setLoading(false);
       return; // Already cached, avoid re-fetching
     }
-    
+
     setLoading(true);
     setError(null);
     try {
       let url: string;
       if (collection) {
-        url = `/api/shopify/collections/${encodeURIComponent(collection)}/products?first=${first}`;
+        url = `https://gehnok.gehnokjewels.workers.dev/api/shopify/collections/${encodeURIComponent(collection)}/products?first=${first}`;
       } else {
-        url = `/api/shopify/products?first=${first}&sortKey=${sortKey}&reverse=${reverse}`;
+        url = `https://gehnok.gehnokjewels.workers.dev/api/shopify/products?first=${first}&sortKey=${sortKey}&reverse=${reverse}`;
       }
 
       const res = await fetch(url);
@@ -112,7 +112,7 @@ interface UseShopifyProductResult {
 export function useShopifyProduct(handle: string): UseShopifyProductResult {
   const cacheKey = `product:${handle}`;
   const hasCache = !!globalProductsCache[cacheKey];
-  
+
   const [product, setProduct] = useState<Product | null>(
     hasCache ? globalProductsCache[cacheKey][0] : null
   );
@@ -124,16 +124,16 @@ export function useShopifyProduct(handle: string): UseShopifyProductResult {
       setLoading(false);
       return;
     }
-    
+
     if (globalProductsCache[cacheKey]) {
       setLoading(false);
       return;
     }
-    
+
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/shopify/products/${encodeURIComponent(handle)}`);
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/products/${encodeURIComponent(handle)}`);
       if (!res.ok) throw new Error(`API responded with status ${res.status}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);

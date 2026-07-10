@@ -28,7 +28,7 @@ const globalMetaobjectCache: Record<string, Record<string, string>> = {};
  */
 export function useShopifyMetaobject(type: string, handle: string) {
   const cacheKey = `${type}:${handle}`;
-  
+
   const [data, setData] = useState<Record<string, string>>(globalMetaobjectCache[cacheKey] || {});
   const [loading, setLoading] = useState(!globalMetaobjectCache[cacheKey]);
   const [error, setError] = useState<string | null>(null);
@@ -43,8 +43,8 @@ export function useShopifyMetaobject(type: string, handle: string) {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/shopify/metaobjects/${encodeURIComponent(type)}/${encodeURIComponent(handle)}`);
-      
+      const res = await fetch(`https://gehnok.gehnokjewels.workers.dev/api/shopify/metaobjects/${encodeURIComponent(type)}/${encodeURIComponent(handle)}`);
+
       if (!res.ok) {
         throw new Error(`API responded with status ${res.status}`);
       }
@@ -56,7 +56,7 @@ export function useShopifyMetaobject(type: string, handle: string) {
       }
 
       const metaobject: ShopifyMetaobject | null = json.metaobject;
-      
+
       if (!metaobject) {
         throw new Error('Metaobject not found');
       }
@@ -64,7 +64,7 @@ export function useShopifyMetaobject(type: string, handle: string) {
       // Convert the array of fields into a clean dictionary
       // Example: { "slide_1": "https://cdn.shopify.com/...", "title": "Welcome" }
       const dictionary: Record<string, string> = {};
-      
+
       metaobject.fields.forEach(field => {
         // If it's a file/image reference, grab the URL
         if (field.reference?.image?.url) {

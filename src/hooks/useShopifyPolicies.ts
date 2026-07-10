@@ -20,11 +20,11 @@ export function useShopifyPolicies() {
   useEffect(() => {
     async function fetchPolicies() {
       try {
-        const res = await fetch('/api/shopify/policies');
+        const res = await fetch('https://gehnok.gehnokjewels.workers.dev/api/shopify/policies');
         if (!res.ok) throw new Error(`Failed to fetch policies: ${res.status}`);
         const data = await res.json();
         if (data.error) throw new Error(data.error);
-        
+
         setPolicies(data.shop as ShopPolicies);
       } catch (err) {
         console.error('[useShopifyPolicies] error:', err);
