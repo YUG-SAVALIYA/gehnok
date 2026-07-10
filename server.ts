@@ -98,7 +98,7 @@ async function shopifyFetch<T = unknown>(options: ShopifyFetchOptions): Promise<
 
       if (!res.ok) {
         let body = '';
-        try { body = await res.text(); } catch {}
+        try { body = await res.text(); } catch { }
         console.error(`[Shopify] HTTP ${res.status} from Storefront API:`, body.slice(0, 500));
         throw new Error(`Shopify API HTTP error: ${res.status} — ${body.slice(0, 200)}`);
       }
@@ -245,7 +245,7 @@ function shopifyGuard(req: express.Request, res: express.Response, next: express
 const shopifyRouter = express.Router();
 shopifyRouter.use(shopifyGuard);
 
-/** GET /api/shopify/metaobjects/:type/:handle - fetch metaobject fields */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/metaobjects/:type/:handle - fetch metaobject fields */
 shopifyRouter.get('/metaobjects/:type/:handle', async (req, res) => {
   try {
     const { type, handle } = req.params;
@@ -281,7 +281,7 @@ shopifyRouter.get('/metaobjects/:type/:handle', async (req, res) => {
   }
 });
 
-/** GET /api/shopify/policies - fetch shop policies */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/policies - fetch shop policies */
 shopifyRouter.get('/policies', async (req, res) => {
   try {
     const data = await shopifyFetch<{ shop: unknown }>({
@@ -311,7 +311,7 @@ app.use(express.json());
 
 // ── Products ──────────────────────────────────────────────────────────────────
 
-/** GET /api/shopify/products — fetch all products with optional sort/pagination */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/products — fetch all products with optional sort/pagination */
 shopifyRouter.get('/products', async (req, res) => {
   try {
     const first = Math.min(parseInt(req.query.first as string ?? '50', 10), 250);
@@ -339,7 +339,7 @@ shopifyRouter.get('/products', async (req, res) => {
   }
 });
 
-/** GET /api/shopify/products/:handle — fetch single product */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/products/:handle — fetch single product */
 shopifyRouter.get('/products/:handle', async (req, res) => {
   try {
     const { handle } = req.params;
@@ -357,7 +357,7 @@ shopifyRouter.get('/products/:handle', async (req, res) => {
   }
 });
 
-/** GET /api/shopify/products/:handle/variant — find variant by options */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/products/:handle/variant — find variant by options */
 shopifyRouter.get('/products/:handle/variant', async (req, res) => {
   try {
     const { handle } = req.params;
@@ -393,7 +393,7 @@ shopifyRouter.get('/products/:handle/variant', async (req, res) => {
 
 // ── Collections ───────────────────────────────────────────────────────────────
 
-/** GET /api/shopify/collections — list all collections */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/collections — list all collections */
 shopifyRouter.get('/collections', async (req, res) => {
   try {
     const first = parseInt(req.query.first as string ?? '20', 10);
@@ -413,7 +413,7 @@ shopifyRouter.get('/collections', async (req, res) => {
   }
 });
 
-/** GET /api/shopify/collections/:handle/products — products in a collection */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/collections/:handle/products — products in a collection */
 shopifyRouter.get('/collections/:handle/products', async (req, res) => {
   try {
     const { handle } = req.params;
@@ -446,7 +446,7 @@ shopifyRouter.get('/collections/:handle/products', async (req, res) => {
 
 // ── Articles / Blogs ────────────────────────────────────────────────────────────
 
-/** GET /api/shopify/articles — fetch recent blog articles */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/articles — fetch recent blog articles */
 shopifyRouter.get('/articles', async (req, res) => {
   try {
     const first = parseInt(req.query.first as string ?? '3', 10);
@@ -480,7 +480,7 @@ shopifyRouter.get('/articles', async (req, res) => {
 
 // ── Search ────────────────────────────────────────────────────────────────────
 
-/** GET /api/shopify/search?q=...&first=10 — full-text product search */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/search?q=...&first=10 — full-text product search */
 shopifyRouter.get('/search', async (req, res) => {
   try {
     const q = (req.query.q as string ?? '').trim();
@@ -514,7 +514,7 @@ shopifyRouter.get('/search', async (req, res) => {
 
 // ── Cart ──────────────────────────────────────────────────────────────────────
 
-/** POST /api/shopify/cart — create a new cart */
+/** POST https://gehnok.gehnokjewels.workers.dev/api/shopify/cart — create a new cart */
 shopifyRouter.post('/cart', async (req, res) => {
   try {
     const { lines = [], note, attributes } = req.body;
@@ -534,7 +534,7 @@ shopifyRouter.post('/cart', async (req, res) => {
   }
 });
 
-/** GET /api/shopify/cart/:cartId — fetch existing cart */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/:cartId — fetch existing cart */
 shopifyRouter.get('/cart/:cartId', async (req, res) => {
   try {
     const { cartId } = req.params;
@@ -549,7 +549,7 @@ shopifyRouter.get('/cart/:cartId', async (req, res) => {
   }
 });
 
-/** POST /api/shopify/cart/:cartId/lines — add items to cart */
+/** POST https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/:cartId/lines — add items to cart */
 shopifyRouter.post('/cart/:cartId/lines', async (req, res) => {
   try {
     const { cartId } = req.params;
@@ -572,7 +572,7 @@ shopifyRouter.post('/cart/:cartId/lines', async (req, res) => {
   }
 });
 
-/** PATCH /api/shopify/cart/:cartId/lines/:lineId — update line quantity */
+/** PATCH https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/:cartId/lines/:lineId — update line quantity */
 shopifyRouter.patch('/cart/:cartId/lines/:lineId', async (req, res) => {
   try {
     const { cartId, lineId } = req.params;
@@ -592,7 +592,7 @@ shopifyRouter.patch('/cart/:cartId/lines/:lineId', async (req, res) => {
   }
 });
 
-/** DELETE /api/shopify/cart/:cartId/lines/:lineId — remove a line */
+/** DELETE https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/:cartId/lines/:lineId — remove a line */
 shopifyRouter.delete('/cart/:cartId/lines/:lineId', async (req, res) => {
   try {
     const { cartId, lineId } = req.params;
@@ -609,7 +609,7 @@ shopifyRouter.delete('/cart/:cartId/lines/:lineId', async (req, res) => {
   }
 });
 
-/** POST /api/shopify/cart/:cartId/discount — apply discount codes */
+/** POST https://gehnok.gehnokjewels.workers.dev/api/shopify/cart/:cartId/discount — apply discount codes */
 shopifyRouter.post('/cart/:cartId/discount', async (req, res) => {
   try {
     const { cartId } = req.params;
@@ -631,7 +631,7 @@ shopifyRouter.post('/cart/:cartId/discount', async (req, res) => {
 
 // ── Customer ──────────────────────────────────────────────────────────────────
 
-/** POST /api/shopify/customer/register — create new customer account */
+/** POST https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/register — create new customer account */
 shopifyRouter.post('/customer/register', async (req, res) => {
   try {
     const { firstName, lastName, email, password } = req.body;
@@ -657,7 +657,7 @@ shopifyRouter.post('/customer/register', async (req, res) => {
   }
 });
 
-/** POST /api/shopify/customer/login — obtain access token */
+/** POST https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/login — obtain access token */
 shopifyRouter.post('/customer/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -684,7 +684,7 @@ shopifyRouter.post('/customer/login', async (req, res) => {
   }
 });
 
-/** DELETE /api/shopify/customer/logout — revoke access token */
+/** DELETE https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/logout — revoke access token */
 shopifyRouter.delete('/customer/logout', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -705,7 +705,7 @@ shopifyRouter.delete('/customer/logout', async (req, res) => {
   }
 });
 
-/** GET /api/shopify/customer — fetch authenticated customer profile */
+/** GET https://gehnok.gehnokjewels.workers.dev/api/shopify/customer — fetch authenticated customer profile */
 shopifyRouter.get('/customer', async (req, res) => {
   try {
     const token = req.headers.authorization?.replace('Bearer ', '');
@@ -739,7 +739,7 @@ shopifyRouter.get('/customer', async (req, res) => {
   }
 });
 
-/** POST /api/shopify/customer/recover — trigger password reset email */
+/** POST https://gehnok.gehnokjewels.workers.dev/api/shopify/customer/recover — trigger password reset email */
 shopifyRouter.post('/customer/recover', async (req, res) => {
   try {
     const { email } = req.body;
@@ -760,11 +760,11 @@ shopifyRouter.post('/customer/recover', async (req, res) => {
 
 // ── Register the Shopify router ───────────────────────────────────────────────
 
-app.use('/api/shopify', shopifyRouter);
+app.use('https://gehnok.gehnokjewels.workers.dev/api/shopify', shopifyRouter);
 
 // ─── Clear Shopify cache (admin utility) ─────────────────────────────────────
 
-app.post('/api/shopify/cache/clear', (req, res) => {
+app.post('https://gehnok.gehnokjewels.workers.dev/api/shopify/cache/clear', (req, res) => {
   shopifyCache.clear();
   console.log('[Shopify] Cache cleared.');
   res.json({ success: true, message: 'Shopify cache cleared' });
@@ -897,7 +897,7 @@ app.post('/api/concierge', async (req, res) => {
 
   // Elegant fallback simulator
   const normalizedMessage = message.toLowerCase();
-  let selectedSim = SIMULATED_CONCIERGE_RESPONSES.find(sim => 
+  let selectedSim = SIMULATED_CONCIERGE_RESPONSES.find(sim =>
     sim.keywords.some(keyword => normalizedMessage.includes(keyword))
   );
 
