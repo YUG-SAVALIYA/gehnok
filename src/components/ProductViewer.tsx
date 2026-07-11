@@ -644,12 +644,69 @@ export default function ProductViewer({
       groups.push({ images: currentImages, video: currentVideo, model3d: currentModel });
     }
 
-    // Map the selected metal to the exact index of the available metals from Shopify
     let safeIndex = 0;
-    if (availableMetals && availableMetals.length > 0 && selectedMetal) {
-      const metalIndex = availableMetals.findIndex(m => m.id === selectedMetal.id);
-      if (metalIndex !== -1) {
-        safeIndex = metalIndex;
+    
+    // Strategy 1: Match by Shopify Variant Image (100% accurate if available)
+    let matchedByVariant = false;
+    if (selectedVariant?.image) {
+      const variantImgUrl = typeof selectedVariant.image === 'string' 
+        ? selectedVariant.image.toLowerCase() 
+        : (selectedVariant.image as any).url?.toLowerCase();
+        
+      if (variantImgUrl) {
+        const matchIdx = groups.findIndex(g => g.images.some(img => img.toLowerCase().includes(variantImgUrl) || variantImgUrl.includes(img.toLowerCase())));
+        if (matchIdx !== -1) {
+          safeIndex = matchIdx;
+          matchedByVariant = true;
+        }
+      }
+    }
+
+    // Strategy 2: Match by filename keywords (Highly accurate for jewelry)
+    if (!matchedByVariant) {
+      const mName = selectedMetal?.name.toLowerCase() || '';
+      const keyword = mName.includes('rose') ? 'rose' :
+                      mName.includes('white') ? 'white' :
+                      mName.includes('silver') ? 'silver' :
+                      mName.includes('platinum') ? 'platinum' : 'yellow';
+
+      let maxScore = 0;
+      let bestIndex = -1;
+
+      groups.forEach((g, idx) => {
+        let score = 0;
+        const str = JSON.stringify(g).toLowerCase();
+        if (str.includes(keyword)) score += 10;
+        if (keyword === 'white' && (str.includes('-wg') || str.includes('_wg'))) score += 5;
+        if (keyword === 'yellow' && (str.includes('-yg') || str.includes('_yg'))) score += 5;
+        if (keyword === 'rose' && (str.includes('-rg') || str.includes('_rg'))) score += 5;
+        
+        if (score > maxScore) {
+          maxScore = score;
+          bestIndex = idx;
+        }
+      });
+
+      if (maxScore > 0 && bestIndex !== -1) {
+        safeIndex = bestIndex;
+      } else {
+        // Strategy 3: Fallback to the exact physical upload order identified from your Shopify store
+        // Group 0 = Gold / Yellow
+        // Group 1 = Rose Gold
+        // Group 2 = White / Silver
+        const mName = selectedMetal?.name.toLowerCase() || '';
+        if (mName.includes('yellow') || (mName.includes('gold') && !mName.includes('rose') && !mName.includes('white'))) {
+          safeIndex = 0;
+        } else if (mName.includes('rose')) {
+          safeIndex = 1;
+        } else if (mName.includes('white') || mName.includes('silver') || mName.includes('platinum')) {
+          safeIndex = 2;
+        }
+        
+        // Ensure we don't go out of bounds if they uploaded fewer groups
+        if (safeIndex >= groups.length) {
+          safeIndex = groups.length - 1;
+        }
       }
     }
 
