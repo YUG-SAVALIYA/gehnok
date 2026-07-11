@@ -127,8 +127,13 @@ img, .photo-protected {
 .policy-content h4 {
   font-family: "Cirka", var(--font-serif);
   color: var(--color-ink);
-  margin-top: 2em;
-  margin-bottom: 0.75em;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+}
+
+/* Hide empty paragraphs often injected by Shopify's rich text editor */
+.policy-content p:empty {
+  display: none;
 }
 
 .policy-content h1 {
@@ -158,8 +163,8 @@ img, .photo-protected {
 }
 
 .policy-content p {
-  margin-top: 0.8em;
-  margin-bottom: 0.8em;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
   font-weight: 500;
 }
 
