@@ -591,7 +591,7 @@ export default function ProductViewer({
   }).format(variantPriceAmount);
 
   // Compute filtered photo list and specific video for the selected metal
-  const { productPhotos, currentMetalVideo, currentModel3d } = useMemo(() => {
+  const { productPhotos, currentMetalVideo, currentModel3d, debugInfo } = useMemo(() => {
     const allImages =
       product.images && product.images.length > 0
         ? product.images
@@ -716,7 +716,14 @@ export default function ProductViewer({
     return {
       productPhotos: selectedGroup.images.length > 0 ? selectedGroup.images : allImages,
       currentMetalVideo: selectedGroup.video,
-      currentModel3d: selectedGroup.model3d || strictlyMappedModel || null
+      currentModel3d: selectedGroup.model3d || strictlyMappedModel || null,
+      debugInfo: {
+        safeIndex,
+        allModelsLength: allModels.length,
+        groupsLength: groups.length,
+        hasStrictModel: !!strictlyMappedModel,
+        hasGroupModel: !!selectedGroup.model3d
+      }
     };
   }, [selectedMetal, product.media, product.images, product.collection, availableMetals]);
 
@@ -846,6 +853,16 @@ export default function ProductViewer({
                         </div>
                       }
                     >
+                      {/* DEBUG UI */}
+                      <div className="absolute top-2 left-2 z-50 bg-black/80 text-white p-2 text-xs rounded border border-red-500 max-w-[200px] pointer-events-none">
+                        <strong className="text-red-400">DEBUG LOG:</strong><br/>
+                        safeIndex: {debugInfo?.safeIndex}<br/>
+                        allModels.length: {debugInfo?.allModelsLength}<br/>
+                        groups.length: {debugInfo?.groupsLength}<br/>
+                        strictlyMappedModel: {debugInfo?.hasStrictModel ? 'Yes' : 'No'}<br/>
+                        group.model3d: {debugInfo?.hasGroupModel ? 'Yes' : 'No'}
+                      </div>
+                      
                       <Model3DViewer src={model3DUrl} poster={productPhotos[0]} title={product.name} />
                     </Suspense>
                   ) : (
