@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface Model3DViewerProps {
@@ -37,14 +36,10 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.75;
+    renderer.toneMappingExposure = 1.0;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     mount.appendChild(renderer.domElement);
-
-    const pmremGenerator = new THREE.PMREMGenerator(renderer);
-    const environmentMap = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
-    scene.environment = environmentMap;
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -54,25 +49,6 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     controls.maxDistance = 10;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.8;
-
-    const ambientLight = new THREE.HemisphereLight(0xffffff, 0xeadfc8, 3.2);
-    scene.add(ambientLight);
-
-    const keyLight = new THREE.DirectionalLight(0xffffff, 5.5);
-    keyLight.position.set(3, 5, 5);
-    scene.add(keyLight);
-
-    const fillLight = new THREE.DirectionalLight(0xfff1d2, 2.8);
-    fillLight.position.set(-4, 2, -3);
-    scene.add(fillLight);
-
-    const rimLight = new THREE.DirectionalLight(0xffffff, 4.2);
-    rimLight.position.set(-3, 4, 4);
-    scene.add(rimLight);
-
-    const frontSparkle = new THREE.PointLight(0xffffff, 3.5, 8);
-    frontSparkle.position.set(0, 1.2, 2.2);
-    scene.add(frontSparkle);
 
     let modelRoot: THREE.Object3D | null = null;
     let animationFrame = 0;
@@ -107,42 +83,6 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
       gltf => {
         if (disposed) return;
         modelRoot = gltf.scene;
-        modelRoot.traverse(child => {
-          if (child instanceof THREE.Mesh) {
-            child.castShadow = false;
-            child.receiveShadow = false;
-            if (child.material) {
-              const materials = Array.isArray(child.material) ? child.material : [child.material];
-              materials.forEach(material => {
-                material.side = THREE.DoubleSide;
-                if (material instanceof THREE.MeshStandardMaterial) {
-                  material.envMapIntensity = Math.max(material.envMapIntensity || 1, 2.4);
-                  material.roughness = Math.min(material.roughness, 0.42);
-                  
-                  // If it's a transparent material (like a diamond/gem)
-                  const physMat = material as any;
-                  if (physMat.transmission !== undefined && physMat.transmission > 0) {
-                    physMat.transmission = 1.0; 
-                    physMat.opacity = 1.0;
-                    physMat.transparent = false; // Prevents CSS background alpha-blend milkiness
-                    physMat.ior = 2.4; // High IOR for diamond refraction
-                    physMat.thickness = Math.max(physMat.thickness || 0, 2.0);
-                    physMat.roughness = 0;
-                    physMat.metalness = 0;
-                    physMat.clearcoat = 1.0;
-                    physMat.clearcoatRoughness = 0;
-                    physMat.dispersion = 1.5; // High fire
-                    physMat.envMapIntensity = 4.0; // Boosted reflections
-                    physMat.color = new THREE.Color(0xffffff);
-                  } else if (material.transparent && material.opacity < 0.8) {
-                    material.opacity = 0.85; 
-                  }
-                }
-                material.needsUpdate = true;
-              });
-            }
-          }
-        });
         scene.add(modelRoot);
         frameModel(modelRoot);
         setLoadProgress(100);
@@ -187,8 +127,6 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
         }
       });
       renderer.dispose();
-      environmentMap.dispose();
-      pmremGenerator.dispose();
       renderer.domElement.remove();
     };
   }, [src]);
