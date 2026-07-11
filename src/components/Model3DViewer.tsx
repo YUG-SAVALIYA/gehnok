@@ -22,12 +22,7 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     setLoadProgress(0);
     setLoadError(false);
 
-    // Prevent page scrolling when zooming the 3D model (Trackpads & Mouse)
-    const handleScrollPrevent = (e: Event) => {
-      e.preventDefault();
-    };
-    mount.addEventListener('wheel', handleScrollPrevent, { passive: false });
-    mount.addEventListener('touchmove', handleScrollPrevent, { passive: false });
+
 
     const scene = new THREE.Scene();
     scene.background = null;
@@ -124,19 +119,20 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
                   material.envMapIntensity = Math.max(material.envMapIntensity || 1, 2.4);
                   material.roughness = Math.min(material.roughness, 0.42);
                   
-                  // If it's a transparent material (like a diamond/gem), make it more solid
-                  if (material.transparent) {
-                    if (material.opacity < 0.8) {
-                      material.opacity = 0.85; // Boost opacity drastically so it's visible
-                    }
-                  }
-                  
-                  // Physical properties (like transmission for glass/diamonds)
+                  // If it's a transparent material (like a diamond/gem)
                   const physMat = material as any;
                   if (physMat.transmission !== undefined && physMat.transmission > 0) {
-                    physMat.transmission = Math.min(physMat.transmission, 0.4); // Cap transmission so it's not totally invisible
+                    physMat.transmission = 1.0; 
+                    physMat.opacity = 1.0;
+                    physMat.transparent = true;
                     physMat.ior = 2.4; // High IOR for diamond-like refraction
-                    physMat.thickness = Math.max(physMat.thickness || 0, 1.0);
+                    physMat.thickness = Math.max(physMat.thickness || 0, 1.5);
+                    physMat.roughness = 0;
+                    physMat.metalness = 0.1;
+                    physMat.dispersion = 1.2; // Add fire/dispersion for diamonds
+                    physMat.color = new THREE.Color(0xffffff);
+                  } else if (material.transparent && material.opacity < 0.8) {
+                    material.opacity = 0.85; 
                   }
                 }
                 material.needsUpdate = true;
@@ -179,8 +175,6 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
       disposed = true;
       window.cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
-      mount.removeEventListener('wheel', handleScrollPrevent);
-      mount.removeEventListener('touchmove', handleScrollPrevent);
       controls.dispose();
       scene.traverse(object => {
         if (object instanceof THREE.Mesh) {
@@ -199,6 +193,8 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
   return (
     <div 
       className="relative h-[400px] w-full overflow-hidden border border-[#381932]/10 bg-[#FAF7F2] rounded-md"
+      data-lenis-prevent="true"
+      data-lenis-prevent-wheel="true"
       style={{ touchAction: 'none', overscrollBehavior: 'none' }}
     >
       {poster && loadProgress < 100 && !loadError && (

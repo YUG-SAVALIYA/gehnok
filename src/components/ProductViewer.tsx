@@ -1,5 +1,6 @@
 import React, { lazy, Suspense, useState, useEffect, useMemo, useRef } from 'react';
 import { Product, CartItem } from '../types';
+import { lenis } from '../lib/lenis';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
 import Gemstone3DViewer from './Gemstone3DViewer';
@@ -496,6 +497,10 @@ export default function ProductViewer({
     setSelectedQuantity(1);
     setActivePhotoIndex(0);
     setActiveMediaTab('photos'); // Default to beautiful photo galleries first
+
+    // Reset scroll when product changes
+    window.scrollTo(0, 0);
+    lenis.scrollTo(0, { immediate: true });
   }, [product, availableSizes, availableMetals]);
 
   const getGemstoneColorProfile = (product: Product) => {
@@ -730,8 +735,9 @@ export default function ProductViewer({
     if (related.length === 0) {
       related = LUXURY_PRODUCTS.filter(p => p.id !== product.id);
     }
-    return related.slice(0, 4);
-  }, [LUXURY_PRODUCTS, product]);
+    const shuffled = [...related].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 4);
+  }, [product.id, product.collection, LUXURY_PRODUCTS]);
 
   const relatedGridClass = 
     displayRelatedProducts.length === 1 ? "grid grid-cols-1 max-w-sm mx-auto" :

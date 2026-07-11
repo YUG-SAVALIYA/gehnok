@@ -13,7 +13,7 @@ import Concierge from './components/Concierge';
 import Cart from './components/Cart';
 import { Heart, Eye, X, Compass } from 'lucide-react';
 import { useShopifyCart } from './hooks/useShopifyCart';
-import './lib/lenis'; // Initialize Lenis smooth scrolling globally
+import { lenis } from './lib/lenis'; // Initialize Lenis smooth scrolling globally
 
 export type View = 'home' | 'all-product' | 'collection' | 'contact-us' | 'journal' | 'policy';
 export type PolicyType = 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy';
@@ -51,6 +51,7 @@ export default function App() {
   
   const [skipAnimation, setSkipAnimation] = useState(false);
   const selectedProductRef = React.useRef(selectedProduct);
+  const savedScrollPosition = React.useRef<number>(0);
   useEffect(() => {
     selectedProductRef.current = selectedProduct;
   }, [selectedProduct]);
@@ -154,8 +155,15 @@ export default function App() {
           setPendingProductId(id);
         }
       } else {
-        if (selectedProductRef.current) setSkipAnimation(true);
-        else setSkipAnimation(false);
+        if (selectedProductRef.current) {
+          setSkipAnimation(true);
+          setTimeout(() => {
+            window.scrollTo(0, savedScrollPosition.current);
+            lenis.scrollTo(savedScrollPosition.current, { immediate: true });
+          }, 0);
+        } else {
+          setSkipAnimation(false);
+        }
         
         setSelectedProduct(null);
         if (path === '/') setCurrentView('home');
@@ -285,9 +293,9 @@ export default function App() {
 
   // Main product inspection
   const handleExamineProduct = (product: Product) => {
+    savedScrollPosition.current = window.scrollY;
     setLastViewBeforeDetail(currentView);
     setSelectedProduct(product);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Quick action: Book a viewing
@@ -364,6 +372,10 @@ export default function App() {
               setSkipAnimation(true);
               setSelectedProduct(null);
               setCurrentView(lastViewBeforeDetail);
+              setTimeout(() => {
+                window.scrollTo(0, savedScrollPosition.current);
+                lenis.scrollTo(savedScrollPosition.current, { immediate: true });
+              }, 0);
             }}
             onAddToCollection={handleAddToCollection}
             onAddToWishlist={handleToggleWishlist}
