@@ -2,6 +2,7 @@ export type Env = {
   SHOPIFY_STORE_DOMAIN?: string;
   SHOPIFY_API_VERSION?: string;
   SHOPIFY_STOREFRONT_ACCESS_TOKEN?: string;
+  SHOPIFY_ADMIN_ACCESS_TOKEN?: string;
 };
 
 type ShopifyData = Record<string, unknown>;
@@ -1225,38 +1226,86 @@ async function handleCustomerRoute(
       );
     }
 
-    const data = await shopifyFetch<{
-      customerCreate: {
-        customer: unknown;
-        customerUserErrors?: ShopifyUserError[];
-      };
-    }>(
-      env,
-      `mutation Register($input: CustomerCreateInput!) {
-        customerCreate(input: $input) {
-          customer { id firstName lastName email }
-          customerUserErrors { field code message }
-        }
-      }`,
-      {
-        input: {
-          firstName,
-          lastName,
-          email,
-          password,
-          acceptsMarketing: false,
+    const adminToken = env.SHOPIFY_ADMIN_ACCESS_TOKEN?.trim();
+    if (adminToken) {
+      // Use Admin REST API to bypass email verification
+      const rawDomain = env.SHOPIFY_STORE_DOMAIN?.trim() || "";
+      const storeDomain = rawDomain.replace(/^https?:\/\//, "").split("/")[0];
+      const apiVersion = env.SHOPIFY_API_VERSION?.trim() || "2024-01";
+      const adminUrl = `https://${storeDomain}/admin/api/${apiVersion}/customers.json`;
+
+      const adminResponse = await fetch(adminUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Shopify-Access-Token": adminToken,
         },
-      },
-    );
+        body: JSON.stringify({
+          customer: {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+            password: password,
+            password_confirmation: password,
+            send_email_invite: false,
+          },
+        }),
+      });
 
-    if (data.customerCreate.customerUserErrors?.length) {
-      return mutationFailure(
-        "Registration failed",
-        data.customerCreate.customerUserErrors,
+      const adminData = await adminResponse.json() as any;
+
+      if (!adminResponse.ok || adminData.errors) {
+        // Format Shopify Admin API errors cleanly
+        const errors = adminData.errors;
+        let errorMessage = "Registration failed";
+        if (typeof errors === "object" && errors !== null) {
+          const firstKey = Object.keys(errors)[0];
+          const firstVal = errors[firstKey];
+          errorMessage = `${firstKey} ${Array.isArray(firstVal) ? firstVal[0] : firstVal}`;
+        }
+        return jsonResponse(
+          { success: false, error: errorMessage },
+          400,
+          String(adminResponse.status)
+        );
+      }
+
+      return jsonResponse({ customer: adminData.customer }, 200, "200");
+    } else {
+      // Fallback to Storefront API (requires email verification)
+      const data = await shopifyFetch<{
+        customerCreate: {
+          customer: unknown;
+          customerUserErrors?: ShopifyUserError[];
+        };
+      }>(
+        env,
+        `mutation Register($input: CustomerCreateInput!) {
+          customerCreate(input: $input) {
+            customer { id firstName lastName email }
+            customerUserErrors { field code message }
+          }
+        }`,
+        {
+          input: {
+            firstName,
+            lastName,
+            email,
+            password,
+            acceptsMarketing: false,
+          },
+        },
       );
-    }
 
-    return jsonResponse({ customer: data.customerCreate.customer }, 200, "200");
+      if (data.customerCreate.customerUserErrors?.length) {
+        return mutationFailure(
+          "Registration failed",
+          data.customerCreate.customerUserErrors,
+        );
+      }
+
+      return jsonResponse({ customer: data.customerCreate.customer }, 200, "200");
+    }
   }
 
   if (request.method === "POST" && action === "login") {
