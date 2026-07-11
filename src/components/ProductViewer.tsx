@@ -609,8 +609,21 @@ export default function ProductViewer({
     let imageIndex = 0;
 
     for (const m of product.media) {
-      const type = m.mediaContentType || '';
-      if (type === 'IMAGE' || type === 'MEDIA_IMAGE' || !type) {
+      const typeStr = (m.mediaContentType || (m as any).type || '').toUpperCase();
+      const formatStr = (m.format || '').toLowerCase();
+      const urlStr = (m.url || m.embeddedUrl || '').toLowerCase();
+      const hasGlbSource = m.sources?.some(s => s.format?.toLowerCase() === 'glb' || s.url?.toLowerCase().includes('.glb'));
+
+      const isModel = typeStr === 'MODEL_3D' || typeStr === '3D' || formatStr === 'glb' || urlStr.includes('.glb') || hasGlbSource;
+      const isVideo = typeStr === 'VIDEO' || typeStr === 'EXTERNAL_VIDEO' || urlStr.includes('.mp4') || !!m.embeddedUrl;
+
+      if (isModel) {
+        const preferredSource = m.sources?.find(s => s.format?.toLowerCase() === 'glb' || s.url?.toLowerCase().includes('.glb')) || m.sources?.[0];
+        currentModel = preferredSource?.url || m.url || null;
+      } else if (isVideo) {
+        currentVideo = m.url || m.embeddedUrl || null;
+      } else {
+        // Treat as Image
         if (currentVideo !== null || currentModel !== null) {
           groups.push({ images: [...currentImages], video: currentVideo, model3d: currentModel });
           currentImages = [];
@@ -621,11 +634,6 @@ export default function ProductViewer({
           currentImages.push(allImages[imageIndex]);
           imageIndex++;
         }
-      } else if (type === 'VIDEO' || type === 'EXTERNAL_VIDEO') {
-        currentVideo = m.url || m.embeddedUrl || null;
-      } else if (type === 'MODEL_3D' || m.format?.toLowerCase() === 'glb' || m.url?.toLowerCase().includes('.glb')) {
-        const preferredSource = m.sources?.find(s => s.format?.toLowerCase() === 'glb' || s.url?.toLowerCase().includes('.glb')) || m.sources?.[0];
-        currentModel = preferredSource?.url || m.url || null;
       }
     }
     
