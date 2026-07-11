@@ -12,9 +12,10 @@ interface Model3DViewerProps {
   src: string;
   poster?: string;
   title: string;
+  isFullscreen?: boolean;
 }
 
-export default function Model3DViewer({ src, poster, title }: Model3DViewerProps) {
+export default function Model3DViewer({ src, poster, title, isFullscreen = false }: Model3DViewerProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const [loadProgress, setLoadProgress] = useState(0);
   const [loadError, setLoadError] = useState(false);
@@ -232,7 +233,7 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
 
   return (
     <div 
-      className="relative h-[400px] w-full overflow-hidden border border-[#381932]/10 bg-[#FAF7F2] rounded-md"
+      className={`relative w-full overflow-hidden ${isFullscreen ? 'h-[100dvh] flex-1 bg-transparent' : 'h-[400px] border border-[#381932]/10 bg-[#FAF7F2] rounded-md'}`}
       data-lenis-prevent="true"
       data-lenis-prevent-wheel="true"
       style={{ touchAction: 'none', overscrollBehavior: 'none' }}

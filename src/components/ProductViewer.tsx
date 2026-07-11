@@ -1718,12 +1718,13 @@ export default function ProductViewer({
                       </div>
                     }
                   >
-                    <Model3DViewer src={model3DUrl} poster={productPhotos[0]} title={product.name} />
+                    <Model3DViewer src={model3DUrl} poster={productPhotos[0]} title={product.name} isFullscreen={true} />
                   </Suspense>
                 ) : (
                   <Gemstone3DViewer
                     color={getGemstoneColorProfile(product)}
                     cut={product.gemstone?.cut || 'Round Brilliant'}
+                    isFullscreen={true}
                   />
                 )}
               </div>

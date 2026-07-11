@@ -4,9 +4,10 @@ import { RotateCw, Sparkles, Compass } from 'lucide-react';
 interface Gemstone3DViewerProps {
   color: 'gold' | 'amethyst' | 'blue' | 'green' | 'diamond';
   cut: 'Round Brilliant' | 'Cushion Cut' | 'Ideal Round Brilliant' | 'Pear Brilliant' | 'Hexagonal Emerald Cut' | string;
+  isFullscreen?: boolean;
 }
 
-export default function Gemstone3DViewer({ color, cut }: Gemstone3DViewerProps) {
+export default function Gemstone3DViewer({ color, cut, isFullscreen = false }: Gemstone3DViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [rotation, setRotation] = useState({ x: 0.5, y: 0.8 });
   const [isDragging, setIsDragging] = useState(false);
@@ -295,7 +296,7 @@ export default function Gemstone3DViewer({ color, cut }: Gemstone3DViewerProps) 
   }, [isDragging]);
 
   return (
-    <div className="flex flex-col items-center bg-[#FAF7F2] border border-[#C9A96E]/10 p-6 rounded-lg relative overflow-hidden group select-none">
+    <div className={`flex flex-col items-center justify-center relative overflow-hidden group select-none ${isFullscreen ? 'w-full h-[100dvh] bg-transparent' : 'bg-[#FAF7F2] border border-[#C9A96E]/10 p-6 rounded-lg'}`}>
       
       {/* HUD overlay for luxury precision */}
       <div className="absolute top-4 left-4 flex items-center space-x-2 font-mono text-[8px] tracking-[0.2em] text-[#8A7F7A] uppercase">
@@ -316,7 +317,7 @@ export default function Gemstone3DViewer({ color, cut }: Gemstone3DViewerProps) 
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
-        className="cursor-grab active:cursor-grabbing max-w-full drop-shadow-[0_20px_50px_rgba(56,25,50,0.08)]"
+        className={`cursor-grab active:cursor-grabbing max-w-full drop-shadow-[0_20px_50px_rgba(56,25,50,0.08)] ${isFullscreen ? 'w-[600px] h-[600px] max-h-[80vh] object-contain' : ''}`}
       />
 
       <div className="mt-4 flex items-center space-x-2 font-mono text-[8px] tracking-[0.15em] text-[#8A7F7A] uppercase">
