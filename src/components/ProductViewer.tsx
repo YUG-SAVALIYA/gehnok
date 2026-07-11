@@ -1640,7 +1640,7 @@ export default function ProductViewer({
                   <img
                     src={activeGalleryItem.url}
                     alt={`${product.name} Fullscreen`}
-                    className="max-w-full max-h-full object-contain drop-shadow-2xl select-none pointer-events-none mix-blend-multiply"
+                    className="max-w-full max-h-full object-contain select-none pointer-events-none mix-blend-multiply"
                     style={getMetalFilterStyle(selectedMetal?.id || '')}
                     onContextMenu={(e) => e.preventDefault()}
                     draggable={false}
@@ -1671,10 +1671,18 @@ export default function ProductViewer({
               </>
             )}
             
-            {/* Image Counter */}
+            {/* Image Pagination Dots */}
             {galleryItems.length > 1 && (
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#381932]/60 font-mono text-[10px] tracking-[0.2em] uppercase">
-                {safePhotoIndex + 1} / {galleryItems.length}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center space-x-3">
+                {galleryItems.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={(e) => { e.stopPropagation(); setActivePhotoIndex(idx); }}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                      idx === safePhotoIndex ? 'bg-[#381932] scale-125' : 'bg-[#381932]/30 hover:bg-[#381932]/50'
+                    }`}
+                  />
+                ))}
               </div>
             )}
           </div>,
