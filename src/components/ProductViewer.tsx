@@ -842,7 +842,7 @@ export default function ProductViewer({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           
           {/* Left Column: Media Tabs (Interactive 3D / Photographs) & Story */}
-          <div className="lg:col-span-6 space-y-8">
+          <div className="lg:col-span-6 space-y-8 lg:sticky lg:top-24 lg:self-start">
             {/* Media Tab System Selector */}
             <div className="flex pb-1 space-x-6">
               <button
@@ -1542,91 +1542,95 @@ export default function ProductViewer({
                 </div>
               </div>
             )}
+            {/* Shipping & Returns extracted from here */}
+          </div>
+        </div>
 
-            {/* Shipping & Returns Accordions */}
-            <div className="pt-6 mt-6">
-              <AccordionItem title="Shipping Details" defaultOpen={false}>
-                <div className="flex items-center space-x-2 font-serif text-[16px] text-gray-900 mb-2">
-                  <Clock size={18} strokeWidth={1.5} />
-                  <span>Processing Time</span>
-                </div>
-                
-                <ul className="space-y-1.5 list-none pl-1 mb-4 text-[14px]">
-                  <li>• Ready-to-ship pieces: <strong className="font-semibold">1-2</strong> business days</li>
-                  <li>• Made-to-order pieces: <strong className="font-semibold">7-14</strong> business days</li>
-                  <li>• Custom / engraved items: <strong className="font-semibold">10-18</strong> business days</li>
-                </ul>
-                
-                <p className="mb-4">Orders placed on weekends or public holidays are processed the next business day.</p>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <div className="flex items-center space-x-2 font-serif text-[16px] text-gray-900 mb-2 mt-4">
-                  <Truck size={18} strokeWidth={1.5} />
-                  <span>Delivery Timeframe</span>
-                </div>
-                
-                <ul className="space-y-1.5 list-none pl-1 mb-4 text-[14px]">
-                  <li>• Metro cities: <strong className="font-semibold">2-4</strong> business days</li>
-                  <li>• Rest of India: <strong className="font-semibold">4-7</strong> business days</li>
-                  <li>• International: <strong className="font-semibold">10-18</strong> business days</li>
-                  <li>• Express delivery: <strong className="font-semibold">1-2</strong> business days (depend on pin codes)</li>
-                </ul>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <p>We ship via trusted courier partners including Blue Dart, Delhivery, FedEx and DTDC. A tracking link is shared via SMS and email once your order is dispatched.</p>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <p>International orders may be subject to customs duties and taxes per the destination country's laws. These charges are the buyer's responsibility.</p>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <p className="mt-4">
-                  <span className="font-bold text-[#381932]">Know more about </span>
-                  <a href="/policies/shipping-policy" className="text-[#381932] underline underline-offset-4 decoration-[#381932]/40 hover:decoration-[#381932] transition-colors">shipping Policy</a>
-                </p>
-              </AccordionItem>
+        {/* ----------------- SECTOR: POLICIES SIDE-BY-SIDE ----------------- */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-16 pt-12 border-t border-[#381932]/20">
+          <div>
+            <AccordionItem title="Shipping Details" defaultOpen={true}>
+              <div className="flex items-center space-x-2 font-serif text-[16px] text-gray-900 mb-2">
+                <Clock size={18} strokeWidth={1.5} />
+                <span>Processing Time</span>
+              </div>
               
-              <AccordionItem title="Return & Exchange" defaultOpen={false}>
-                <p>We accept returns within <strong className="font-semibold">15 days</strong> from the date of delivery.</p>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <p>Items showing signs of wear, damage caused by the customer, or missing certificates will not be accepted for return.</p>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <h5 className="font-serif text-[16px] text-gray-900 mb-2 mt-4">To be eligible, items must be</h5>
-                <ul className="space-y-1.5 list-none pl-1 mb-4 text-[14px]">
-                  <li>• Unworn, unaltered, and in original condition</li>
-                  <li>• In the original packaging with all tags intact</li>
-                  <li>• Accompanied by the original invoice and, for diamond jewelry, the original certificate (GIA, IGI, SGL, or equivalent)</li>
-                  <li>• Free from any signs of wear, resizing, or tampering</li>
-                </ul>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <h5 className="font-serif text-[16px] text-gray-900 mb-2 mt-4">Non-Returnable Items</h5>
-                <p className="mb-2">The following items cannot be returned under any circumstances:</p>
-                <ul className="space-y-1.5 list-disc pl-5 mb-4 text-[14px]">
-                  <li>Engraved / personalized pieces</li>
-                  <li>Custom-made jewelry</li>
-                  <li>Nose pins & body jewelry</li>
-                  <li>Final sale items</li>
-                  <li>Gift cards</li>
-                </ul>
-                
-                <hr className="border-gray-200 my-4" />
-                
-                <p className="mt-4">
-                  <span className="font-bold text-[#381932]">Know more about </span>
-                  <a href="/policies/refund-policy" className="text-[#381932] underline underline-offset-4 decoration-[#381932]/40 hover:decoration-[#381932] transition-colors">Return Policy</a>
-                </p>
-              </AccordionItem>
-            </div>
-
+              <ul className="space-y-1.5 list-none pl-1 mb-4 text-[14px]">
+                <li>• Ready-to-ship pieces: <strong className="font-semibold">1-2</strong> business days</li>
+                <li>• Made-to-order pieces: <strong className="font-semibold">7-14</strong> business days</li>
+                <li>• Custom / engraved items: <strong className="font-semibold">10-18</strong> business days</li>
+              </ul>
+              
+              <p className="mb-4">Orders placed on weekends or public holidays are processed the next business day.</p>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <div className="flex items-center space-x-2 font-serif text-[16px] text-gray-900 mb-2 mt-4">
+                <Truck size={18} strokeWidth={1.5} />
+                <span>Delivery Timeframe</span>
+              </div>
+              
+              <ul className="space-y-1.5 list-none pl-1 mb-4 text-[14px]">
+                <li>• Metro cities: <strong className="font-semibold">2-4</strong> business days</li>
+                <li>• Rest of India: <strong className="font-semibold">4-7</strong> business days</li>
+                <li>• International: <strong className="font-semibold">10-18</strong> business days</li>
+                <li>• Express delivery: <strong className="font-semibold">1-2</strong> business days (depend on pin codes)</li>
+              </ul>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <p>We ship via trusted courier partners including Blue Dart, Delhivery, FedEx and DTDC. A tracking link is shared via SMS and email once your order is dispatched.</p>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <p>International orders may be subject to customs duties and taxes per the destination country's laws. These charges are the buyer's responsibility.</p>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <p className="mt-4">
+                <span className="font-bold text-[#381932]">Know more about </span>
+                <a href="/policies/shipping-policy" className="text-[#381932] underline underline-offset-4 decoration-[#381932]/40 hover:decoration-[#381932] transition-colors">shipping Policy</a>
+              </p>
+            </AccordionItem>
+          </div>
+          
+          <div>
+            <AccordionItem title="Return & Exchange" defaultOpen={true}>
+              <p>We accept returns within <strong className="font-semibold">15 days</strong> from the date of delivery.</p>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <p>Items showing signs of wear, damage caused by the customer, or missing certificates will not be accepted for return.</p>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <h5 className="font-serif text-[16px] text-gray-900 mb-2 mt-4">To be eligible, items must be</h5>
+              <ul className="space-y-1.5 list-none pl-1 mb-4 text-[14px]">
+                <li>• Unworn, unaltered, and in original condition</li>
+                <li>• In the original packaging with all tags intact</li>
+                <li>• Accompanied by the original invoice and, for diamond jewelry, the original certificate (GIA, IGI, SGL, or equivalent)</li>
+                <li>• Free from any signs of wear, resizing, or tampering</li>
+              </ul>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <h5 className="font-serif text-[16px] text-gray-900 mb-2 mt-4">Non-Returnable Items</h5>
+              <p className="mb-2">The following items cannot be returned under any circumstances:</p>
+              <ul className="space-y-1.5 list-disc pl-5 mb-4 text-[14px]">
+                <li>Engraved / personalized pieces</li>
+                <li>Custom-made jewelry</li>
+                <li>Nose pins & body jewelry</li>
+                <li>Final sale items</li>
+                <li>Gift cards</li>
+              </ul>
+              
+              <hr className="border-gray-200 my-4" />
+              
+              <p className="mt-4">
+                <span className="font-bold text-[#381932]">Know more about </span>
+                <a href="/policies/refund-policy" className="text-[#381932] underline underline-offset-4 decoration-[#381932]/40 hover:decoration-[#381932] transition-colors">Return Policy</a>
+              </p>
+            </AccordionItem>
           </div>
         </div>
 
