@@ -131,11 +131,16 @@ img, .photo-protected {
   margin-bottom: 0.5em;
 }
 
-/* Hide empty paragraphs often injected by Shopify's rich text editor */
-.policy-content p:empty {
-  display: none;
+/* Hide empty paragraphs and paragraphs that only contain a <br> injected by Shopify's rich text editor */
+.policy-content p:empty,
+.policy-content p:has(br:only-child) {
+  display: none !important;
 }
 
+/* Hide standalone <br> tags that cause massive gaps */
+.policy-content > br {
+  display: none !important;
+}
 .policy-content h1 {
   font-size: 2.2em;
   font-weight: 900;
