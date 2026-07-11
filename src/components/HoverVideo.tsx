@@ -10,6 +10,7 @@ interface HoverVideoProps {
   videoClassName?: string;
   containerClassName?: string;
   onClick?: () => void;
+  forceHover?: boolean;
 }
 
 export default function HoverVideo({ 
@@ -19,7 +20,8 @@ export default function HoverVideo({
   imageClassName = '', 
   videoClassName = '', 
   containerClassName = '', 
-  onClick 
+  onClick,
+  forceHover
 }: HoverVideoProps) {
   const [inView, setInView] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -42,11 +44,13 @@ export default function HoverVideo({
     return () => observer.disconnect();
   }, []);
 
+  const activeHoverState = forceHover !== undefined ? forceHover : isHovered;
+
   // Handle play/pause and reset
   useEffect(() => {
     if (!videoRef.current) return;
     
-    if (isHovered) {
+    if (activeHoverState) {
       const playPromise = videoRef.current.play();
       if (playPromise !== undefined) {
         playPromise.catch(() => {
@@ -60,7 +64,7 @@ export default function HoverVideo({
       }
       setIsPlaying(false);
     }
-  }, [isHovered]);
+  }, [activeHoverState]);
 
   return (
     <div 
@@ -75,7 +79,7 @@ export default function HoverVideo({
       <ImageWithSkeleton
         src={imageUrl}
         alt={alt}
-        className={`${imageClassName} ${isHovered ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`}
+        className={`${imageClassName} ${activeHoverState ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`}
         containerClassName={`${isPlaying ? 'opacity-0' : 'opacity-100'}`}
         draggable={false}
         loading="lazy"
@@ -90,7 +94,7 @@ export default function HoverVideo({
           playsInline 
           preload="metadata"
           onPlaying={() => setIsPlaying(true)}
-          className={`${videoClassName} ${isPlaying ? 'opacity-100' : 'opacity-0'} ${isHovered ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`} 
+          className={`${videoClassName} ${isPlaying ? 'opacity-100' : 'opacity-0'} ${activeHoverState ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`} 
         />
       )}
     </div>

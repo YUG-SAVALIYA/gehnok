@@ -52,6 +52,7 @@ export default function CollectionViewer({
 
   const [maxPrice, setMaxPrice] = useState<number>(35000);
   const [sortBy, setSortBy] = useState<string>('default');
+  const [hoveredProductId, setHoveredProductId] = useState<string | null>(null);
   
   // Cinematic Animation State
   const [mounted, setMounted] = useState(false);
@@ -212,6 +213,7 @@ export default function CollectionViewer({
           videoUrl={videoUrl}
           imageUrl={product.images[0]}
           alt={product.name}
+          forceHover={hoveredProductId === product.id}
           containerClassName="w-full h-48 sm:h-72 bg-transparent group"
           imageClassName="absolute inset-0 m-auto w-full h-full object-contain mix-blend-multiply z-10"
           videoClassName="absolute inset-0 m-auto w-[90%] h-[90%] object-contain mix-blend-multiply z-0 pointer-events-none"
@@ -501,6 +503,8 @@ export default function CollectionViewer({
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
                 className="group cursor-pointer space-y-4"
+                onMouseEnter={() => setHoveredProductId(product.id)}
+                onMouseLeave={() => setHoveredProductId(null)}
               >
                 {/* Visual Frame */}
                 {renderProductIllustration(product)}

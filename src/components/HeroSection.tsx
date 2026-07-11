@@ -47,6 +47,8 @@ export default function HeroSection({
 }: HeroSectionProps) {
   const { products: LUXURY_PRODUCTS, loading: productsLoading } = useShopifyProducts();
   const { data: homepageAssets } = useShopifyMetaobject('homepage_assets', 'main');
+  const [hoveredBestSellerId, setHoveredBestSellerId] = useState<string | null>(null);
+  const [hoveredNewLaunchId, setHoveredNewLaunchId] = useState<string | null>(null);
   const { articles: allBlogs, loading: blogsLoading } = useShopifyArticles(3);
   const { collections, loading: collectionsLoading } = useShopifyCollections(4);
   
@@ -389,6 +391,8 @@ export default function HeroSection({
                 <div 
                   key={product.id}
                   className="group bg-transparent flex flex-col justify-between overflow-hidden cursor-pointer"
+                  onMouseEnter={() => setHoveredBestSellerId(product.id)}
+                  onMouseLeave={() => setHoveredBestSellerId(null)}
                 >
                   {/* Product Image Panel */}
                   {(() => {
@@ -406,6 +410,7 @@ export default function HeroSection({
                         videoUrl={videoUrl}
                         imageUrl={product.images[0]}
                         alt={product.name}
+                        forceHover={hoveredBestSellerId === product.id}
                         containerClassName="aspect-square bg-[#FAF8F4] flex items-center justify-center"
                         imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
                         videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
@@ -527,6 +532,8 @@ export default function HeroSection({
                   <div 
                     key={product.id}
                     className="group bg-transparent flex flex-col justify-between overflow-hidden cursor-pointer"
+                    onMouseEnter={() => setHoveredNewLaunchId(product.id)}
+                    onMouseLeave={() => setHoveredNewLaunchId(null)}
                   >
                     {/* Product Image Panel */}
                     {(() => {
@@ -544,6 +551,7 @@ export default function HeroSection({
                           videoUrl={videoUrl}
                           imageUrl={product.images[0]}
                           alt={product.name}
+                          forceHover={hoveredNewLaunchId === product.id}
                           containerClassName="aspect-square bg-[#FAF8F4] flex items-center justify-center"
                           imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
                           videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
