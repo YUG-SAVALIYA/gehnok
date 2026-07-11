@@ -608,6 +608,8 @@ export default function ProductViewer({
     let currentModel: string | null = null;
     let imageIndex = 0;
 
+    const allModels: string[] = [];
+
     for (const m of product.media) {
       const typeStr = (m.mediaContentType || (m as any).type || '').toUpperCase();
       const formatStr = (m.format || '').toLowerCase();
@@ -620,6 +622,7 @@ export default function ProductViewer({
       if (isModel) {
         const preferredSource = m.sources?.find(s => s.format?.toLowerCase() === 'glb' || s.url?.toLowerCase().includes('.glb')) || m.sources?.[0];
         currentModel = preferredSource?.url || m.url || null;
+        if (currentModel) allModels.push(currentModel);
       } else if (isVideo) {
         currentVideo = m.url || m.embeddedUrl || null;
       } else {
@@ -641,33 +644,24 @@ export default function ProductViewer({
       groups.push({ images: currentImages, video: currentVideo, model3d: currentModel });
     }
 
-    // Determine the color category of the selected metal
-    const metalName = selectedMetal.name.toLowerCase();
-    let category = 'yellow'; // Default to Yellow Gold
-    if (metalName.includes('rose')) {
-      category = 'rose';
-    } else if (metalName.includes('white') || metalName.includes('silver') || metalName.includes('platinum')) {
-      category = 'white';
-    }
-
-    // Map category to the group index. 
-    // Standard upload order assumed: [0] Yellow Gold, [1] Rose Gold, [2] White Gold / Silver
+    // Map the selected metal to the exact index of the available metals from Shopify
     let safeIndex = 0;
-    if (groups.length >= 3) {
-      if (category === 'yellow') safeIndex = 0;
-      else if (category === 'rose') safeIndex = 1;
-      else if (category === 'white') safeIndex = 2;
-    } else if (groups.length === 2) {
-      if (category === 'yellow') safeIndex = 0;
-      else safeIndex = 1; // If only 2 groups, assume [0] Yellow, [1] White/Rose
+    if (availableMetals && availableMetals.length > 0 && selectedMetal) {
+      const metalIndex = availableMetals.findIndex(m => m.id === selectedMetal.id);
+      if (metalIndex !== -1) {
+        safeIndex = metalIndex;
+      }
     }
 
     const selectedGroup = groups[safeIndex] || { images: allImages, video: null, model3d: null };
+    // If the group doesn't have a 3d model directly inside it, we strictly pull it from the allModels array using the safeIndex!
+    const strictlyMappedModel = allModels.length > 0 ? (allModels[safeIndex] || allModels[allModels.length - 1]) : null;
+    
     
     return {
       productPhotos: selectedGroup.images.length > 0 ? selectedGroup.images : allImages,
       currentMetalVideo: selectedGroup.video,
-      currentModel3d: selectedGroup.model3d
+      currentModel3d: strictlyMappedModel || selectedGroup.model3d
     };
   }, [selectedMetal, product.media, product.images, product.collection, availableMetals]);
 

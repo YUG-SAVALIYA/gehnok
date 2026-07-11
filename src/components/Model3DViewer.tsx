@@ -130,17 +130,37 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
             child.receiveShadow = false;
             if (child.material) {
               const materials = Array.isArray(child.material) ? child.material : [child.material];
-              materials.forEach(material => {
+              materials.forEach((material, index) => {
                 material.side = THREE.DoubleSide;
                 if (material instanceof THREE.MeshStandardMaterial) {
-                  // If it's a transparent material (like a diamond/gem)
-                  const physMat = material as any;
-                  if (physMat.transmission !== undefined && physMat.transmission > 0) {
+                  const name = (material.name || '').toLowerCase();
+                  const isDiamond = 
+                    name.includes('diamond') || 
+                    name.includes('gem') || 
+                    name.includes('stone') || 
+                    name.includes('crystal') || 
+                    name.includes('glass') || 
+                    (material as any).transmission > 0 || 
+                    (material.transparent && material.opacity < 1);
+
+                  if (isDiamond) {
+                    // Upgrade to MeshPhysicalMaterial if it isn't already
+                    let physMat = material as any;
+                    if (!(material instanceof THREE.MeshPhysicalMaterial)) {
+                      physMat = new THREE.MeshPhysicalMaterial().copy(material);
+                      // Replace the material on the mesh
+                      if (Array.isArray(child.material)) {
+                        child.material[index] = physMat;
+                      } else {
+                        child.material = physMat;
+                      }
+                    }
+
                     physMat.transmission = 1.0; 
                     physMat.opacity = 1.0;
-                    physMat.transparent = false;
+                    physMat.transparent = false; // False is best for physical refraction
                     physMat.ior = 2.4;
-                    physMat.thickness = Math.max(physMat.thickness || 0, 2.0);
+                    physMat.thickness = Math.max(physMat.thickness || 0, 1.5);
                     physMat.roughness = 0;
                     physMat.metalness = 0;
                     physMat.clearcoat = 1.0;
@@ -149,6 +169,8 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
                     physMat.envMapIntensity = 4.0;
                     physMat.color = new THREE.Color(0xffffff);
                     if (diamondEnvMap) physMat.envMap = diamondEnvMap;
+                    
+                    physMat.needsUpdate = true;
                   }
                 }
                 material.needsUpdate = true;
