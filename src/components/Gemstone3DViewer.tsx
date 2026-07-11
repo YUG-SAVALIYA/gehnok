@@ -19,42 +19,42 @@ export default function Gemstone3DViewer({ color, cut }: Gemstone3DViewerProps) 
         return {
           primary: 'rgba(92, 46, 84, 0.45)', // Amethyst
           wireframe: '#E8D5B0', // Gold wire
-          glow: 'rgba(92, 46, 84, 0.2)',
-          facetSpecular: 'rgba(232, 213, 176, 0.7)',
+          glow: 'rgba(92, 46, 84, 0.1)',
+          facetSpecular: 'rgba(232, 213, 176, 0.5)',
           facets: ['rgba(92, 46, 84, 0.5)', 'rgba(56, 25, 50, 0.65)', 'rgba(26, 12, 24, 0.8)']
         };
       case 'blue':
         return {
           primary: 'rgba(48, 148, 178, 0.45)', // Lagoon blue
           wireframe: '#FAF7F2',
-          glow: 'rgba(48, 148, 178, 0.25)',
-          facetSpecular: 'rgba(255, 255, 255, 0.8)',
+          glow: 'rgba(48, 148, 178, 0.12)',
+          facetSpecular: 'rgba(255, 255, 255, 0.5)',
           facets: ['rgba(48, 148, 178, 0.5)', 'rgba(16, 80, 110, 0.65)', 'rgba(5, 40, 60, 0.8)']
         };
       case 'green':
         return {
           primary: 'rgba(30, 120, 80, 0.45)', // Emerald green
           wireframe: '#C9A96E',
-          glow: 'rgba(30, 120, 80, 0.2)',
-          facetSpecular: 'rgba(232, 213, 176, 0.65)',
+          glow: 'rgba(30, 120, 80, 0.1)',
+          facetSpecular: 'rgba(232, 213, 176, 0.45)',
           facets: ['rgba(30, 120, 80, 0.5)', 'rgba(15, 75, 50, 0.65)', 'rgba(5, 35, 20, 0.8)']
         };
       case 'gold':
         return {
           primary: 'rgba(201, 169, 110, 0.4)', // Champagne Gold
           wireframe: '#E8D5B0',
-          glow: 'rgba(201, 169, 110, 0.15)',
-          facetSpecular: 'rgba(255, 255, 255, 0.75)',
+          glow: 'rgba(201, 169, 110, 0.08)',
+          facetSpecular: 'rgba(255, 255, 255, 0.5)',
           facets: ['rgba(201, 169, 110, 0.4)', 'rgba(168, 137, 85, 0.55)', 'rgba(120, 95, 55, 0.7)']
         };
       case 'diamond':
       default:
         return {
-          primary: 'rgba(220, 230, 245, 0.25)', // Pure diamond
-          wireframe: '#C9A96E',
-          glow: 'rgba(200, 220, 255, 0.15)',
-          facetSpecular: 'rgba(255, 255, 255, 0.9)',
-          facets: ['rgba(235, 245, 255, 0.3)', 'rgba(190, 210, 235, 0.4)', 'rgba(150, 175, 210, 0.55)']
+          primary: 'rgba(230, 240, 255, 0.45)', // Pure diamond
+          wireframe: '#8A95A5', // Silver wire for contrast
+          glow: 'rgba(200, 220, 255, 0.1)',
+          facetSpecular: 'rgba(255, 255, 255, 0.85)',
+          facets: ['rgba(245, 250, 255, 0.65)', 'rgba(210, 225, 245, 0.75)', 'rgba(170, 190, 220, 0.85)']
         };
     }
   };
@@ -184,14 +184,14 @@ export default function Gemstone3DViewer({ color, cut }: Gemstone3DViewerProps) 
       ctx.fillStyle = colorBase;
       ctx.fill();
 
-      // Gleaming specularity lines
-      if (Math.abs(cross) > (width * height * 0.08)) {
+      // Gleaming specularity lines (Subdued)
+      if (Math.abs(cross) > (width * height * 0.12)) {
         ctx.strokeStyle = palette.facetSpecular;
-        ctx.lineWidth = 1.2;
+        ctx.lineWidth = 0.8;
         ctx.stroke();
       } else {
         ctx.strokeStyle = palette.wireframe;
-        ctx.lineWidth = 0.5;
+        ctx.lineWidth = 0.3;
         ctx.stroke();
       }
     };

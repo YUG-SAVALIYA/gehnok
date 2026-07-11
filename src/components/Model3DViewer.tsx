@@ -22,6 +22,12 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     setLoadProgress(0);
     setLoadError(false);
 
+    // Prevent page scrolling when zooming the 3D model
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+    };
+    mount.addEventListener('wheel', handleWheel, { passive: false });
+
     const scene = new THREE.Scene();
     scene.background = null;
 
@@ -157,6 +163,7 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
       disposed = true;
       window.cancelAnimationFrame(animationFrame);
       resizeObserver.disconnect();
+      mount.removeEventListener('wheel', handleWheel);
       controls.dispose();
       scene.traverse(object => {
         if (object instanceof THREE.Mesh) {
