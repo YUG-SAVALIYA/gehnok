@@ -591,7 +591,7 @@ export default function ProductViewer({
   }).format(variantPriceAmount);
 
   // Compute filtered photo list and specific video for the selected metal
-  const { productPhotos, currentMetalVideo } = useMemo(() => {
+  const { productPhotos, currentMetalVideo, currentModel3d } = useMemo(() => {
     const allImages =
       product.images && product.images.length > 0
         ? product.images
