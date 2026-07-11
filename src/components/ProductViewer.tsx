@@ -1929,7 +1929,7 @@ export default function ProductViewer({
                   No verified appraisals exist yet. Use the form beside this register to leave a signature review.
                 </div>
               ) : (
-                <div className="divide-y divide-[#381932]/30 space-y-6">
+                <div className="divide-y divide-[#381932]/30 space-y-6 max-h-[400px] overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pr-2">
                   {reviews.map((review) => (
                     <div key={review.id} className="pt-6 first:pt-0 space-y-2 animate-fade-in">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">

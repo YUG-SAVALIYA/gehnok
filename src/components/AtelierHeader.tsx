@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ShoppingBag, Heart, Menu, X, ChevronDown, Search } from 'lucide-react';
+import { ShoppingBag, Heart, Menu, X, Search, User } from 'lucide-react';
 import { useShopifyCollections } from '../hooks/useShopifyCollections';
+import { useShopifyCustomer } from '../hooks/useShopifyCustomer';
 import logoUrl from '../assets/png_logo.avif';
 
 interface AtelierHeaderProps {
@@ -31,6 +32,7 @@ export default function AtelierHeader({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const { isLoggedIn } = useShopifyCustomer();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -172,6 +174,17 @@ export default function AtelierHeader({
                 </button>
               )}
             </div>
+
+            <button
+              onClick={() => onNavigate(isLoggedIn ? 'account' : 'auth')}
+              className="p-2 text-[#8A7F7A] hover:text-[#381932] transition-colors relative cursor-pointer"
+              title="Private Registry"
+            >
+              <User size={18} />
+              {isLoggedIn && (
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#C9A96E] rounded-full border border-[#F9F7F2]" />
+              )}
+            </button>
 
             <button
               onClick={onOpenWishlist}
