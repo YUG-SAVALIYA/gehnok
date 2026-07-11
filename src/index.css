@@ -110,8 +110,15 @@ img, .photo-protected {
 .policy-content {
   font-family: "Cirka", var(--font-serif);
   color: rgba(56, 25, 50, 0.85); /* #381932 with opacity */
-  line-height: 1.8;
-  font-size: 1.1rem;
+  line-height: 1.65;
+  font-size: 1.05rem;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.policy-content * {
+  max-width: 100% !important; /* Force Shopify tables/images/divs to not overflow */
 }
 
 .policy-content h1, 
@@ -120,18 +127,18 @@ img, .photo-protected {
 .policy-content h4 {
   font-family: "Cirka", var(--font-serif);
   color: var(--color-ink);
-  margin-top: 2.5em;
+  margin-top: 2em;
   margin-bottom: 0.75em;
 }
 
 .policy-content h1 {
-  font-size: 2.5em;
+  font-size: 2.2em;
   font-weight: 900;
   letter-spacing: -0.02em;
 }
 
 .policy-content h2 {
-  font-size: 1.8em;
+  font-size: 1.6em;
   font-weight: 900;
   letter-spacing: -0.01em;
   border-bottom: 1px solid rgba(56, 25, 50, 0.15);
@@ -139,7 +146,7 @@ img, .photo-protected {
 }
 
 .policy-content h3 {
-  font-size: 1.35em;
+  font-size: 1.25em;
   font-weight: 900;
 }
 
@@ -151,9 +158,14 @@ img, .photo-protected {
 }
 
 .policy-content p {
-  margin-top: 1.25em;
-  margin-bottom: 1.25em;
+  margin-top: 0.8em;
+  margin-bottom: 0.8em;
   font-weight: 500;
+}
+
+.policy-content li p {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
 }
 
 .policy-content strong, 
@@ -164,9 +176,9 @@ img, .photo-protected {
 
 .policy-content ul, 
 .policy-content ol {
-  margin-top: 1em;
-  margin-bottom: 1.5em;
-  padding-left: 2em;
+  margin-top: 0.8em;
+  margin-bottom: 1em;
+  padding-left: 1.5em;
   font-weight: 500;
 }
 
@@ -180,7 +192,7 @@ img, .photo-protected {
 
 .policy-content li {
   margin-bottom: 0.5em;
-  padding-left: 0.5em;
+  padding-left: 0.25em;
 }
 
 .policy-content li::marker {
