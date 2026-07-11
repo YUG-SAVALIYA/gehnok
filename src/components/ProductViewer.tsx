@@ -489,18 +489,6 @@ export default function ProductViewer({
     setActivePhotoIndex(index); // Video thumbnails act just like images
   }, []);
 
-  // Keyboard navigation for fullscreen gallery
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isFullscreenGalleryOpen) return;
-      if (e.key === 'Escape') setIsFullscreenGalleryOpen(false);
-      if (e.key === 'ArrowRight') showNextGalleryItem();
-      if (e.key === 'ArrowLeft') showPreviousGalleryItem();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreenGalleryOpen, showNextGalleryItem, showPreviousGalleryItem]);
-
   // Lock body scroll when fullscreen is open
   useEffect(() => {
     if (isFullscreenGalleryOpen) {
@@ -818,6 +806,18 @@ export default function ProductViewer({
     if (galleryItems.length <= 1) return;
     setActivePhotoIndex(prev => (prev + 1) % galleryItems.length);
   }, [galleryItems.length]);
+
+  // Keyboard navigation for fullscreen gallery
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isFullscreenGalleryOpen) return;
+      if (e.key === 'Escape') setIsFullscreenGalleryOpen(false);
+      if (e.key === 'ArrowRight') showNextGalleryItem();
+      if (e.key === 'ArrowLeft') showPreviousGalleryItem();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreenGalleryOpen, showNextGalleryItem, showPreviousGalleryItem]);
 
   // Removed the artificial CSS tinting because it tinted the entire photograph (including skin and backgrounds)
   const getMetalFilterStyle = (metalId: string): React.CSSProperties => {
