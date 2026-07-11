@@ -336,29 +336,33 @@ export default function App() {
 
   // cartCount comes from useShopifyCart hook
 
+  const isAuthView = currentView === 'auth';
+
   return (
     <div className="flex flex-col min-h-screen bg-[#F9F7F2] text-[#381932] relative selection:bg-[#381932]/10">
 
       {/* Exquisite Brand Header */}
-      <AtelierHeader
-        onNavigate={(view, collectionHandle) => {
-          setSkipAnimation(false);
-          if (view === 'collection' && collectionHandle) {
-            setActiveCollectionHandle(collectionHandle);
-          }
-          setCurrentView(view);
-          setSelectedProduct(null); // Clear active item detail on navigation
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-        currentView={currentView}
-        activeCollectionHandle={activeCollectionHandle}
-        cartCount={cartCount}
-        onOpenCart={() => setIsCartOpen(true)}
-        wishlistCount={wishlist.length}
-        onOpenWishlist={() => setIsWishlistOpen(true)}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-      />
+      {!isAuthView && (
+        <AtelierHeader
+          onNavigate={(view, collectionHandle) => {
+            setSkipAnimation(false);
+            if (view === 'collection' && collectionHandle) {
+              setActiveCollectionHandle(collectionHandle);
+            }
+            setCurrentView(view);
+            setSelectedProduct(null); // Clear active item detail on navigation
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          currentView={currentView}
+          activeCollectionHandle={activeCollectionHandle}
+          cartCount={cartCount}
+          onOpenCart={() => setIsCartOpen(true)}
+          wishlistCount={wishlist.length}
+          onOpenWishlist={() => setIsWishlistOpen(true)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+        />
+      )}
 
       {/* Main Content Router */}
       <main className="flex-1">
@@ -500,132 +504,136 @@ export default function App() {
       </main>
 
       {/* Elegant Brand Footer */}
-      <AtelierFooter
-        onOpenPolicy={handleOpenPolicy}
-        onNavigate={(view, collectionHandle) => {
-          setSkipAnimation(false);
-          if (view === 'collection' && collectionHandle) {
-            setActiveCollectionHandle(collectionHandle);
-          }
-          setCurrentView(view);
-          setSelectedProduct(null);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
-      />
+      {!isAuthView && (
+        <>
+          <AtelierFooter
+            onOpenPolicy={handleOpenPolicy}
+            onNavigate={(view, collectionHandle) => {
+              setSkipAnimation(false);
+              if (view === 'collection' && collectionHandle) {
+                setActiveCollectionHandle(collectionHandle);
+              }
+              setCurrentView(view);
+              setSelectedProduct(null);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
 
-      {/* Slide-over Drawers */}
+          {/* Slide-over Drawers */}
 
-      {/* 1. Collection Cart Drawer */}
-      <Cart
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        cartItems={cartItems}
-        onRemoveItem={handleRemoveFromCollection}
-        onUpdateQuantity={handleUpdateQuantity}
-        checkoutUrl={checkoutUrl}
-      />
+          {/* 1. Collection Cart Drawer */}
+          <Cart
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            cartItems={cartItems}
+            onRemoveItem={handleRemoveFromCollection}
+            onUpdateQuantity={handleUpdateQuantity}
+            checkoutUrl={checkoutUrl}
+          />
 
-      {/* 2. Secure AI Concierge Chat Room Drawer */}
-      <Concierge
-        isOpen={isConciergeOpen}
-        onClose={() => setIsConciergeOpen(false)}
-        onExamineProduct={handleExamineProduct}
-      />
+          {/* 2. Secure AI Concierge Chat Room Drawer */}
+          <Concierge
+            isOpen={isConciergeOpen}
+            onClose={() => setIsConciergeOpen(false)}
+            onExamineProduct={handleExamineProduct}
+          />
 
-      {/* 3. Wishlist Slide-over Panel (Bespoke layout) */}
-      {isWishlistOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity duration-500">
-          <div className="absolute inset-0 cursor-pointer" onClick={() => setIsWishlistOpen(false)} />
-          <div className="relative w-full max-w-md h-full bg-[#F9F7F2] text-[#381932] flex flex-col border-l border-[#381932] shadow-2xl p-6 font-sans">
+          {/* 3. Wishlist Slide-over Panel (Bespoke layout) */}
+          {isWishlistOpen && (
+            <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity duration-500">
+              <div className="absolute inset-0 cursor-pointer" onClick={() => setIsWishlistOpen(false)} />
+              <div className="relative w-full max-w-md h-full bg-[#F9F7F2] text-[#381932] flex flex-col border-l border-[#381932] shadow-2xl p-6 font-sans">
 
-            {/* Header */}
-            <div className="flex items-center justify-between border-b border-[#381932] pb-4 mb-6">
-              <div className="flex items-center space-x-2">
-                <Heart className="text-[#381932] fill-[#381932]" size={16} />
-                <h3 className="text-sm font-sans uppercase tracking-widest text-[#381932] font-bold">
-                  Saved Creations
-                </h3>
-              </div>
-              <button
-                onClick={() => setIsWishlistOpen(false)}
-                className="p-1.5 text-[#8A7F7A] hover:text-[#381932] transition-colors cursor-pointer"
-                title="Close Wishlist"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            {/* List */}
-            <div className="flex-1 overflow-y-auto space-y-4">
-              {wishlist.length === 0 ? (
-                <div className="text-center py-20 text-xs text-[#381932]/60 italic leading-relaxed font-serif">
-                  Your wishlist is empty. Examine our curated collections to save pieces for private viewing.
+                {/* Header */}
+                <div className="flex items-center justify-between border-b border-[#381932] pb-4 mb-6">
+                  <div className="flex items-center space-x-2">
+                    <Heart className="text-[#381932] fill-[#381932]" size={16} />
+                    <h3 className="text-sm font-sans uppercase tracking-widest text-[#381932] font-bold">
+                      Saved Creations
+                    </h3>
+                  </div>
+                  <button
+                    onClick={() => setIsWishlistOpen(false)}
+                    className="p-1.5 text-[#8A7F7A] hover:text-[#381932] transition-colors cursor-pointer"
+                    title="Close Wishlist"
+                  >
+                    <X size={16} />
+                  </button>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {wishlist.map((product) => (
-                    <div
-                      key={product.id}
-                      className="bg-white border border-[#381932] p-4 rounded-none flex items-center justify-between gap-4 group"
-                    >
-                      <div className="space-y-1">
-                        <span className="text-[8px] font-sans text-[#381932]/60 uppercase tracking-widest block font-bold">
-                          {product.collection}
-                        </span>
-                        <h4 className="text-xs font-serif font-bold text-[#381932]">
-                          {product.name}
-                        </h4>
-                        <p className="text-[10px] font-mono text-[#381932] font-bold">
-                          {new Intl.NumberFormat('en-IN', {
-                            style: 'currency',
-                            currency: 'INR',
-                            maximumFractionDigits: 0
-                          }).format(product.price)}
-                        </p>
-                      </div>
 
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => {
-                            handleExamineProduct(product);
-                            setIsWishlistOpen(false);
-                          }}
-                          className="p-2 bg-[#381932] text-white hover:bg-transparent hover:text-[#381932] border border-[#381932] rounded-none transition-all cursor-pointer"
-                          title="Examine piece details"
-                        >
-                          <Eye size={12} />
-                        </button>
-                        <button
-                          onClick={() => handleToggleWishlist(product)}
-                          className="p-2 border border-[#381932] text-[#381932] hover:bg-[#381932] hover:text-white rounded-none transition-all cursor-pointer"
-                          title="Remove from saved list"
-                        >
-                          <X size={12} />
-                        </button>
-                      </div>
+                {/* List */}
+                <div className="flex-1 overflow-y-auto space-y-4">
+                  {wishlist.length === 0 ? (
+                    <div className="text-center py-20 text-xs text-[#381932]/60 italic leading-relaxed font-serif">
+                      Your wishlist is empty. Examine our curated collections to save pieces for private viewing.
                     </div>
-                  ))}
+                  ) : (
+                    <div className="space-y-4">
+                      {wishlist.map((product) => (
+                        <div
+                          key={product.id}
+                          className="bg-white border border-[#381932] p-4 rounded-none flex items-center justify-between gap-4 group"
+                        >
+                          <div className="space-y-1">
+                            <span className="text-[8px] font-sans text-[#381932]/60 uppercase tracking-widest block font-bold">
+                              {product.collection}
+                            </span>
+                            <h4 className="text-xs font-serif font-bold text-[#381932]">
+                              {product.name}
+                            </h4>
+                            <p className="text-[10px] font-mono text-[#381932] font-bold">
+                              {new Intl.NumberFormat('en-IN', {
+                                style: 'currency',
+                                currency: 'INR',
+                                maximumFractionDigits: 0
+                              }).format(product.price)}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => {
+                                handleExamineProduct(product);
+                                setIsWishlistOpen(false);
+                              }}
+                              className="p-2 bg-[#381932] text-white hover:bg-transparent hover:text-[#381932] border border-[#381932] rounded-none transition-all cursor-pointer"
+                              title="Examine piece details"
+                            >
+                              <Eye size={12} />
+                            </button>
+                            <button
+                              onClick={() => handleToggleWishlist(product)}
+                              className="p-2 border border-[#381932] text-[#381932] hover:bg-[#381932] hover:text-white rounded-none transition-all cursor-pointer"
+                              title="Remove from saved list"
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
+
+              </div>
             </div>
+          )}
 
-          </div>
-        </div>
+          {/* Floating Action Button for the Private Concierge */}
+          <button
+            onClick={() => setIsConciergeOpen(true)}
+            className="fixed bottom-6 right-6 z-35 bg-[#381932] text-white hover:bg-[#EAE8E3] hover:text-[#381932] border border-[#381932] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer"
+            title="Consult private concierge"
+          >
+            <Compass size={22} className="group-hover:rotate-45 transition-transform duration-700" />
+
+            {/* Help tip pop */}
+            <span className="absolute right-16 scale-0 group-hover:scale-100 transition-transform bg-[#381932] text-white border border-[#381932] text-[9px] font-sans uppercase tracking-widest px-3 py-1.5 rounded-none whitespace-nowrap shadow-lg font-bold">
+              Consult Concierge
+            </span>
+          </button>
+        </>
       )}
-
-      {/* Floating Action Button for the Private Concierge */}
-      <button
-        onClick={() => setIsConciergeOpen(true)}
-        className="fixed bottom-6 right-6 z-35 bg-[#381932] text-white hover:bg-[#EAE8E3] hover:text-[#381932] border border-[#381932] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer"
-        title="Consult private concierge"
-      >
-        <Compass size={22} className="group-hover:rotate-45 transition-transform duration-700" />
-
-        {/* Help tip pop */}
-        <span className="absolute right-16 scale-0 group-hover:scale-100 transition-transform bg-[#381932] text-white border border-[#381932] text-[9px] font-sans uppercase tracking-widest px-3 py-1.5 rounded-none whitespace-nowrap shadow-lg font-bold">
-          Consult Concierge
-        </span>
-      </button>
 
     </div>
   );

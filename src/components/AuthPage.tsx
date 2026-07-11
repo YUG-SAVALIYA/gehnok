@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useShopifyCustomer } from '../hooks/useShopifyCustomer';
-import { X, ArrowRight, Lock, User, Mail, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Lock, User, Mail, ShieldCheck } from 'lucide-react';
+import bgImage from '../assets/First_Web_baner_jpg.webp';
 
 interface AuthPageProps {
   onBack: () => void;
@@ -60,28 +61,28 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
         <div className="hidden md:flex flex-col justify-between bg-[#381932] text-white p-12 relative overflow-hidden">
           <div className="absolute inset-0">
             <img 
-              src="https://images.unsplash.com/photo-1599643478524-fb66f7ca265b?auto=format&fit=crop&q=80" 
-              alt="Luxury Texture" 
-              className="w-full h-full object-cover opacity-20 mix-blend-overlay"
+              src={bgImage}
+              alt="Gehnok Collection" 
+              className="w-full h-full object-cover opacity-40 mix-blend-overlay"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#381932] via-[#381932]/80 to-transparent" />
           </div>
           
           <div className="relative z-10">
-            <h2 className="font-serif text-3xl font-bold mb-4">The GEHNOK Vault</h2>
+            <h2 className="font-serif text-3xl font-bold mb-4">Welcome to GEHNOK</h2>
             <p className="text-sm font-sans tracking-wide text-white/70 leading-relaxed max-w-sm">
-              Enter our private chambers. Members enjoy exclusive access to limited acquisitions, bespoke concierge services, and our heirloom tracking registry.
+              Sign in or create an account to view your orders, save items to your wishlist, and enjoy a faster checkout experience.
             </p>
           </div>
           
           <div className="relative z-10 space-y-4">
             <div className="flex items-center space-x-3 text-white/80">
               <ShieldCheck size={18} className="text-[#C9A96E]" />
-              <span className="text-xs uppercase tracking-widest font-bold">Encrypted & Secure</span>
+              <span className="text-xs uppercase tracking-widest font-bold">Secure Checkout</span>
             </div>
             <div className="flex items-center space-x-3 text-white/80">
               <Lock size={18} className="text-[#C9A96E]" />
-              <span className="text-xs uppercase tracking-widest font-bold">Private Concierge</span>
+              <span className="text-xs uppercase tracking-widest font-bold">Fast & Easy</span>
             </div>
           </div>
         </div>
@@ -91,10 +92,11 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
           {/* Back Button */}
           <button 
             onClick={onBack}
-            className="absolute top-6 right-6 p-2 text-[#381932]/50 hover:text-[#381932] transition-colors cursor-pointer"
-            aria-label="Return to boutique"
+            className="absolute top-6 left-6 flex items-center space-x-2 text-[10px] font-sans uppercase tracking-widest font-bold text-[#381932]/50 hover:text-[#381932] transition-colors cursor-pointer"
+            aria-label="Return to store"
           >
-            <X size={20} />
+            <ArrowLeft size={16} />
+            <span>Back to Store</span>
           </button>
 
           <div className="max-w-sm mx-auto w-full pt-10 pb-6">
@@ -108,10 +110,10 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
               >
                 <div className="text-center mb-10">
                   <h1 className="text-2xl font-serif font-bold text-[#381932] mb-2">
-                    {mode === 'login' ? 'Private Sign In' : 'Establish Registry'}
+                    {mode === 'login' ? 'Sign In' : 'Create Account'}
                   </h1>
                   <p className="text-xs font-sans text-[#381932]/60 uppercase tracking-widest">
-                    {mode === 'login' ? 'Access your curated collection' : 'Join the inner circle'}
+                    {mode === 'login' ? 'Access your account' : 'Join Gehnok'}
                   </p>
                 </div>
 
@@ -160,17 +162,17 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full bg-white border border-[#381932]/20 py-2.5 pl-9 pr-4 text-sm text-[#381932] focus:border-[#381932] focus:ring-1 focus:ring-[#381932] outline-none transition-all rounded-none"
-                        placeholder="vip@gehnok.com"
+                        placeholder="you@example.com"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex justify-between items-center">
-                      <label className="text-[10px] uppercase tracking-widest font-bold text-[#381932]/70">Security Key</label>
+                      <label className="text-[10px] uppercase tracking-widest font-bold text-[#381932]/70">Password</label>
                       {mode === 'login' && (
                         <button type="button" className="text-[9px] uppercase tracking-widest font-bold text-[#C9A96E] hover:text-[#381932] transition-colors cursor-pointer">
-                          Forgot Key?
+                          Forgot Password?
                         </button>
                       )}
                     </div>
@@ -192,20 +194,20 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
                     disabled={loading}
                     className="w-full mt-6 py-3.5 bg-[#381932] text-white border border-[#381932] text-[11px] uppercase tracking-widest font-bold hover:bg-transparent hover:text-[#381932] transition-colors flex items-center justify-center space-x-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed group"
                   >
-                    <span>{loading ? 'Authenticating...' : (mode === 'login' ? 'Enter Vault' : 'Establish Record')}</span>
+                    <span>{loading ? 'Authenticating...' : (mode === 'login' ? 'Sign In' : 'Create Account')}</span>
                     {!loading && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
                   </button>
                 </form>
 
                 <div className="mt-8 text-center border-t border-[#381932]/10 pt-6">
                   <p className="text-xs text-[#381932]/60 font-sans">
-                    {mode === 'login' ? "Not yet registered?" : "Already possess a registry key?"}
+                    {mode === 'login' ? "Don't have an account?" : "Already have an account?"}
                   </p>
                   <button 
                     onClick={() => setMode(mode === 'login' ? 'signup' : 'login')}
                     className="mt-2 text-[10px] uppercase tracking-widest font-bold text-[#381932] hover:text-[#C9A96E] transition-colors cursor-pointer border-b border-[#381932]/30 hover:border-[#C9A96E] pb-0.5"
                   >
-                    {mode === 'login' ? "Request Membership" : "Sign In to Vault"}
+                    {mode === 'login' ? "Create Account" : "Sign In"}
                   </button>
                 </div>
 
