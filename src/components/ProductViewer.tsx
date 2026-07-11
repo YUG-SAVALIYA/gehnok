@@ -601,28 +601,36 @@ export default function ProductViewer({
       return { productPhotos: allImages, currentMetalVideo: null };
     }
 
-    // Group images by Video delimiters as requested by user
-    // A video marks the end of a metal's image gallery
-    const groups: { images: string[], video: string | null }[] = [];
+    // Group images by delimiters (Video and 3D Model mark the end of a metal's gallery)
+    const groups: { images: string[], video: string | null, model3d: string | null }[] = [];
     let currentImages: string[] = [];
+    let currentVideo: string | null = null;
+    let currentModel: string | null = null;
     let imageIndex = 0;
 
     for (const m of product.media) {
-      if (m.mediaContentType === 'IMAGE' || !m.mediaContentType || m.mediaContentType === 'MEDIA_IMAGE') {
+      const type = m.mediaContentType || '';
+      if (type === 'IMAGE' || type === 'MEDIA_IMAGE' || !type) {
+        if (currentVideo !== null || currentModel !== null) {
+          groups.push({ images: [...currentImages], video: currentVideo, model3d: currentModel });
+          currentImages = [];
+          currentVideo = null;
+          currentModel = null;
+        }
         if (imageIndex < allImages.length) {
           currentImages.push(allImages[imageIndex]);
           imageIndex++;
         }
-      } else if (m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO') {
-        const vidUrl = m.url || m.embeddedUrl || null;
-        groups.push({ images: [...currentImages], video: vidUrl });
-        currentImages = []; // reset for next metal
+      } else if (type === 'VIDEO' || type === 'EXTERNAL_VIDEO') {
+        currentVideo = m.url || m.embeddedUrl || null;
+      } else if (type === 'MODEL_3D' || m.format?.toLowerCase() === 'glb' || m.url?.toLowerCase().includes('.glb')) {
+        const preferredSource = m.sources?.find(s => s.format?.toLowerCase() === 'glb' || s.url?.toLowerCase().includes('.glb')) || m.sources?.[0];
+        currentModel = preferredSource?.url || m.url || null;
       }
     }
     
-    // Add any remaining images that didn't have a trailing video
-    if (currentImages.length > 0) {
-      groups.push({ images: currentImages, video: null });
+    if (currentImages.length > 0 || currentVideo !== null || currentModel !== null) {
+      groups.push({ images: currentImages, video: currentVideo, model3d: currentModel });
     }
 
     // Determine the color category of the selected metal
@@ -646,11 +654,12 @@ export default function ProductViewer({
       else safeIndex = 1; // If only 2 groups, assume [0] Yellow, [1] White/Rose
     }
 
-    const selectedGroup = groups[safeIndex] || { images: allImages, video: null };
+    const selectedGroup = groups[safeIndex] || { images: allImages, video: null, model3d: null };
     
     return {
       productPhotos: selectedGroup.images.length > 0 ? selectedGroup.images : allImages,
-      currentMetalVideo: selectedGroup.video
+      currentMetalVideo: selectedGroup.video,
+      currentModel3d: selectedGroup.model3d
     };
   }, [selectedMetal, product.media, product.images, product.collection, availableMetals]);
 
@@ -674,6 +683,10 @@ export default function ProductViewer({
   }, [activeGalleryVideo, productPhotos]);
 
   const model3DUrl = useMemo(() => {
+    // Return the color-specific 3D model if it exists
+    if (currentModel3d) return currentModel3d;
+
+    // Fallback to the old logic of finding the last 3D model in the array if no specific grouping was found
     const media = product.media || [];
     const modelMedia = [...media].reverse().find(item => {
       const mediaType = item.mediaContentType?.toUpperCase() || '';
@@ -699,7 +712,7 @@ export default function ProductViewer({
       modelMedia.sources?.[0];
 
     return preferredSource?.url || modelMedia.url || null;
-  }, [product.media]);
+  }, [currentModel3d, product.media]);
 
   // Clamp activePhotoIndex to valid range after productPhotos/video changes
   const safePhotoIndex = galleryItems.length > 0 ? Math.min(activePhotoIndex, galleryItems.length - 1) : 0;
