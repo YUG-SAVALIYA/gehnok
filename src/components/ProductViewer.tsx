@@ -11,7 +11,7 @@ import { motion } from 'motion/react';
 import { 
   Heart, Sparkles, Calendar, ArrowLeft, 
   ChevronDown, ChevronUp, Star, CheckCircle, Image, Scissors, PlayCircle,
-  ChevronLeft, ChevronRight, Truck, Clock, X
+  ChevronLeft, ChevronRight, Truck, Clock, X, Maximize2
 } from 'lucide-react';
 import paymentGatewayImg from '../assets/payment_gateway.svg';
 import bisHallmarkImg from '../assets/BIS_Hallmark.svg';
@@ -273,6 +273,7 @@ export default function ProductViewer({
   const { data: metalAssets } = useShopifyMetaobject('metal_colors', 'main');
   const [activeAccordion, setActiveAccordion] = useState<string | null>('materials');
   const [isAdded, setIsAdded] = useState(false);
+  const [isFullscreen3DOpen, setIsFullscreen3DOpen] = useState(false);
 
   // Custom configuration states
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
@@ -491,7 +492,7 @@ export default function ProductViewer({
 
   // Lock body scroll when fullscreen is open
   useEffect(() => {
-    if (isFullscreenGalleryOpen) {
+    if (isFullscreenGalleryOpen || isFullscreen3DOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -499,7 +500,7 @@ export default function ProductViewer({
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [isFullscreenGalleryOpen]);
+  }, [isFullscreenGalleryOpen, isFullscreen3DOpen]);
 
   // Interactive reviews state
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -810,6 +811,10 @@ export default function ProductViewer({
   // Keyboard navigation for fullscreen gallery
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      if (isFullscreen3DOpen) {
+        if (e.key === 'Escape') setIsFullscreen3DOpen(false);
+        return;
+      }
       if (!isFullscreenGalleryOpen) return;
       if (e.key === 'Escape') setIsFullscreenGalleryOpen(false);
       if (e.key === 'ArrowRight') showNextGalleryItem();
@@ -817,7 +822,7 @@ export default function ProductViewer({
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreenGalleryOpen, showNextGalleryItem, showPreviousGalleryItem]);
+  }, [isFullscreenGalleryOpen, isFullscreen3DOpen, showNextGalleryItem, showPreviousGalleryItem]);
 
   // Removed the artificial CSS tinting because it tinted the entire photograph (including skin and backgrounds)
   const getMetalFilterStyle = (metalId: string): React.CSSProperties => {
@@ -895,9 +900,16 @@ export default function ProductViewer({
             </div>
 
             {/* Media Window Render */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="animate-fade-in">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="animate-fade-in relative">
               {activeMediaTab === '3d' ? (
-                <div className="space-y-2">
+                <div className="space-y-2 relative">
+                  <button
+                    onClick={() => setIsFullscreen3DOpen(true)}
+                    className="absolute top-2 right-2 z-[20] p-2 bg-[#381932]/10 hover:bg-[#381932]/20 text-[#381932] rounded-full transition-colors cursor-pointer"
+                    title="View Fullscreen"
+                  >
+                    <Maximize2 size={16} />
+                  </button>
                   {model3DUrl ? (
                     <Suspense
                       fallback={
@@ -1579,18 +1591,18 @@ export default function ProductViewer({
 
         {/* Fullscreen Media Gallery */}
         {isFullscreenGalleryOpen && createPortal(
-          <div className="fixed inset-0 z-[100] bg-[#381932]/95 backdrop-blur-xl flex items-center justify-center">
+          <div className="fixed inset-0 z-[100] bg-[#F9F7F2]/95 backdrop-blur-xl flex items-center justify-center">
             {/* Close / Back Button */}
             <button
               onClick={() => setIsFullscreenGalleryOpen(false)}
-              className="absolute top-6 left-6 z-[110] flex items-center space-x-2 text-white/70 hover:text-white transition-colors cursor-pointer"
+              className="absolute top-6 left-6 z-[110] flex items-center space-x-2 text-[#381932]/70 hover:text-[#381932] transition-colors cursor-pointer"
             >
               <ArrowLeft size={24} />
               <span className="font-sans text-[12px] uppercase tracking-widest font-bold">Back to Product</span>
             </button>
             <button
               onClick={() => setIsFullscreenGalleryOpen(false)}
-              className="absolute top-6 right-6 z-[110] p-2 text-white/70 hover:text-white transition-colors cursor-pointer bg-white/10 rounded-full hover:bg-white/20"
+              className="absolute top-6 right-6 z-[110] p-2 text-[#381932]/70 hover:text-[#381932] transition-colors cursor-pointer bg-[#381932]/5 rounded-full hover:bg-[#381932]/10"
             >
               <X size={24} />
             </button>
@@ -1602,7 +1614,7 @@ export default function ProductViewer({
                   {activeGalleryItem.url.includes('youtube') || activeGalleryItem.url.includes('vimeo') ? (
                     <iframe
                       src={activeGalleryItem.url}
-                      className="w-full aspect-video max-h-full"
+                      className="w-full aspect-video max-h-full mix-blend-multiply"
                       frameBorder="0"
                       allowFullScreen
                       allow="autoplay; fullscreen"
@@ -1611,9 +1623,11 @@ export default function ProductViewer({
                     <video
                       src={activeGalleryItem.url}
                       poster={productPhotos[0]}
-                      controls
                       autoPlay
-                      className="w-full max-h-full object-contain"
+                      loop
+                      muted
+                      playsInline
+                      className="w-full max-h-full object-contain mix-blend-multiply"
                     />
                   )}
                   {/* Protective overlay for custom videos in full screen */}
@@ -1626,7 +1640,7 @@ export default function ProductViewer({
                   <img
                     src={activeGalleryItem.url}
                     alt={`${product.name} Fullscreen`}
-                    className="max-w-full max-h-full object-contain drop-shadow-2xl select-none pointer-events-none"
+                    className="max-w-full max-h-full object-contain drop-shadow-2xl select-none pointer-events-none mix-blend-multiply"
                     style={getMetalFilterStyle(selectedMetal?.id || '')}
                     onContextMenu={(e) => e.preventDefault()}
                     draggable={false}
@@ -1643,14 +1657,14 @@ export default function ProductViewer({
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); showPreviousGalleryItem(); }}
-                  className="absolute left-4 sm:left-12 top-1/2 z-[110] -translate-y-1/2 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer backdrop-blur-md border border-white/20"
+                  className="absolute left-4 sm:left-12 top-1/2 z-[110] -translate-y-1/2 p-3 rounded-full bg-[#381932]/5 text-[#381932] hover:bg-[#381932]/10 transition-colors cursor-pointer backdrop-blur-md border border-[#381932]/10"
                 >
                   <ChevronLeft size={32} />
                 </button>
                 <button
                   type="button"
                   onClick={(e) => { e.stopPropagation(); showNextGalleryItem(); }}
-                  className="absolute right-4 sm:right-12 top-1/2 z-[110] -translate-y-1/2 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer backdrop-blur-md border border-white/20"
+                  className="absolute right-4 sm:right-12 top-1/2 z-[110] -translate-y-1/2 p-3 rounded-full bg-[#381932]/5 text-[#381932] hover:bg-[#381932]/10 transition-colors cursor-pointer backdrop-blur-md border border-[#381932]/10"
                 >
                   <ChevronRight size={32} />
                 </button>
@@ -1659,10 +1673,57 @@ export default function ProductViewer({
             
             {/* Image Counter */}
             {galleryItems.length > 1 && (
-              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 font-mono text-[10px] tracking-[0.2em] uppercase">
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#381932]/60 font-mono text-[10px] tracking-[0.2em] uppercase">
                 {safePhotoIndex + 1} / {galleryItems.length}
               </div>
             )}
+          </div>,
+          document.body
+        )}
+
+        {/* Fullscreen 3D Viewer */}
+        {isFullscreen3DOpen && createPortal(
+          <div className="fixed inset-0 z-[100] bg-[#F9F7F2]/95 backdrop-blur-xl flex items-center justify-center">
+            {/* Close / Back Button */}
+            <button
+              onClick={() => setIsFullscreen3DOpen(false)}
+              className="absolute top-6 left-6 z-[110] flex items-center space-x-2 text-[#381932]/70 hover:text-[#381932] transition-colors cursor-pointer"
+            >
+              <ArrowLeft size={24} />
+              <span className="font-sans text-[12px] uppercase tracking-widest font-bold">Back to Product</span>
+            </button>
+            <button
+              onClick={() => setIsFullscreen3DOpen(false)}
+              className="absolute top-6 right-6 z-[110] p-2 text-[#381932]/70 hover:text-[#381932] transition-colors cursor-pointer bg-[#381932]/5 rounded-full hover:bg-[#381932]/10"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Main Content */}
+            <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-12">
+              <div className="w-full max-w-6xl h-full flex items-center justify-center relative">
+                {model3DUrl ? (
+                  <Suspense
+                    fallback={
+                      <div className="h-[400px] w-full border border-[#381932]/10 bg-transparent rounded-md flex items-center justify-center text-[9px] font-mono uppercase tracking-[0.18em] text-[#381932]/60">
+                        Preparing 3D studio
+                      </div>
+                    }
+                  >
+                    <Model3DViewer src={model3DUrl} poster={productPhotos[0]} title={product.name} />
+                  </Suspense>
+                ) : (
+                  <Gemstone3DViewer
+                    color={getGemstoneColorProfile(product)}
+                    cut={product.gemstone?.cut || 'Round Brilliant'}
+                  />
+                )}
+              </div>
+            </div>
+            
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[#381932]/60 font-mono text-[10px] tracking-[0.2em] uppercase">
+              Drag to rotate and inspect
+            </div>
           </div>,
           document.body
         )}
