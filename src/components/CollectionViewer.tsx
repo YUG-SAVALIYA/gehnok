@@ -19,6 +19,7 @@ interface CollectionViewerProps {
   title?: string;
   description?: string;
   searchQuery?: string;
+  skipAnimation?: boolean;
 }
 
 export default function CollectionViewer({
@@ -27,7 +28,8 @@ export default function CollectionViewer({
   collectionHandle,
   title,
   description,
-  searchQuery = ''
+  searchQuery = '',
+  skipAnimation = false
 }: CollectionViewerProps) {
   const { products: LUXURY_PRODUCTS, loading } = useShopifyProducts(
     collectionHandle ? { collection: collectionHandle } : {}
@@ -53,7 +55,7 @@ export default function CollectionViewer({
   
   // Cinematic Animation State
   const [mounted, setMounted] = useState(false);
-  const [animPhase, setAnimPhase] = useState<'full' | 'animating' | 'done'>('full');
+  const [animPhase, setAnimPhase] = useState<'full' | 'animating' | 'done'>(skipAnimation ? 'done' : 'full');
 
   useEffect(() => {
     // Start text animations immediately on mount

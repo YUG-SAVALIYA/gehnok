@@ -1471,32 +1471,7 @@ export default function ProductViewer({
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             
-            {/* Review Header Panel */}
-            <div className="flex flex-col md:flex-row items-center md:items-start justify-between border border-[#381932] p-8 bg-[#EAE8E3]/30 gap-6">
-              <div className="space-y-2 text-center md:text-left">
-                <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block">
-                  Client Diaries
-                </span>
-                <p className="text-xs text-[#381932]/70 leading-relaxed max-w-sm">
-                  Patient verified reports logged directly by registered collectors. Evaluated strictly on cut, luster, alloy consistency, and delivery standards.
-                </p>
-              </div>
 
-              {/* Aggregated score bento box */}
-              <div className="text-center bg-[#F9F7F2] border border-[#381932] py-4 px-6 min-w-[160px] flex flex-col justify-center items-center">
-                <span className="text-4xl font-serif font-bold text-[#381932]">
-                  {averageRating}
-                </span>
-                <div className="flex text-amber-500 my-1">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} size={13} className="fill-current" />
-                  ))}
-                </div>
-                <span className="text-[9px] font-mono text-[#381932]/60 uppercase tracking-wider font-bold">
-                  {totalReviewsCount} Appraisals
-                </span>
-              </div>
-            </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               {/* Form: Add Signature Review */}

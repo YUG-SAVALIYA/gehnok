@@ -48,11 +48,20 @@ export default function App() {
   });
   const [lastViewBeforeDetail, setLastViewBeforeDetail] = useState<View>('home');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  
+  const [skipAnimation, setSkipAnimation] = useState(false);
+  const selectedProductRef = React.useRef(selectedProduct);
+  useEffect(() => {
+    selectedProductRef.current = selectedProduct;
+  }, [selectedProduct]);
 
   // Track if we need to load a product from the URL once data arrives
   const [pendingProductId, setPendingProductId] = useState<string | null>(() => {
     const path = window.location.pathname;
-    return path.startsWith('/products/') ? path.replace('/products/', '') : null;
+    if (path.startsWith('/products/')) return path.replace('/products/', '');
+    const parts = path.split('/').filter(Boolean);
+    if (parts[0] === 'collections' && parts.length >= 3) return parts[2];
+    return null;
   });
 
   // Resolve pending product once products load
@@ -93,7 +102,11 @@ export default function App() {
 
     let path = '/';
     if (selectedProduct) {
-      path = `/products/${selectedProduct.id}`;
+      if (currentView === 'collection' && activeCollectionHandle && activeCollectionHandle !== 'all') {
+        path = `/collections/${activeCollectionHandle}/${selectedProduct.id}`;
+      } else {
+        path = `/products/${selectedProduct.id}`;
+      }
     } else {
       switch (currentView) {
         case 'home': path = '/'; break;
@@ -125,9 +138,15 @@ export default function App() {
     const handlePopState = () => {
       const path = window.location.pathname;
       const params = new URLSearchParams(window.location.search);
+      const parts = path.split('/').filter(Boolean);
 
-      if (path.startsWith('/products/')) {
-        const id = path.replace('/products/', '');
+      if (path.startsWith('/products/') || (parts[0] === 'collections' && parts.length >= 3)) {
+        const id = path.startsWith('/products/') ? path.replace('/products/', '') : parts[2];
+        if (parts[0] === 'collections' && parts.length >= 3) {
+          setCurrentView('collection');
+          setActiveCollectionHandle(parts[1]);
+        }
+        
         const prod = LUXURY_PRODUCTS.find(p => p.id === id);
         if (prod) {
           setSelectedProduct(prod);
@@ -135,6 +154,9 @@ export default function App() {
           setPendingProductId(id);
         }
       } else {
+        if (selectedProductRef.current) setSkipAnimation(true);
+        else setSkipAnimation(false);
+        
         setSelectedProduct(null);
         if (path === '/') setCurrentView('home');
         else if (path === '/collections/all') setCurrentView('all-product');
@@ -304,6 +326,7 @@ export default function App() {
       {/* Exquisite Brand Header */}
       <AtelierHeader
         onNavigate={(view, collectionHandle) => {
+          setSkipAnimation(false);
           if (view === 'collection' && collectionHandle) {
             setActiveCollectionHandle(collectionHandle);
           }
@@ -338,6 +361,7 @@ export default function App() {
             cartItems={cartItems}
             onUpdateQuantity={handleUpdateQuantity}
             onBack={() => {
+              setSkipAnimation(true);
               setSelectedProduct(null);
               setCurrentView(lastViewBeforeDetail);
             }}
@@ -359,6 +383,7 @@ export default function App() {
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 onNavigate={(view, subFilter) => {
+                  setSkipAnimation(false);
                   setCurrentView(view);
                   if (view === 'collection' && subFilter) {
                     setActiveCollectionHandle(subFilter);
@@ -373,6 +398,7 @@ export default function App() {
             {/* 2. ALL PRODUCTS VIEW */}
             {currentView === 'all-product' && (
               <CollectionViewer
+                skipAnimation={skipAnimation}
                 onSelectProduct={handleExamineProduct}
                 title="Atelier Full Catalog"
                 description="Explore our complete line of permanent vessels. Each masterwork is individually forged to heirloom specifications."
@@ -380,9 +406,10 @@ export default function App() {
               />
             )}
 
-            {/* DYNAMIC COLLECTION VIEW */}
+            {/* 3. DYNAMIC COLLECTION VIEW */}
             {currentView === 'collection' && activeCollectionHandle && (
               <CollectionViewer
+                skipAnimation={skipAnimation}
                 key={activeCollectionHandle}
                 collectionHandle={activeCollectionHandle}
                 onSelectProduct={handleExamineProduct}
@@ -428,6 +455,7 @@ export default function App() {
       <AtelierFooter
         onOpenPolicy={handleOpenPolicy}
         onNavigate={(view, collectionHandle) => {
+          setSkipAnimation(false);
           if (view === 'collection' && collectionHandle) {
             setActiveCollectionHandle(collectionHandle);
           }
