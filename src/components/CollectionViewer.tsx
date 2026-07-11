@@ -376,7 +376,7 @@ export default function CollectionViewer({
         }`}
         style={animPhase !== 'done' ? { height: 'calc(100vh - 24rem)', overflow: 'hidden' } : {}}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Curated Filter Bar System */}
         <div className="border-t border-b border-[#381932] py-6 mb-12 space-y-6">
@@ -541,3 +541,4 @@ export default function CollectionViewer({
     </section>
   );
 }
+

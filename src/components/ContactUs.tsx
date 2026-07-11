@@ -77,7 +77,7 @@ export default function ContactUs({
 
   return (
     <div className="py-12 bg-[#F9F7F2] min-h-[80vh] font-sans text-[#381932]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
         
         {/* Header section */}
         <div className="border-b border-[#381932] pb-8 mb-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -309,3 +309,4 @@ export default function ContactUs({
     </div>
   );
 }
+

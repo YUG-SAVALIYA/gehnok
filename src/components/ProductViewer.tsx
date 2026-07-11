@@ -1,4 +1,5 @@
 import React, { lazy, Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { Product, CartItem } from '../types';
 import { lenis } from '../lib/lenis';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
@@ -272,6 +273,7 @@ export default function ProductViewer({
   const { data: metalAssets } = useShopifyMetaobject('metal_colors', 'main');
   const [activeAccordion, setActiveAccordion] = useState<string | null>('materials');
   const [isAdded, setIsAdded] = useState(false);
+  const [isFullscreenGalleryOpen, setIsFullscreenGalleryOpen] = useState(false);
 
   // Custom configuration states
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
@@ -484,10 +486,33 @@ export default function ProductViewer({
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
   const [isFullscreenGalleryOpen, setIsFullscreenGalleryOpen] = useState(false);
 
-  // Reset to first image whenever the metal changes
+  const handleVideoSelect = useCallback((videoUrl: string, index: number) => {
+    setActivePhotoIndex(index); // Video thumbnails act just like images
+  }, []);
+
+  // Keyboard navigation for fullscreen gallery
   useEffect(() => {
-    setActivePhotoIndex(0);
-  }, [selectedMetal?.name]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isFullscreenGalleryOpen) return;
+      if (e.key === 'Escape') setIsFullscreenGalleryOpen(false);
+      if (e.key === 'ArrowRight') showNextGalleryItem();
+      if (e.key === 'ArrowLeft') showPreviousGalleryItem();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreenGalleryOpen, showNextGalleryItem, showPreviousGalleryItem]);
+
+  // Lock body scroll when fullscreen is open
+  useEffect(() => {
+    if (isFullscreenGalleryOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isFullscreenGalleryOpen]);
 
   // Interactive reviews state
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -795,17 +820,6 @@ export default function ProductViewer({
     setActivePhotoIndex(prev => (prev + 1) % galleryItems.length);
   }, [galleryItems.length]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isFullscreenGalleryOpen) return;
-      if (e.key === 'Escape') setIsFullscreenGalleryOpen(false);
-      else if (e.key === 'ArrowRight') showNextGalleryItem();
-      else if (e.key === 'ArrowLeft') showPreviousGalleryItem();
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isFullscreenGalleryOpen, showNextGalleryItem, showPreviousGalleryItem]);
-
   // Removed the artificial CSS tinting because it tinted the entire photograph (including skin and backgrounds)
   const getMetalFilterStyle = (metalId: string): React.CSSProperties => {
     return { transition: 'all 0.5s ease-in-out' };
@@ -944,7 +958,7 @@ export default function ProductViewer({
                     
                     {/* Protective transparent overlay to block right-click and save, but allow opening full screen */}
                     <div 
-                      className="absolute inset-0 z-15 cursor-pointer" 
+                      className="absolute inset-0 z-[15] cursor-pointer" 
                       onContextMenu={(e) => e.preventDefault()} 
                       onClick={() => setIsFullscreenGalleryOpen(true)}
                     />
@@ -1562,6 +1576,98 @@ export default function ProductViewer({
           </div>
         </div>
 
+        {/* ----------------- END OF POLICIES ----------------- */}
+
+        {/* Fullscreen Media Gallery */}
+        {isFullscreenGalleryOpen && createPortal(
+          <div className="fixed inset-0 z-[100] bg-[#381932]/95 backdrop-blur-xl flex items-center justify-center">
+            {/* Close / Back Button */}
+            <button
+              onClick={() => setIsFullscreenGalleryOpen(false)}
+              className="absolute top-6 left-6 z-[110] flex items-center space-x-2 text-white/70 hover:text-white transition-colors cursor-pointer"
+            >
+              <ArrowLeft size={24} />
+              <span className="font-sans text-[12px] uppercase tracking-widest font-bold">Back to Product</span>
+            </button>
+            <button
+              onClick={() => setIsFullscreenGalleryOpen(false)}
+              className="absolute top-6 right-6 z-[110] p-2 text-white/70 hover:text-white transition-colors cursor-pointer bg-white/10 rounded-full hover:bg-white/20"
+            >
+              <X size={24} />
+            </button>
+
+            {/* Main Content */}
+            <div className="relative w-full h-full flex items-center justify-center p-4 sm:p-12">
+              {activeGalleryItem?.type === 'video' ? (
+                <div className="w-full max-w-6xl h-full flex items-center justify-center relative">
+                  {activeGalleryItem.url.includes('youtube') || activeGalleryItem.url.includes('vimeo') ? (
+                    <iframe
+                      src={activeGalleryItem.url}
+                      className="w-full aspect-video max-h-full"
+                      frameBorder="0"
+                      allowFullScreen
+                      allow="autoplay; fullscreen"
+                    />
+                  ) : (
+                    <video
+                      src={activeGalleryItem.url}
+                      poster={productPhotos[0]}
+                      controls
+                      autoPlay
+                      className="w-full max-h-full object-contain"
+                    />
+                  )}
+                  {/* Protective overlay for custom videos in full screen */}
+                  {!activeGalleryItem.url.includes('youtube') && !activeGalleryItem.url.includes('vimeo') && (
+                    <div className="absolute inset-0 z-10 pointer-events-none" onContextMenu={(e) => e.preventDefault()} />
+                  )}
+                </div>
+              ) : activeGalleryItem?.type === 'image' ? (
+                <div className="w-full h-full flex items-center justify-center relative">
+                  <img
+                    src={activeGalleryItem.url}
+                    alt={`${product.name} Fullscreen`}
+                    className="max-w-full max-h-full object-contain drop-shadow-2xl select-none pointer-events-none"
+                    style={getMetalFilterStyle(selectedMetal?.id || '')}
+                    onContextMenu={(e) => e.preventDefault()}
+                    draggable={false}
+                  />
+                  {/* Protective overlay */}
+                  <div className="absolute inset-0 z-10" onContextMenu={(e) => e.preventDefault()} />
+                </div>
+              ) : null}
+            </div>
+
+            {/* Navigation Buttons */}
+            {galleryItems.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); showPreviousGalleryItem(); }}
+                  className="absolute left-4 sm:left-12 top-1/2 z-[110] -translate-y-1/2 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer backdrop-blur-md border border-white/20"
+                >
+                  <ChevronLeft size={32} />
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); showNextGalleryItem(); }}
+                  className="absolute right-4 sm:right-12 top-1/2 z-[110] -translate-y-1/2 p-3 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors cursor-pointer backdrop-blur-md border border-white/20"
+                >
+                  <ChevronRight size={32} />
+                </button>
+              </>
+            )}
+            
+            {/* Image Counter */}
+            {galleryItems.length > 1 && (
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/60 font-mono text-[10px] tracking-[0.2em] uppercase">
+                {safePhotoIndex + 1} / {galleryItems.length}
+              </div>
+            )}
+          </div>,
+          document.body
+        )}
+        
         {/* ----------------- SECTOR: POLICIES SIDE-BY-SIDE ----------------- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-16 pt-12 border-t border-[#381932]/20">
           <div>

@@ -217,7 +217,7 @@ export default function HeroSection({
 
       {/* ----------------- SECTION 2: AVAILABLE CATEGORIES ----------------- */}
       <section className="py-16 sm:py-20 border-b border-[#381932]/30 bg-[#FAF8F4]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           {/* Header */}
           <motion.div 
@@ -347,7 +347,7 @@ export default function HeroSection({
 
       {/* ----------------- SECTION 3: BEST SELLERS ----------------- */}
       <section className="py-20 bg-[#F9F7F2] border-b border-[#381932]/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           {/* Section title */}
           <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[#381932]/30 pb-6 gap-4">
@@ -489,7 +489,7 @@ export default function HeroSection({
 
         {/* Newly Launched Products */}
         <div className="py-20 bg-[#FAF8F4]">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
             
             {/* Header */}
             <motion.div 
@@ -594,7 +594,7 @@ export default function HeroSection({
         <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#FFFDF8] via-[#FDE4C3] to-[#C97B34]" />
 
         {/* Content Container */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+        <div className="relative z-10 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             
             {/* Left Column: Headings, Cards & CTA */}
@@ -690,7 +690,7 @@ export default function HeroSection({
 
       {/* ----------------- SECTION 6: COMPLIMENTARY 15 RETURN, GLOBAL JEWELER, CERTIFICATES ----------------- */}
       <section className="py-16 sm:py-20 bg-[#F4F1EA] border-b border-[#381932]/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 sm:gap-10">
             
@@ -743,7 +743,7 @@ export default function HeroSection({
       <section className="py-20 bg-[#F9F7F2] space-y-24">
         
         {/* Blogs Sub-Section */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           {/* Subheader */}
           <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[#381932]/30 pb-6 gap-4">
@@ -896,3 +896,4 @@ export default function HeroSection({
     </div>
   );
 }
+
