@@ -3,6 +3,10 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
+
+// @ts-ignore - Vite will resolve these as static URLs
+import diamondHdrUrl from '../assets/textures/dimond_small.hdr';
 
 interface Model3DViewerProps {
   src: string;
@@ -43,8 +47,32 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     mount.appendChild(renderer.domElement);
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
     scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
     
+    let diamondEnvMap: THREE.Texture | null = null;
+    const rgbeLoader = new RGBELoader();
+    rgbeLoader.load(diamondHdrUrl, (tex) => {
+      if (disposed) return;
+      diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
+      
+      // If the model loaded before the HDR, we need to update the diamond material now
+      if (modelRoot) {
+        modelRoot.traverse(child => {
+          if (child instanceof THREE.Mesh && child.material) {
+            const materials = Array.isArray(child.material) ? child.material : [child.material];
+            materials.forEach(material => {
+              const physMat = material as any;
+              if (physMat.transmission !== undefined && physMat.transmission > 0) {
+                physMat.envMap = diamondEnvMap;
+                material.needsUpdate = true;
+              }
+            });
+          }
+        });
+      }
+    });
+
     // Add default lighting similar to standard GLTF viewers
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
     scene.add(ambientLight);
@@ -95,6 +123,40 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
       gltf => {
         if (disposed) return;
         modelRoot = gltf.scene;
+        
+        modelRoot.traverse(child => {
+          if (child instanceof THREE.Mesh) {
+            child.castShadow = false;
+            child.receiveShadow = false;
+            if (child.material) {
+              const materials = Array.isArray(child.material) ? child.material : [child.material];
+              materials.forEach(material => {
+                material.side = THREE.DoubleSide;
+                if (material instanceof THREE.MeshStandardMaterial) {
+                  // If it's a transparent material (like a diamond/gem)
+                  const physMat = material as any;
+                  if (physMat.transmission !== undefined && physMat.transmission > 0) {
+                    physMat.transmission = 1.0; 
+                    physMat.opacity = 1.0;
+                    physMat.transparent = false;
+                    physMat.ior = 2.4;
+                    physMat.thickness = Math.max(physMat.thickness || 0, 2.0);
+                    physMat.roughness = 0;
+                    physMat.metalness = 0;
+                    physMat.clearcoat = 1.0;
+                    physMat.clearcoatRoughness = 0;
+                    physMat.dispersion = 1.5; 
+                    physMat.envMapIntensity = 4.0;
+                    physMat.color = new THREE.Color(0xffffff);
+                    if (diamondEnvMap) physMat.envMap = diamondEnvMap;
+                  }
+                }
+                material.needsUpdate = true;
+              });
+            }
+          }
+        });
+
         scene.add(modelRoot);
         frameModel(modelRoot);
         setLoadProgress(100);
@@ -139,6 +201,7 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
         }
       });
       renderer.dispose();
+      if (diamondEnvMap) diamondEnvMap.dispose();
       if (scene.environment) scene.environment.dispose();
       pmremGenerator.dispose();
       renderer.domElement.remove();
