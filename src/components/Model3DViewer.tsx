@@ -25,7 +25,7 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
 
 
     const scene = new THREE.Scene();
-    scene.background = null;
+    scene.background = new THREE.Color('#FAF7F2');
 
     const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     camera.position.set(0, 1.2, 4);
@@ -124,12 +124,15 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
                   if (physMat.transmission !== undefined && physMat.transmission > 0) {
                     physMat.transmission = 1.0; 
                     physMat.opacity = 1.0;
-                    physMat.transparent = true;
-                    physMat.ior = 2.4; // High IOR for diamond-like refraction
-                    physMat.thickness = Math.max(physMat.thickness || 0, 1.5);
+                    physMat.transparent = false; // Prevents CSS background alpha-blend milkiness
+                    physMat.ior = 2.4; // High IOR for diamond refraction
+                    physMat.thickness = Math.max(physMat.thickness || 0, 2.0);
                     physMat.roughness = 0;
-                    physMat.metalness = 0.1;
-                    physMat.dispersion = 1.2; // Add fire/dispersion for diamonds
+                    physMat.metalness = 0;
+                    physMat.clearcoat = 1.0;
+                    physMat.clearcoatRoughness = 0;
+                    physMat.dispersion = 1.5; // High fire
+                    physMat.envMapIntensity = 4.0; // Boosted reflections
                     physMat.color = new THREE.Color(0xffffff);
                   } else if (material.transparent && material.opacity < 0.8) {
                     material.opacity = 0.85; 
