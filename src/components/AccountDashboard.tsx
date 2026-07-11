@@ -81,12 +81,88 @@ export default function AccountDashboard({ onBack, onLogoutSuccess }: AccountDas
           {/* Activity Area */}
           <div className="md:col-span-2 space-y-6">
             
-            <div className="border border-[#381932]/20 bg-white p-8 flex flex-col items-center justify-center text-center min-h-[200px]">
-              <Package size={32} className="text-[#381932]/20 mb-4" />
-              <h3 className="font-serif text-xl font-bold mb-2">Acquisition History</h3>
-              <p className="text-xs text-[#381932]/60 max-w-xs mx-auto leading-relaxed">
-                Your heirloom registry and past acquisitions will appear here once secured through our concierge.
-              </p>
+            <div className="border border-[#381932]/20 bg-white p-8">
+              <h3 className="font-serif text-xl font-bold mb-6 text-[#381932]">Acquisition History</h3>
+              
+              {!customer.orders?.edges || customer.orders.edges.length === 0 ? (
+                <div className="flex flex-col items-center justify-center text-center py-10">
+                  <Package size={32} className="text-[#381932]/20 mb-4" />
+                  <p className="text-xs text-[#381932]/60 max-w-xs mx-auto leading-relaxed">
+                    Your heirloom registry and past acquisitions will appear here once secured.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {customer.orders.edges.map(({ node: order }) => (
+                    <div key={order.id} className="border border-[#381932]/10 p-5 group hover:border-[#381932]/30 transition-colors">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 border-b border-[#381932]/10 pb-4">
+                        <div>
+                          <p className="text-sm font-bold text-[#381932]">Order #{order.orderNumber}</p>
+                          <p className="text-[10px] text-[#381932]/60 uppercase tracking-widest mt-1">
+                            {new Date(order.processedAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <span className={`text-[9px] uppercase tracking-widest font-bold px-2 py-1 ${
+                            order.financialStatus === 'PAID' ? 'bg-green-700/10 text-green-700' : 'bg-yellow-600/10 text-yellow-700'
+                          }`}>
+                            {order.financialStatus}
+                          </span>
+                          <span className={`text-[9px] uppercase tracking-widest font-bold px-2 py-1 ${
+                            order.fulfillmentStatus === 'FULFILLED' ? 'bg-green-700/10 text-green-700' : 'bg-[#381932]/10 text-[#381932]'
+                          }`}>
+                            {order.fulfillmentStatus || 'UNFULFILLED'}
+                          </span>
+                          <p className="text-xs font-mono font-bold text-[#381932] ml-2">
+                            {new Intl.NumberFormat('en-IN', {
+                              style: 'currency',
+                              currency: order.totalPrice.currencyCode,
+                              maximumFractionDigits: 0
+                            }).format(parseFloat(order.totalPrice.amount))}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        {order.lineItems.edges.map(({ node: item }, i) => (
+                          <div key={i} className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                              {item.variant?.image ? (
+                                <img 
+                                  src={item.variant.image.url} 
+                                  alt={item.variant.image.altText || item.title}
+                                  className="w-10 h-10 object-cover bg-[#F9F7F2]"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 bg-[#F9F7F2] flex items-center justify-center">
+                                  <Package size={14} className="text-[#381932]/30" />
+                                </div>
+                              )}
+                              <div>
+                                <p className="text-xs font-serif font-bold text-[#381932] line-clamp-1">{item.title}</p>
+                                <p className="text-[10px] text-[#381932]/60 font-sans tracking-wide">Qty: {item.quantity}</p>
+                              </div>
+                            </div>
+                            {item.variant && (
+                              <p className="text-[10px] font-mono text-[#381932]/80">
+                                {new Intl.NumberFormat('en-IN', {
+                                  style: 'currency',
+                                  currency: item.variant.price.currencyCode,
+                                  maximumFractionDigits: 0
+                                }).format(parseFloat(item.variant.price.amount))}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-6">
