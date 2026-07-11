@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface Model3DViewerProps {
@@ -40,6 +41,17 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     mount.appendChild(renderer.domElement);
+
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    
+    // Add default lighting similar to standard GLTF viewers
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    directionalLight.position.set(2, 2, 2);
+    scene.add(directionalLight);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -127,6 +139,8 @@ export default function Model3DViewer({ src, poster, title }: Model3DViewerProps
         }
       });
       renderer.dispose();
+      if (scene.environment) scene.environment.dispose();
+      pmremGenerator.dispose();
       renderer.domElement.remove();
     };
   }, [src]);
