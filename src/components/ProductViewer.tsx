@@ -1,4 +1,4 @@
-import React, { lazy, Suspense, useState, useEffect, useMemo, useRef } from 'react';
+import React, { lazy, Suspense, useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { Product, CartItem } from '../types';
 import { lenis } from '../lib/lenis';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
@@ -10,7 +10,7 @@ import { motion } from 'motion/react';
 import { 
   Heart, Sparkles, Calendar, ArrowLeft, 
   ChevronDown, ChevronUp, Star, CheckCircle, Image, Scissors, PlayCircle,
-  ChevronLeft, ChevronRight, Truck, Clock
+  ChevronLeft, ChevronRight, Truck, Clock, X
 } from 'lucide-react';
 import paymentGatewayImg from '../assets/payment_gateway.svg';
 import bisHallmarkImg from '../assets/BIS_Hallmark.svg';
@@ -482,6 +482,7 @@ export default function ProductViewer({
   // Tab selector state for Media
   const [activeMediaTab, setActiveMediaTab] = useState<'3d' | 'photos'>('photos');
   const [activePhotoIndex, setActivePhotoIndex] = useState<number>(0);
+  const [isFullscreenGalleryOpen, setIsFullscreenGalleryOpen] = useState(false);
 
   // Reset to first image whenever the metal changes
   useEffect(() => {
@@ -784,15 +785,26 @@ export default function ProductViewer({
   const safePhotoIndex = galleryItems.length > 0 ? Math.min(activePhotoIndex, galleryItems.length - 1) : 0;
   const activeGalleryItem = galleryItems[safePhotoIndex];
 
-  const showPreviousGalleryItem = () => {
+  const showPreviousGalleryItem = useCallback(() => {
     if (galleryItems.length <= 1) return;
     setActivePhotoIndex(prev => (prev - 1 + galleryItems.length) % galleryItems.length);
-  };
+  }, [galleryItems.length]);
 
-  const showNextGalleryItem = () => {
+  const showNextGalleryItem = useCallback(() => {
     if (galleryItems.length <= 1) return;
     setActivePhotoIndex(prev => (prev + 1) % galleryItems.length);
-  };
+  }, [galleryItems.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isFullscreenGalleryOpen) return;
+      if (e.key === 'Escape') setIsFullscreenGalleryOpen(false);
+      else if (e.key === 'ArrowRight') showNextGalleryItem();
+      else if (e.key === 'ArrowLeft') showPreviousGalleryItem();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullscreenGalleryOpen, showNextGalleryItem, showPreviousGalleryItem]);
 
   // Removed the artificial CSS tinting because it tinted the entire photograph (including skin and backgrounds)
   const getMetalFilterStyle = (metalId: string): React.CSSProperties => {
@@ -930,8 +942,12 @@ export default function ProductViewer({
                       />
                     ) : null}
                     
-                    {/* Protective transparent overlay to block right-click and save */}
-                    <div className="absolute inset-0 z-15" onContextMenu={(e) => e.preventDefault()} />
+                    {/* Protective transparent overlay to block right-click and save, but allow opening full screen */}
+                    <div 
+                      className="absolute inset-0 z-15 cursor-pointer" 
+                      onContextMenu={(e) => e.preventDefault()} 
+                      onClick={() => setIsFullscreenGalleryOpen(true)}
+                    />
 
                     {galleryItems.length > 1 && (
                       <>
