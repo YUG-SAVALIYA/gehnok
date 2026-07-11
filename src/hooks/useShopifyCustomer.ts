@@ -68,6 +68,8 @@ function clearToken(): void {
   } catch { }
 }
 
+const triggerAuthChange = () => window.dispatchEvent(new Event('gehnok_auth_change'));
+
 // ─── Hook ────────────────────────────────────────────────────────────────────
 
 export function useShopifyCustomer(): UseShopifyCustomerResult {
@@ -97,33 +99,39 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
   // ── Initialize from stored token on mount ─────────────────────────────
 
   useEffect(() => {
-    const storedToken = getStoredToken();
-    if (!storedToken) {
-      setState(prev => ({ ...prev, loading: false }));
-      return;
-    }
-
-    setState(prev => ({ ...prev, loading: true }));
-    fetchCustomer(storedToken).then(customer => {
-      if (customer) {
-        setState({
-          isLoggedIn: true,
-          customer,
-          accessToken: storedToken,
-          loading: false,
-          error: null,
-        });
-      } else {
-        clearToken();
-        setState({
-          isLoggedIn: false,
-          customer: null,
-          accessToken: null,
-          loading: false,
-          error: null,
-        });
+    const syncState = () => {
+      const storedToken = getStoredToken();
+      if (!storedToken) {
+        setState(prev => ({ ...prev, isLoggedIn: false, customer: null, accessToken: null, loading: false }));
+        return;
       }
-    });
+
+      setState(prev => ({ ...prev, loading: true }));
+      fetchCustomer(storedToken).then(customer => {
+        if (customer) {
+          setState({
+            isLoggedIn: true,
+            customer,
+            accessToken: storedToken,
+            loading: false,
+            error: null,
+          });
+        } else {
+          clearToken();
+          setState({
+            isLoggedIn: false,
+            customer: null,
+            accessToken: null,
+            loading: false,
+            error: null,
+          });
+        }
+      });
+    };
+
+    syncState();
+    window.addEventListener('gehnok_auth_change', syncState);
+    return () => window.removeEventListener('gehnok_auth_change', syncState);
   }, [fetchCustomer]);
 
   // ── Login ─────────────────────────────────────────────────────────────
@@ -147,6 +155,7 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
       }
 
       storeToken(data.accessToken, data.expiresAt);
+      triggerAuthChange();
       const customer = await fetchCustomer(data.accessToken);
       setState({
         isLoggedIn: true,
@@ -216,6 +225,7 @@ export function useShopifyCustomer(): UseShopifyCustomerResult {
         loading: false,
         error: null,
       });
+      triggerAuthChange();
     }
   }, [state]);
 
