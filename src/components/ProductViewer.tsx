@@ -273,7 +273,6 @@ export default function ProductViewer({
   const { data: metalAssets } = useShopifyMetaobject('metal_colors', 'main');
   const [activeAccordion, setActiveAccordion] = useState<string | null>('materials');
   const [isAdded, setIsAdded] = useState(false);
-  const [isFullscreenGalleryOpen, setIsFullscreenGalleryOpen] = useState(false);
 
   // Custom configuration states
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
