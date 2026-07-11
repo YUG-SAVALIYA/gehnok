@@ -36,8 +36,18 @@ export default function Cart({
 
   const handleCheckout = () => {
     if (checkoutUrl) {
+      // Force the checkout to use the original myshopify.com domain 
+      // instead of the custom domain (which is hosting this React app)
+      let targetUrl = checkoutUrl;
+      try {
+        const urlObj = new URL(checkoutUrl);
+        urlObj.hostname = "gehnok-jewels.myshopify.com";
+        targetUrl = urlObj.toString();
+      } catch (e) {}
+      
       // Instantly redirect to the real Shopify checkout page
-      window.location.href = checkoutUrl;
+      window.location.href = targetUrl;
+      setCheckoutStep('confirming');
     } else {
       // Fallback: mock flow for when Shopify is not yet configured or failed
       setCheckoutStep('confirming');
