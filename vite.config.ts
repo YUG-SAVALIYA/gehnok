@@ -12,6 +12,8 @@ export default defineConfig(() => {
       cloudflare(),
     ],
 
+    assetsInclude: ['**/*.hdr'],
+
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "."),

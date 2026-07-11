@@ -6,7 +6,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 // @ts-ignore - Vite will resolve these as static URLs
-import diamondHdrUrl from '../assets/textures/dimond_small.hdr';
+import diamondHdrUrl from '../assets/textures/dimond.hdr';
 
 interface Model3DViewerProps {
   src: string;
