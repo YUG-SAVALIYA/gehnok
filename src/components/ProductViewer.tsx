@@ -711,14 +711,12 @@ export default function ProductViewer({
     }
 
     const selectedGroup = groups[safeIndex] || { images: allImages, video: null, model3d: null };
-    // If the group doesn't have a 3d model directly inside it, we strictly pull it from the allModels array using the safeIndex!
-    const strictlyMappedModel = allModels.length > 0 ? (allModels[safeIndex] || allModels[allModels.length - 1]) : null;
-    
+    const strictlyMappedModel = allModels.length > 0 ? allModels[safeIndex] : null;
     
     return {
       productPhotos: selectedGroup.images.length > 0 ? selectedGroup.images : allImages,
       currentMetalVideo: selectedGroup.video,
-      currentModel3d: strictlyMappedModel || selectedGroup.model3d
+      currentModel3d: selectedGroup.model3d || strictlyMappedModel || null
     };
   }, [selectedMetal, product.media, product.images, product.collection, availableMetals]);
 
@@ -742,36 +740,10 @@ export default function ProductViewer({
   }, [activeGalleryVideo, productPhotos]);
 
   const model3DUrl = useMemo(() => {
-    // Return the color-specific 3D model if it exists
-    if (currentModel3d) return currentModel3d;
-
-    // Fallback to the old logic of finding the last 3D model in the array if no specific grouping was found
-    const media = product.media || [];
-    const modelMedia = [...media].reverse().find(item => {
-      const mediaType = item.mediaContentType?.toUpperCase() || '';
-      const format = item.format?.toLowerCase() || '';
-      const url = item.url?.toLowerCase() || '';
-      const hasGlbSource = item.sources?.some(source => {
-        const sourceFormat = source.format?.toLowerCase() || '';
-        const sourceUrl = source.url?.toLowerCase() || '';
-        return sourceFormat === 'glb' || sourceUrl.includes('.glb');
-      });
-
-      return mediaType === 'MODEL_3D' || format === 'glb' || url.includes('.glb') || hasGlbSource;
-    });
-
-    if (!modelMedia) return null;
-
-    const preferredSource =
-      modelMedia.sources?.find(source => {
-        const format = source.format?.toLowerCase() || '';
-        const url = source.url?.toLowerCase() || '';
-        return format === 'glb' || url.includes('.glb');
-      }) ||
-      modelMedia.sources?.[0];
-
-    return preferredSource?.url || modelMedia.url || null;
-  }, [currentModel3d, product.media]);
+    // Return the strictly mapped color-specific 3D model. 
+    // We removed the aggressive fallback so it won't force the Rose Gold model onto every color if models are missing!
+    return currentModel3d || null;
+  }, [currentModel3d]);
 
   // Clamp activePhotoIndex to valid range after productPhotos/video changes
   const safePhotoIndex = galleryItems.length > 0 ? Math.min(activePhotoIndex, galleryItems.length - 1) : 0;
