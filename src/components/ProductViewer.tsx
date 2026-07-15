@@ -11,7 +11,6 @@ import { motion } from 'motion/react';
 import { 
   Heart, Sparkles, Calendar, ArrowLeft, 
   ChevronDown, ChevronUp, Star, CheckCircle, Image, Scissors, PlayCircle,
-  ChevronDown, ChevronUp, Star, CheckCircle, Image, Scissors, PlayCircle,
   ChevronLeft, ChevronRight, Truck, Clock, X, Maximize2, Cuboid
 } from 'lucide-react';
 import paymentGatewayImg from '../assets/payment_gateway.svg';
@@ -1159,7 +1158,7 @@ export default function ProductViewer({
                     <select
                       value={selectedSize}
                       onChange={(e) => setSelectedSize(e.target.value)}
-                      className="w-full appearance-none bg-[#FFFFFF] border border-[#381932] text-[#381932] px-4 py-3 font-mono text-xs font-bold focus:outline-none focus:border-[#381932] transition-colors cursor-pointer rounded-none"
+                      className="w-full appearance-none bg-[#FFFFFF] border border-[#381932] text-[#381932] px-4 py-3 font-mono text-xs font-bold focus:outline-none focus:bg-[#381932] focus:text-white transition-colors cursor-pointer rounded-md"
                     >
                       {availableSizes.map(size => (
                         <option key={size} value={size}>{size}</option>
@@ -1348,57 +1347,16 @@ export default function ProductViewer({
             {/* Core Action Zone */}
             <div className="space-y-4 pt-6 border-t border-[#381932]">
               
-              {/* Primary CTA / Quantity Adjuster */}
-              {(() => {
-                const currentCartItem = cartItems?.find(item => 
-                  item.product.id === product.id && 
-                  (item.selectedMetal === (selectedMetal?.name || product.metal) || (!item.selectedMetal)) && 
-                  (item.selectedSize === (selectedSize || 'Standard') || (!item.selectedSize))
-                );
-
-                if (currentCartItem && onUpdateQuantity) {
-                  return (
-                    <div className="space-y-3">
-                      <span className="block text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/80 bg-[#381932]/10 px-3 py-1.5 inline-block border border-[#381932]/20 rounded-sm">
-                        {currentCartItem.quantity} ITEM(S) ALREADY IN COLLECTION
-                      </span>
-                      <div className="flex items-center space-x-3 mt-2">
-                        <div className="flex items-center border border-[#381932] bg-white rounded-sm overflow-hidden">
-                          <button
-                            type="button"
-                            onClick={() => onUpdateQuantity(product.id, Math.max(0, currentCartItem.quantity - 1), selectedMetal?.name || product.metal, selectedSize || 'Standard')}
-                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-r border-[#381932] cursor-pointer"
-                          >
-                            -
-                          </button>
-                          <span className="px-5 text-xs font-mono font-bold text-[#381932]">
-                            {currentCartItem.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => onUpdateQuantity(product.id, currentCartItem.quantity + 1, selectedMetal?.name || product.metal, selectedSize || 'Standard')}
-                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-l border-[#381932] cursor-pointer"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <span className="text-[9px] font-mono text-[#381932]/60 uppercase">
-                          Adjust Collection Quantity
-                        </span>
-                      </div>
-                    </div>
-                  );
-                }
-
-                return (
-                  <button
-                    onClick={handleAddClick}
-                    className="w-full py-4 text-xs uppercase tracking-widest font-sans font-bold border rounded-md transition-all duration-300 relative overflow-hidden cursor-pointer bg-[#381932] text-white border-[#381932] hover:bg-transparent hover:text-[#381932]"
-                  >
-                    Add to Collection
-                  </button>
-                );
-              })()}
+              <button
+                onClick={handleAddClick}
+                className={`w-full py-4 text-xs uppercase tracking-widest font-sans font-bold border rounded-md transition-all duration-300 relative overflow-hidden cursor-pointer ${
+                  isAdded
+                    ? 'bg-[#381932] text-[#FFFFFF] border-[#381932]'
+                    : 'bg-[#381932] text-white border-[#381932] hover:bg-transparent hover:text-[#381932]'
+                }`}
+              >
+                {isAdded ? 'Added to Collection' : 'Add to Collection'}
+              </button>
 
               <button
                 className="w-full py-4 text-xs uppercase tracking-widest font-sans font-bold border rounded-md transition-all duration-300 cursor-pointer bg-white text-[#381932] border-[#381932] hover:bg-[#381932] hover:text-white"
@@ -1712,7 +1670,7 @@ export default function ProductViewer({
             </AccordionItem>
           </div>
 
-          <div className="w-full">
+          <div className="w-full sticky top-32">
             <h4 className="font-serif text-[18px] text-[#381932] font-bold mb-4">Product Specifications</h4>
             <div className="bg-[#F5F5F5] rounded-[24px] p-6 md:p-8 w-full border border-[#381932]/5">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-[13px] font-sans">
@@ -1989,10 +1947,12 @@ export default function ProductViewer({
                   </div>
 
                   <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
-                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
-                      {item.name.split('-')[0].trim()}
-                    </h3>
-                    <div className="pt-0.5">
+                    <div className="flex justify-between items-start">
+                      <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                        {item.name.split('-')[0].trim()}
+                      </h3>
+                    </div>
+                    <div className="pt-0.5 flex justify-between items-center">
                       <span className="text-sm font-sans font-medium text-[#381932]">
                         {new Intl.NumberFormat('en-IN', {
                           style: 'currency',
@@ -2000,6 +1960,24 @@ export default function ProductViewer({
                           maximumFractionDigits: 0
                         }).format(item.price)}
                       </span>
+                      {/* Metal Dots */}
+                      <div className="flex -space-x-1">
+                        {(() => {
+                          const metalOption = item.options?.find(opt => opt.name.toLowerCase().includes('metal') || opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('material'));
+                          if (!metalOption) return null;
+                          const rawMetals = metalOption.optionValues.map(v => v.name);
+                          const colors = new Set<string>();
+                          rawMetals.forEach(m => {
+                            const ml = m.toLowerCase();
+                            if (ml.includes('rose')) colors.add('linear-gradient(135deg, #e8a598, #b76e5d)');
+                            else if (ml.includes('white') || ml.includes('platinum') || ml.includes('silver')) colors.add('linear-gradient(135deg, #e6e5e3, #c4c3c0)');
+                            else if (ml.includes('yellow') || ml.includes('gold')) colors.add('linear-gradient(135deg, #e6c27a, #d4af37)');
+                          });
+                          return Array.from(colors).slice(0, 4).map((bg, idx) => (
+                            <div key={idx} className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ background: bg }} />
+                          ));
+                        })()}
+                      </div>
                     </div>
                   </div>
                 </div>

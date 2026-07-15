@@ -506,10 +506,12 @@ export default function CollectionViewer({
 
                 {/* Info Text block */}
                 <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
-                  <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
-                    {product.name.split('-')[0].trim()}
-                  </h3>
-                  <div className="pt-0.5">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                      {product.name.split('-')[0].trim()}
+                    </h3>
+                  </div>
+                  <div className="pt-0.5 flex justify-between items-center">
                     <span className="text-sm font-sans font-medium text-[#381932]">
                       {new Intl.NumberFormat('en-IN', {
                         style: 'currency',
@@ -517,6 +519,24 @@ export default function CollectionViewer({
                         maximumFractionDigits: 0
                       }).format(product.price)}
                     </span>
+                    {/* Metal Dots */}
+                    <div className="flex -space-x-1">
+                      {(() => {
+                        const metalOption = (product as any).options?.find((opt: any) => opt.name.toLowerCase().includes('metal') || opt.name.toLowerCase().includes('color') || opt.name.toLowerCase().includes('material'));
+                        if (!metalOption) return null;
+                        const rawMetals = metalOption.optionValues.map((v: any) => v.name);
+                        const colors = new Set<string>();
+                        rawMetals.forEach((m: string) => {
+                          const ml = m.toLowerCase();
+                          if (ml.includes('rose')) colors.add('linear-gradient(135deg, #e8a598, #b76e5d)');
+                          else if (ml.includes('white') || ml.includes('platinum') || ml.includes('silver')) colors.add('linear-gradient(135deg, #e6e5e3, #c4c3c0)');
+                          else if (ml.includes('yellow') || ml.includes('gold')) colors.add('linear-gradient(135deg, #e6c27a, #d4af37)');
+                        });
+                        return Array.from(colors).slice(0, 4).map((bg, idx) => (
+                          <div key={idx} className="w-3 h-3 rounded-full border border-white shadow-sm" style={{ background: bg }} />
+                        ));
+                      })()}
+                    </div>
                   </div>
                 </div>
               </div>
