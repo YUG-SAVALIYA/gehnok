@@ -54,6 +54,27 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
     scene.environment = roomEnvTexture;
     
     let diamondEnvMap: THREE.Texture | null = null;
+    let modelRoot: THREE.Object3D | null = null;
+    let animationFrame = 0;
+    let disposed = false;
+
+    // This function is called by BOTH the HDR callback and the GLTF callback.
+    // Whichever finishes LAST will find both diamondEnvMap and modelRoot populated
+    // and will successfully apply the HDR to the tagged diamond meshes.
+    const applyDiamondHDR = () => {
+      if (!diamondEnvMap || !modelRoot) return; // Wait until both are ready
+      modelRoot.traverse(child => {
+        if (child instanceof THREE.Mesh && child.userData.isDiamond && child.material) {
+          const materials = Array.isArray(child.material) ? child.material : [child.material];
+          materials.forEach(material => {
+            (material as any).envMap = diamondEnvMap;
+            (material as any).envMapIntensity = 10.0;
+            material.needsUpdate = true;
+          });
+        }
+      });
+    };
+
     const rgbeLoader = new RGBELoader();
     rgbeLoader.load(
       diamondHdrUrl,
@@ -62,20 +83,7 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
         tex.mapping = THREE.EquirectangularReflectionMapping;
         diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
         tex.dispose();
-        
-        // NOTE: We do NOT set scene.environment here. That would apply to metals too.
-        // Instead we directly assign envMap ONLY to meshes tagged as diamond.
-        if (modelRoot) {
-          modelRoot.traverse(child => {
-            if (child instanceof THREE.Mesh && child.userData.isDiamond && child.material) {
-              const materials = Array.isArray(child.material) ? child.material : [child.material];
-              materials.forEach(material => {
-                (material as any).envMap = diamondEnvMap;
-                material.needsUpdate = true;
-              });
-            }
-          });
-        }
+        applyDiamondHDR(); // Try applying — works if model is already loaded
       },
       undefined,
       (err) => { console.error('Failed to load diamond HDR:', err); }
@@ -83,7 +91,7 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
 
     // Lighting: Keep ambient very low so the diamond HDR can show full contrast.
     // Scene lights are for the metal only. Diamond sparkle comes from the HDR env map.
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.15); // Very dim — prevents diamond from washing out
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.15);
     scene.add(ambientLight);
     
     const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
@@ -94,7 +102,6 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
     fillLight.position.set(-3, 1, -2);
     scene.add(fillLight);
 
-    // A focused point light aimed at where the diamond is to create genuine sparkle
     const sparkleLight = new THREE.PointLight(0xffffff, 3.0, 10);
     sparkleLight.position.set(0, 1, 2);
     scene.add(sparkleLight);
@@ -107,10 +114,6 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
     controls.maxDistance = 10;
     controls.autoRotate = true;
     controls.autoRotateSpeed = 0.8;
-
-    let modelRoot: THREE.Object3D | null = null;
-    let animationFrame = 0;
-    let disposed = false;
 
     const frameModel = (object: THREE.Object3D) => {
       const box = new THREE.Box3().setFromObject(object);
@@ -205,6 +208,7 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
 
         scene.add(modelRoot);
         frameModel(modelRoot);
+        applyDiamondHDR(); // Try applying — works if HDR is already loaded
         setLoadProgress(100);
       },
       event => {
