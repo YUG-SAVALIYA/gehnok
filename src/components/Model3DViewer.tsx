@@ -81,18 +81,23 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
       (err) => { console.error('Failed to load diamond HDR:', err); }
     );
 
-    // Lighting: Dim ambient so diamond facets show real contrast from the HDR,
-    // and a focused directional light to create sparkle highlights.
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3); // Keep low — too much washes out the diamond
+    // Lighting: Keep ambient very low so the diamond HDR can show full contrast.
+    // Scene lights are for the metal only. Diamond sparkle comes from the HDR env map.
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.15); // Very dim — prevents diamond from washing out
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 3.0);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
     directionalLight.position.set(2, 4, 3);
     scene.add(directionalLight);
 
-    const fillLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
     fillLight.position.set(-3, 1, -2);
     scene.add(fillLight);
+
+    // A focused point light aimed at where the diamond is to create genuine sparkle
+    const sparkleLight = new THREE.PointLight(0xffffff, 3.0, 10);
+    sparkleLight.position.set(0, 1, 2);
+    scene.add(sparkleLight);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -172,14 +177,15 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                     // Tag this mesh so the HDR callback can reliably find it later
                     child.userData.isDiamond = true;
 
-                    // Diamond material: high-sparkle transparent mirror approach
+                    // Diamond material: max-sparkle mirror approach
+                    // envMapIntensity=10 means the HDR is applied at FULL POWER, not diluted
                     physMat.roughness = 0;
                     physMat.metalness = 1.0;
-                    physMat.opacity = 0.7;
+                    physMat.opacity = 0.75;
                     physMat.transparent = true;
                     physMat.clearcoat = 1.0;
                     physMat.clearcoatRoughness = 0;
-                    physMat.envMapIntensity = 5.0;
+                    physMat.envMapIntensity = 10.0; // Maximum — full HDR power only on this diamond mesh
                     physMat.color = new THREE.Color(0xffffff);
                     physMat.flatShading = true;
                     
