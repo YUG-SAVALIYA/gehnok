@@ -79,7 +79,7 @@ export default function HoverVideo({
       <ImageWithSkeleton
         src={imageUrl}
         alt={alt}
-        className={`${imageClassName} ${activeHoverState ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`}
+        className={`${imageClassName}`}
         containerClassName={`${isPlaying ? 'opacity-0' : 'opacity-100'}`}
         draggable={false}
         loading="lazy"
@@ -94,7 +94,7 @@ export default function HoverVideo({
           playsInline 
           preload="metadata"
           onPlaying={() => setIsPlaying(true)}
-          className={`${videoClassName} ${isPlaying ? 'opacity-100' : 'opacity-0'} ${activeHoverState ? 'scale-105' : 'scale-100'} transition-transform duration-700 ease-out`} 
+          className={`${videoClassName} ${isPlaying ? 'opacity-100' : 'opacity-0'} transition-opacity duration-700 ease-out`} 
         />
       )}
     </div>

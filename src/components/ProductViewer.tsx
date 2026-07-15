@@ -1184,7 +1184,7 @@ export default function ProductViewer({
                           <div 
                             className={`flex items-center justify-center rounded-full transition-all duration-250 ease-out shadow-sm
                               ${isActive 
-                                ? 'w-12 h-12 border-[3px] border-[#D4AF37] shadow-[0_0_8px_rgba(212,175,55,0.4)] scale-100 z-10' 
+                                ? 'w-12 h-12 border-[3px] border-[#381932] shadow-[0_0_8px_rgba(56,25,50,0.4)] scale-100 z-10' 
                                 : 'w-11 h-11 border border-neutral-300 hover:scale-108 hover:border-neutral-400 hover:shadow-md hover:brightness-105'
                               }`}
                           >
@@ -1252,24 +1252,19 @@ export default function ProductViewer({
                       {selectedSize}
                     </span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {availableSizes.map(size => {
-                      const isActive = selectedSize === size;
-                      return (
-                        <button
-                          key={size}
-                          type="button"
-                          onClick={() => setSelectedSize(size)}
-                          className={`px-4 py-2 text-[10px] font-mono tracking-wider transition-all duration-300 border cursor-pointer ${
-                            isActive
-                              ? 'bg-[#381932] text-white border-[#381932] font-bold'
-                              : 'bg-transparent text-[#381932] border-[#381932]/30 hover:border-[#381932]'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      );
-                    })}
+                  <div className="relative w-full mt-2">
+                    <select
+                      value={selectedSize}
+                      onChange={(e) => setSelectedSize(e.target.value)}
+                      className="w-full appearance-none bg-transparent border border-[#381932]/30 text-[#381932] px-4 py-3 font-mono text-xs font-bold focus:outline-none focus:border-[#381932] transition-colors cursor-pointer rounded-none"
+                    >
+                      {availableSizes.map(size => (
+                        <option key={size} value={size}>{size}</option>
+                      ))}
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#381932]">
+                      <ChevronDown size={14} />
+                    </div>
                   </div>
                 </div>
               )}
@@ -1421,7 +1416,7 @@ export default function ProductViewer({
                       <div 
                         className="flex items-stretch min-h-[105px] w-full h-full bg-gradient-to-r from-[#FDF8F0] to-white rounded-xl"
                         style={{
-                          boxShadow: 'inset 0 0 0 1.5px rgba(56, 25, 50, 0.28), 0 10px 24px rgba(56, 25, 50, 0.08)',
+                          boxShadow: '0 10px 24px rgba(56, 25, 50, 0.08)',
                           WebkitMaskImage: 'radial-gradient(circle at 0 50%, transparent 12px, black 12.5px), radial-gradient(circle at 100% 50%, transparent 12px, black 12.5px)',
                           WebkitMaskSize: '51% 100%',
                           WebkitMaskRepeat: 'no-repeat',
@@ -2039,7 +2034,7 @@ export default function ProductViewer({
                   }}
                   className="group flex flex-col justify-between cursor-pointer animate-fade-in"
                 >
-                  <div className="aspect-[4/5] bg-[#F4F1EA] relative overflow-hidden flex items-center justify-center mb-6">
+                  <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden flex items-center justify-center mb-6">
                     {(() => {
                       const videoMedia = item.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
                       let videoUrl = videoMedia?.url;
@@ -2055,7 +2050,7 @@ export default function ProductViewer({
                           <img
                             src={item.images[0]}
                             alt={item.name}
-                            className={`object-contain w-3/4 h-3/4 transition-all duration-300 ease-out group-hover:scale-110 group-hover:-translate-y-2 mix-blend-multiply relative z-10 ${videoUrl ? 'group-hover:opacity-0' : ''}`}
+                            className={`object-contain w-3/4 h-3/4 transition-all duration-300 ease-out mix-blend-multiply relative z-10 ${videoUrl ? 'group-hover:opacity-0' : ''}`}
                             referrerPolicy="no-referrer"
                           />
                           {videoUrl && (
@@ -2073,20 +2068,19 @@ export default function ProductViewer({
                     })()}
                   </div>
 
-                  <div className="space-y-2 text-center px-4">
-                    <span className="text-[8px] tracking-[0.2em] font-sans font-bold uppercase text-[#381932]/40">
-                      {item.collection}
-                    </span>
-                    <h3 className="text-sm font-serif font-bold text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
-                      {item.name}
+                  <div className="pt-4 space-y-1 text-left bg-transparent">
+                    <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                      {item.name.split('-')[0].trim()}
                     </h3>
-                    <p className="text-xs font-mono font-bold text-[#381932]">
-                      {new Intl.NumberFormat('en-IN', {
-                        style: 'currency',
-                        currency: 'INR',
-                        maximumFractionDigits: 0
-                      }).format(item.price)}
-                    </p>
+                    <div className="pt-0.5">
+                      <span className="text-sm font-sans font-medium text-[#381932]">
+                        {new Intl.NumberFormat('en-IN', {
+                          style: 'currency',
+                          currency: 'INR',
+                          maximumFractionDigits: 0
+                        }).format(item.price)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               )))}

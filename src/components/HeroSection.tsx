@@ -411,7 +411,7 @@ export default function HeroSection({
                         imageUrl={product.images[0]}
                         alt={product.name}
                         forceHover={hoveredBestSellerId === product.id}
-                        containerClassName="aspect-square bg-[#FAF8F4] flex items-center justify-center"
+                        containerClassName="aspect-square bg-[#F5F5F5] flex items-center justify-center"
                         imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
                         videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
                         onClick={() => onSelectProduct(product)}
@@ -419,20 +419,14 @@ export default function HeroSection({
                     );
                   })()}
   
-                  {/* Product Details Panel - Elegant & Compact */}
-                  <div className="pt-4 px-2 space-y-1.5 text-center bg-transparent">
-                    <div className="text-[#381932]/40 text-[9px] uppercase tracking-[0.3em] font-sans font-bold pb-1">
-                      Best Seller
-                    </div>
-                    <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#D4AF37] transition-colors duration-500">
-                      {product.name}
+                  {/* Product Details Panel */}
+                  <div className="pt-4 space-y-1 text-left bg-transparent">
+                    <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                      {product.name.split('-')[0].trim()}
                     </h3>
-                    <div className="flex flex-col items-center justify-center gap-1.5 pt-1 relative">
-                      <span className="text-xs font-mono font-bold text-[#381932]/80 group-hover:opacity-0 transition-opacity duration-500">
+                    <div className="pt-0.5">
+                      <span className="text-sm font-sans font-medium text-[#381932]">
                         {formatPrice(product.price)}
-                      </span>
-                      <span className="text-[9px] uppercase tracking-[0.2em] text-[#381932] font-sans font-bold opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500 absolute inset-0 flex items-center justify-center">
-                        View Details
                       </span>
                     </div>
                   </div>
@@ -552,7 +546,7 @@ export default function HeroSection({
                           imageUrl={product.images[0]}
                           alt={product.name}
                           forceHover={hoveredNewLaunchId === product.id}
-                          containerClassName="aspect-square bg-[#FAF8F4] flex items-center justify-center"
+                          containerClassName="aspect-square bg-[#F5F5F5] flex items-center justify-center"
                           imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
                           videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
                           onClick={() => onSelectProduct(product)}
@@ -560,20 +554,14 @@ export default function HeroSection({
                       );
                     })()}
   
-                    {/* Compact Product Details Panel */}
-                    <div className="pt-4 px-2 space-y-1.5 text-center bg-transparent">
-                      <div className="text-[#D4AF37] text-[9px] uppercase tracking-[0.3em] font-sans font-bold pb-1">
-                        New Release
-                      </div>
-                      <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#D4AF37] transition-colors duration-500">
-                        {product.name}
+                    {/* Product Details Panel */}
+                    <div className="pt-4 space-y-1 text-left bg-transparent">
+                      <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                        {product.name.split('-')[0].trim()}
                       </h3>
-                      <div className="flex flex-col items-center justify-center gap-1.5 pt-1 relative">
-                        <span className="text-xs font-mono font-bold text-[#381932]/80 group-hover:opacity-0 transition-opacity duration-500">
+                      <div className="pt-0.5">
+                        <span className="text-sm font-sans font-medium text-[#381932]">
                           {formatPrice(product.price)}
-                        </span>
-                        <span className="text-[9px] uppercase tracking-[0.2em] text-[#381932] font-sans font-bold opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-500 absolute inset-0 flex items-center justify-center">
-                          View Details
                         </span>
                       </div>
                     </div>
@@ -696,7 +684,7 @@ export default function HeroSection({
             
             {/* Badge 1: 15-Day Return */}
             <div className="group space-y-5 p-4 flex flex-col items-center justify-start text-center h-full">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
                 <img src={returnSvg} alt="15-Day Return" className="w-full h-full object-contain drop-shadow-sm" />
               </div>
               <h3 className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] font-bold text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
@@ -706,7 +694,7 @@ export default function HeroSection({
 
             {/* Badge 2: Global Jeweler */}
             <div className="group space-y-5 p-4 flex flex-col items-center justify-start text-center h-full">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
                 <img src={globalSvg} alt="Global Boutique" className="w-full h-full object-contain drop-shadow-sm" />
               </div>
               <h3 className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] font-bold text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
@@ -716,7 +704,7 @@ export default function HeroSection({
 
             {/* Badge 3: Certificates */}
             <div className="group space-y-5 p-4 flex flex-col items-center justify-start text-center h-full">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
                 <img src={certifiedSvg} alt="Certified Documents" className="w-full h-full object-contain drop-shadow-sm" />
               </div>
               <h3 className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] font-bold text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
@@ -726,7 +714,7 @@ export default function HeroSection({
 
             {/* Badge 4: Secure Checkout */}
             <div className="group space-y-5 p-4 flex flex-col items-center justify-start text-center h-full">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
+              <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center shrink-0 transition-transform duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1">
                 <img src={secureCheckoutSvg} alt="Secure Checkout" className="w-full h-full object-contain drop-shadow-sm" />
               </div>
               <h3 className="text-[10px] sm:text-xs font-sans uppercase tracking-[0.25em] font-bold text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">

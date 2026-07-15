@@ -214,7 +214,7 @@ export default function CollectionViewer({
           imageUrl={product.images[0]}
           alt={product.name}
           forceHover={hoveredProductId === product.id}
-          containerClassName="w-full h-48 sm:h-72 bg-transparent group"
+          containerClassName="w-full h-48 sm:h-72 bg-[#F5F5F5] group"
           imageClassName="absolute inset-0 m-auto w-full h-full object-contain mix-blend-multiply z-10"
           videoClassName="absolute inset-0 m-auto w-[90%] h-[90%] object-contain mix-blend-multiply z-0 pointer-events-none"
         />
@@ -382,8 +382,8 @@ export default function CollectionViewer({
         <div className="border-t border-b border-[#381932] py-6 mb-12 space-y-6">
           <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
             
-            {/* Left Side: Collection Filter - Only shown if not forced category */}
-            {!forcedCategory ? (
+            {/* Left Side: Collection Filter - Only shown if not forced category and is 'all' collection */}
+            {(!forcedCategory && (!collectionHandle || collectionHandle.toLowerCase() === 'all')) ? (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-[9px] tracking-[0.2em] font-sans text-[#381932] uppercase mr-3 flex items-center gap-1.5 font-bold">
                   <Filter size={10} />
@@ -411,13 +411,7 @@ export default function CollectionViewer({
                   </button>
                 ))}
               </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <span className="text-[9px] tracking-[0.2em] font-sans text-[#381932]/60 uppercase font-bold">
-                  Displaying: {forcedCategory}
-                </span>
-              </div>
-            )}
+            ) : null}
 
             {/* Right Side: Sorting Filter */}
             <div className="flex flex-wrap items-center gap-2">
@@ -510,26 +504,19 @@ export default function CollectionViewer({
                 {renderProductIllustration(product)}
 
                 {/* Info Text block */}
-                <div className="space-y-1.5 pl-1">
-                  <div className="flex items-center justify-between text-[9px] tracking-widest font-sans uppercase font-bold text-[#381932] opacity-60">
-                    <span>{product.purity} {product.metal}</span>
-                    {product.gemstone && (
-                      <span className="flex items-center space-x-1 font-mono text-[8px]">
-                        <Sparkles size={8} />
-                        <span>{product.gemstone.carat} ct</span>
-                      </span>
-                    )}
-                  </div>
-                  <h3 className="text-lg font-serif-luxury font-bold tracking-tight text-[#381932] group-hover:text-[#D4AF37] transition-colors duration-500">
-                    {product.name}
+                <div className="pt-4 space-y-1 text-left bg-transparent">
+                  <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                    {product.name.split('-')[0].trim()}
                   </h3>
-                  <p className="text-xs font-mono text-[#381932]/70">
-                    {new Intl.NumberFormat('en-IN', {
-                      style: 'currency',
-                      currency: 'INR',
-                      maximumFractionDigits: 0
-                    }).format(product.price)}
-                  </p>
+                  <div className="pt-0.5">
+                    <span className="text-sm font-sans font-medium text-[#381932]">
+                      {new Intl.NumberFormat('en-IN', {
+                        style: 'currency',
+                        currency: 'INR',
+                        maximumFractionDigits: 0
+                      }).format(product.price)}
+                    </span>
+                  </div>
                 </div>
               </div>
             ))}

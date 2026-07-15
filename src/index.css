@@ -19,8 +19,8 @@
 @theme {
   --font-sans: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-serif: "Cirka", "Cormorant Garamond", serif;
-  --font-sc: "Cormorant SC", serif;
-  --font-mono: "JetBrains Mono", monospace;
+  --font-sc: "Cirka", "Cormorant Garamond", serif;
+  --font-mono: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   
   --color-brand-plum: #381932;
   --color-amethyst: #5C2E54;
