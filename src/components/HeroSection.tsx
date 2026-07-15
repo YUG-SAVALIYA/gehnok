@@ -392,7 +392,7 @@ export default function HeroSection({
               bestSellers.slice(0, 4).map((product, idx) => (
                 <div 
                   key={product.id}
-                  className="group bg-gradient-to-r from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer"
+                  className="group bg-gradient-to-br from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer"
                   onMouseEnter={() => setHoveredBestSellerId(product.id)}
                   onMouseLeave={() => setHoveredBestSellerId(null)}
                 >
@@ -548,7 +548,7 @@ export default function HeroSection({
                 newlyLaunched.slice(0, 4).map((product) => (
                   <div 
                     key={product.id}
-                    className="group bg-gradient-to-r from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer"
+                    className="group bg-gradient-to-br from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer"
                     onMouseEnter={() => setHoveredNewLaunchId(product.id)}
                     onMouseLeave={() => setHoveredNewLaunchId(null)}
                   >

@@ -278,6 +278,22 @@ export default function ProductViewer({
   // Custom configuration states
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
 
+  // Lenis smooth scroll configuration
+  useEffect(() => {
+    const lenis = new Lenis({
+      lerp: 0.1,
+      duration: 1.5,
+      smoothWheel: true,
+      wheelMultiplier: 0.8,
+    });
+    const raf = (time: number) => {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    };
+    requestAnimationFrame(raf);
+    return () => lenis.destroy();
+  }, []);
+
   // Dynamic available metals from variants (100% data-driven from Shopify)
   const availableMetals = useMemo(() => {
     console.log('[DEBUG] product.options for', product.name, ':', product.options);
@@ -542,7 +558,6 @@ export default function ProductViewer({
 
     // Reset scroll when product changes
     window.scrollTo(0, 0);
-    lenis.scrollTo(0, { immediate: true });
   }, [product, availableSizes, availableMetals]);
 
   const getGemstoneColorProfile = (product: Product) => {
@@ -1154,20 +1169,11 @@ export default function ProductViewer({
                       Select {sizeOptionName}:
                     </span>
                   </div>
-                  <div className="relative w-full mt-2">
-                    <select
-                      value={selectedSize}
-                      onChange={(e) => setSelectedSize(e.target.value)}
-                      className="w-full appearance-none bg-[#FFFFFF] border border-[#381932] text-[#381932] px-4 py-3 font-mono text-xs font-bold focus:outline-none focus:bg-[#381932] focus:text-white transition-colors cursor-pointer rounded-md"
-                    >
-                      {availableSizes.map(size => (
-                        <option key={size} value={size}>{size}</option>
-                      ))}
-                    </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#381932]">
-                      <ChevronDown size={14} />
-                    </div>
-                  </div>
+                  <CustomDropdown
+                    value={selectedSize}
+                    onChange={(val) => setSelectedSize(val)}
+                    options={availableSizes}
+                  />
                 </div>
               )}
 
@@ -1910,7 +1916,7 @@ export default function ProductViewer({
                       video.currentTime = 0;
                     }
                   }}
-                  className="group bg-gradient-to-r from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer animate-fade-in"
+                  className="group bg-gradient-to-br from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer animate-fade-in"
                 >
                   <div className="aspect-[4/5] bg-transparent relative overflow-hidden flex items-center justify-center">
                     {(() => {

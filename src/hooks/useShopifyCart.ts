@@ -305,7 +305,16 @@ export function useShopifyCart(): UseShopifyCartResult {
       const adjustedPrice = Math.round(product.price * priceFactor);
       const customProduct = { ...product, price: adjustedPrice, metal: metalName as any };
       const items = localCartRef.current;
-      saveLocal([...items, { product: customProduct, quantity, selectedMetal: metalName, selectedSize: size }]);
+      const existing = items.findIndex(
+        i => i.product.id === product.id && i.selectedMetal === metalName && i.selectedSize === size
+      );
+      if (existing > -1) {
+        const updated = [...items];
+        updated[existing].quantity += quantity;
+        saveLocal(updated);
+      } else {
+        saveLocal([...items, { product: customProduct, quantity, selectedMetal: metalName, selectedSize: size }]);
+      }
     } finally {
       setLoading(false);
     }

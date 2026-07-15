@@ -497,7 +497,7 @@ export default function CollectionViewer({
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
-                className="group bg-gradient-to-r from-white to-[#381932]/5 cursor-pointer flex flex-col justify-between overflow-hidden"
+                className="group bg-gradient-to-br from-white to-[#381932]/5 cursor-pointer flex flex-col justify-between overflow-hidden"
                 onMouseEnter={() => setHoveredProductId(product.id)}
                 onMouseLeave={() => setHoveredProductId(null)}
               >
