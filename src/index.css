@@ -27,8 +27,8 @@
   --color-deep-plum: #180916;
   --color-gold-champagne: #C9A96E;
   --color-gold-light: #E8D5B0;
-  --color-warm-white: #F9F7F2;
-  --color-cream: #EAE8E3;
+  --color-warm-white: #FFFFFF;
+  --color-cream: #F5F5F5;
   --color-stone: #8A7F7A;
   --color-ash: #8A7F7A;
   --color-ink: #381932;
@@ -66,7 +66,7 @@
 
 /* Glassmorphism for Atelier Cards */
 .atelier-glass {
-  background: rgba(250, 247, 242, 0.85);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(201, 169, 110, 0.15);

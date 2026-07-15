@@ -20,7 +20,7 @@ export default function AccountDashboard({ onBack, onLogoutSuccess }: AccountDas
   }
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] font-sans text-[#381932] selection:bg-[#381932]/10 py-24 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#FFFFFF] font-sans text-[#381932] selection:bg-[#381932]/10 py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         
         {/* Header */}
@@ -135,10 +135,10 @@ export default function AccountDashboard({ onBack, onLogoutSuccess }: AccountDas
                                 <img 
                                   src={item.variant.image.url} 
                                   alt={item.variant.image.altText || item.title}
-                                  className="w-10 h-10 object-cover bg-[#F9F7F2]"
+                                  className="w-10 h-10 object-cover bg-[#FFFFFF]"
                                 />
                               ) : (
-                                <div className="w-10 h-10 bg-[#F9F7F2] flex items-center justify-center">
+                                <div className="w-10 h-10 bg-[#FFFFFF] flex items-center justify-center">
                                   <Package size={14} className="text-[#381932]/30" />
                                 </div>
                               )}
@@ -166,12 +166,12 @@ export default function AccountDashboard({ onBack, onLogoutSuccess }: AccountDas
             </div>
 
             <div className="grid grid-cols-2 gap-6">
-              <div className="border border-[#381932]/20 bg-[#F9F7F2] p-6 hover:bg-white transition-colors cursor-pointer group">
+              <div className="border border-[#381932]/20 bg-[#FFFFFF] p-6 hover:bg-white transition-colors cursor-pointer group">
                 <Key size={20} className="text-[#C9A96E] mb-4" />
                 <h4 className="text-xs font-sans uppercase tracking-widest font-bold mb-1">Security Settings</h4>
                 <p className="text-[10px] text-[#381932]/60">Manage your private keys</p>
               </div>
-              <div className="border border-[#381932]/20 bg-[#F9F7F2] p-6 hover:bg-white transition-colors cursor-pointer group">
+              <div className="border border-[#381932]/20 bg-[#FFFFFF] p-6 hover:bg-white transition-colors cursor-pointer group">
                 <Settings size={20} className="text-[#C9A96E] mb-4" />
                 <h4 className="text-xs font-sans uppercase tracking-widest font-bold mb-1">Preferences</h4>
                 <p className="text-[10px] text-[#381932]/60">Tailor your boutique experience</p>

@@ -339,7 +339,7 @@ export default function App() {
   const isAuthView = currentView === 'auth';
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F9F7F2] text-[#381932] relative selection:bg-[#381932]/10">
+    <div className="flex flex-col min-h-screen bg-[#FFFFFF] text-[#381932] relative selection:bg-[#381932]/10">
 
       {/* Exquisite Brand Header */}
       {!isAuthView && (
@@ -542,7 +542,7 @@ export default function App() {
           {isWishlistOpen && (
             <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm transition-opacity duration-500">
               <div className="absolute inset-0 cursor-pointer" onClick={() => setIsWishlistOpen(false)} />
-              <div className="relative w-full max-w-md h-full bg-[#F9F7F2] text-[#381932] flex flex-col border-l border-[#381932] shadow-2xl p-6 font-sans">
+              <div className="relative w-full max-w-md h-full bg-[#FFFFFF] text-[#381932] flex flex-col border-l border-[#381932] shadow-2xl p-6 font-sans">
 
                 {/* Header */}
                 <div className="flex items-center justify-between border-b border-[#381932] pb-4 mb-6">
@@ -622,7 +622,7 @@ export default function App() {
           {/* Floating Action Button for the Private Concierge */}
           <button
             onClick={() => setIsConciergeOpen(true)}
-            className="fixed bottom-6 right-6 z-35 bg-[#381932] text-white hover:bg-[#EAE8E3] hover:text-[#381932] border border-[#381932] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer"
+            className="fixed bottom-6 right-6 z-35 bg-[#381932] text-white hover:bg-[#F5F5F5] hover:text-[#381932] border border-[#381932] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer"
             title="Consult private concierge"
           >
             <Compass size={22} className="group-hover:rotate-45 transition-transform duration-700" />

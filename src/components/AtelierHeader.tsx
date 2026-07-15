@@ -62,7 +62,7 @@ export default function AtelierHeader({
   ];
 
   return (
-    <header className={`sticky top-0 z-40 w-full bg-[#F9F7F2]/95 backdrop-blur-md border-b border-[#381932] transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
+    <header className={`sticky top-0 z-40 w-full bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#381932] transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
 
       {/* Gliding Ticker of Luxury Promises */}
       <div className="w-full bg-[#381932] text-[#FAF7F2] overflow-hidden py-1.5 border-b border-[#381932]">
@@ -182,7 +182,7 @@ export default function AtelierHeader({
             >
               <User size={18} />
               {isLoggedIn && (
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#C9A96E] rounded-full border border-[#F9F7F2]" />
+                <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[#C9A96E] rounded-full border border-[#FFFFFF]" />
               )}
             </button>
 
@@ -225,7 +225,7 @@ export default function AtelierHeader({
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-[#F9F7F2] border-b border-[#381932] px-4 py-6 space-y-4">
+        <div className="lg:hidden bg-[#FFFFFF] border-b border-[#381932] px-4 py-6 space-y-4">
           {navItems.map((item) => (
             <div key={item.label} className="space-y-1">
               <button

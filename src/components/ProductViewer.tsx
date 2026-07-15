@@ -238,7 +238,7 @@ const AccordionItem = ({ title, defaultOpen = false, children }: { title: string
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full py-4 flex justify-between items-center text-left focus:outline-none cursor-pointer group transition-colors hover:bg-[#F9F7F2]/50"
+        className="w-full py-4 flex justify-between items-center text-left focus:outline-none cursor-pointer group transition-colors hover:bg-[#FFFFFF]/50"
       >
         <span className="text-[12px] tracking-widest font-sans font-bold uppercase text-[#381932] group-hover:text-[#381932]/80 transition-colors">
           {title}
@@ -856,7 +856,7 @@ export default function ProductViewer({
 
   return (
     <>
-    <div className="py-12 bg-[#F9F7F2]">
+    <div className="py-12 bg-[#FFFFFF]">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Back navigation */}
@@ -979,7 +979,7 @@ export default function ProductViewer({
                         <button
                           type="button"
                           onClick={showPreviousGalleryItem}
-                          className="hidden md:flex absolute left-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#F9F7F2]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
+                          className="hidden md:flex absolute left-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
                           aria-label="Previous product media"
                         >
                           <ChevronLeft size={18} />
@@ -987,7 +987,7 @@ export default function ProductViewer({
                         <button
                           type="button"
                           onClick={showNextGalleryItem}
-                          className="hidden md:flex absolute right-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#F9F7F2]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
+                          className="hidden md:flex absolute right-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
                           aria-label="Next product media"
                         >
                           <ChevronRight size={18} />
@@ -1025,7 +1025,7 @@ export default function ProductViewer({
                                   decoding="async"
                                 />
                               )}
-                              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#F9F7F2]/45">
+                              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#FFFFFF]/45">
                                 <PlayCircle size={28} className="text-[#381932]" />
                               </div>
                             </>
@@ -1100,7 +1100,7 @@ export default function ProductViewer({
                   {formattedPrice}
                 </p>
                 {selectedMetal?.priceFactor !== 1 && selectedMetal?.priceFactor !== undefined && (
-                  <span className="text-[9px] tracking-wider uppercase font-mono bg-[#EAE8E3] text-[#381932] px-2 py-0.5 font-bold">
+                  <span className="text-[9px] tracking-wider uppercase font-mono bg-[#F5F5F5] text-[#381932] px-2 py-0.5 font-bold">
                     Alloy Rate Adjusted
                   </span>
                 )}
@@ -1129,7 +1129,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {metalOptionName}:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#EAE8E3] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
                       {selectedMetal?.name}
                     </span>
                   </div>
@@ -1223,7 +1223,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select Purity:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#EAE8E3] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
                       {selectedPurity}
                     </span>
                   </div>
@@ -1232,7 +1232,7 @@ export default function ProductViewer({
                       <button
                         key={p}
                         onClick={() => setSelectedPurity(p)}
-                        className={`px-6 py-2.5 border ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#EAE8E3] bg-[#EAE8E3] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
+                        className={`px-6 py-2.5 border ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#F5F5F5] bg-[#F5F5F5] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
                       >
                         {p}
                       </button>
@@ -1248,7 +1248,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {sizeOptionName}:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#EAE8E3] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
                       {selectedSize}
                     </span>
                   </div>
@@ -1281,7 +1281,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {option.name}:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#EAE8E3] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
                       {otherSelections[option.name]}
                     </span>
                   </div>
@@ -1496,7 +1496,7 @@ export default function ProductViewer({
                 onClick={handleAddClick}
                 className={`w-full py-4 text-xs uppercase tracking-widest font-sans font-bold border rounded-none transition-all duration-300 relative overflow-hidden cursor-pointer ${
                   isAdded
-                    ? 'bg-[#381932] text-[#F9F7F2] border-[#381932]'
+                    ? 'bg-[#381932] text-[#FFFFFF] border-[#381932]'
                     : 'bg-[#381932] text-white border-[#381932] hover:bg-transparent hover:text-[#381932]'
                 }`}
               >
@@ -1519,7 +1519,7 @@ export default function ProductViewer({
               </div>
 
               {/* Trust Badges */}
-              <div className="grid grid-cols-4 gap-3 sm:gap-4 mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#F9F7F2]/70">
+              <div className="grid grid-cols-4 gap-3 sm:gap-4 mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#FFFFFF]/70">
                 <div className="flex flex-col items-center justify-center space-y-3 opacity-80 hover:opacity-100 transition-all mix-blend-multiply group cursor-default">
                   <img src={bisHallmarkImg} alt="BIS Hallmark" className="h-12 w-auto object-contain transition-transform group-hover:scale-105" />
                   <span className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#381932]/70 text-center leading-[1.2]">BIS Hallmark</span>
@@ -1538,7 +1538,7 @@ export default function ProductViewer({
                 </div>
               </div>
 
-              <div className="mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#F9F7F2]/70 flex items-center justify-center">
+              <div className="mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#FFFFFF]/70 flex items-center justify-center">
                 <img
                   src={paymentGatewayImg}
                   alt="Secure payment options"
@@ -1560,7 +1560,7 @@ export default function ProductViewer({
                   </button>
                   {activeAccordion === 'materials' && (
                     <div className="mt-4 space-y-3 pl-1 text-xs text-[#381932]/80 leading-relaxed">
-                      <div className="grid grid-cols-2 gap-y-2 border border-[#381932] p-4 rounded-none bg-[#EAE8E3]/40">
+                      <div className="grid grid-cols-2 gap-y-2 border border-[#381932] p-4 rounded-none bg-[#F5F5F5]/40">
                         <div>
                           <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Gemstone Type</span>
                           <span className="text-[#381932] font-bold">{product.gemstone.type}</span>
@@ -1591,7 +1591,7 @@ export default function ProductViewer({
 
         {/* Fullscreen Media Gallery */}
         {isFullscreenGalleryOpen && createPortal(
-          <div className="fixed inset-0 z-[100] bg-[#F9F7F2]/95 backdrop-blur-xl flex items-center justify-center">
+          <div className="fixed inset-0 z-[100] bg-[#FFFFFF]/95 backdrop-blur-xl flex items-center justify-center">
             {/* Close / Back Button */}
             <button
               onClick={() => setIsFullscreenGalleryOpen(false)}
@@ -1691,7 +1691,7 @@ export default function ProductViewer({
 
         {/* Fullscreen 3D Viewer */}
         {isFullscreen3DOpen && createPortal(
-          <div className="fixed inset-0 z-[100] bg-[#F9F7F2]/95 backdrop-blur-xl flex items-center justify-center">
+          <div className="fixed inset-0 z-[100] bg-[#FFFFFF]/95 backdrop-blur-xl flex items-center justify-center">
             {/* Close / Back Button */}
             <button
               onClick={() => setIsFullscreen3DOpen(false)}
@@ -1848,7 +1848,7 @@ export default function ProductViewer({
                 </h4>
 
                 {reviewSuccessMsg ? (
-                  <div className="p-4 bg-[#EAE8E3] border border-[#381932] text-xs text-[#381932] flex items-center space-x-2 font-bold uppercase font-sans tracking-wide">
+                  <div className="p-4 bg-[#F5F5F5] border border-[#381932] text-xs text-[#381932] flex items-center space-x-2 font-bold uppercase font-sans tracking-wide">
                     <CheckCircle size={14} />
                     <span>Appraisal successfully committed to our registers.</span>
                   </div>
@@ -1865,14 +1865,14 @@ export default function ProductViewer({
                           onChange={(e) => setReviewFormName(e.target.value)}
                           required
                           placeholder="e.g. Charlotte M."
-                          className="w-full bg-[#F9F7F2] text-[#381932] border border-[#381932] rounded-none px-3.5 py-2 text-xs focus:ring-1 focus:ring-[#381932] outline-none font-mono"
+                          className="w-full bg-[#FFFFFF] text-[#381932] border border-[#381932] rounded-none px-3.5 py-2 text-xs focus:ring-1 focus:ring-[#381932] outline-none font-mono"
                         />
                       </div>
                       <div className="space-y-1.5">
                         <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
                           Commit Star Rating
                         </label>
-                        <div className="flex min-h-[35px] items-center space-x-2 bg-[#F9F7F2] px-3.5 py-2 border border-[#381932]">
+                        <div className="flex min-h-[35px] items-center space-x-2 bg-[#FFFFFF] px-3.5 py-2 border border-[#381932]">
                           {[1, 2, 3, 4, 5].map((s) => (
                             <button
                               key={s}
@@ -1904,7 +1904,7 @@ export default function ProductViewer({
                         required
                         rows={4}
                         placeholder="Share your raw assessment of the gemstone, metallurgy, or boutique courier experience..."
-                        className="w-full bg-[#F9F7F2] text-[#381932] border border-[#381932] rounded-none p-3.5 text-xs focus:ring-1 focus:ring-[#381932] outline-none"
+                        className="w-full bg-[#FFFFFF] text-[#381932] border border-[#381932] rounded-none p-3.5 text-xs focus:ring-1 focus:ring-[#381932] outline-none"
                       />
                     </div>
 
@@ -1951,7 +1951,7 @@ export default function ProductViewer({
                         <div className="flex items-center space-x-2 text-[10px] text-[#381932]/50">
                           <span>{review.date}</span>
                           {review.isVerified && (
-                            <span className="flex items-center space-x-1 text-[9px] font-sans font-bold uppercase text-[#381932] bg-[#EAE8E3] px-2 py-0.5 font-bold">
+                            <span className="flex items-center space-x-1 text-[9px] font-sans font-bold uppercase text-[#381932] bg-[#F5F5F5] px-2 py-0.5 font-bold">
                               <CheckCircle size={8} />
                               <span>Verified Owner</span>
                             </span>
@@ -2008,11 +2008,11 @@ export default function ProductViewer({
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`rel-skel-${idx}`} className="group flex flex-col justify-between cursor-pointer animate-pulse">
-                    <div className="aspect-[4/5] bg-[#EAE8E3]/50 border border-[#381932]/10 flex items-center justify-center mb-6" />
+                    <div className="aspect-[4/5] bg-[#F5F5F5]/50 border border-[#381932]/10 flex items-center justify-center mb-6" />
                     <div className="space-y-2 text-center px-4">
-                      <div className="h-2 w-1/3 bg-[#EAE8E3] mx-auto" />
-                      <div className="h-4 w-3/4 bg-[#EAE8E3] mx-auto" />
-                      <div className="h-3 w-1/4 bg-[#EAE8E3] mx-auto" />
+                      <div className="h-2 w-1/3 bg-[#F5F5F5] mx-auto" />
+                      <div className="h-4 w-3/4 bg-[#F5F5F5] mx-auto" />
+                      <div className="h-3 w-1/4 bg-[#F5F5F5] mx-auto" />
                     </div>
                   </div>
                 ))

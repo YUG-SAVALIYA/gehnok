@@ -155,7 +155,7 @@ export default function HeroSection({
   };
 
   return (
-    <div className="w-full bg-[#F9F7F2] text-[#381932] flex flex-col font-serif box-border">
+    <div className="w-full bg-[#FFFFFF] text-[#381932] flex flex-col font-serif box-border">
       
       {/* ----------------- SECTION 1: SLIDING BAR (HERO CAROUSEL) ----------------- */}
       <div className="relative w-full aspect-[4/5] sm:aspect-[16/9] lg:aspect-[21/9] max-h-[800px] bg-[#381932] overflow-hidden border-b border-[#381932]">
@@ -185,7 +185,7 @@ export default function HeroSection({
         {/* Sliding Navigation Controls (Prev / Next Arrows) */}
         <button
           onClick={handlePrevSlide}
-          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/20 hover:bg-[#F9F7F2] hover:text-[#381932] text-white border border-white/20 rounded-full flex items-center justify-center transition-all cursor-pointer"
+          className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/20 hover:bg-[#FFFFFF] hover:text-[#381932] text-white border border-white/20 rounded-full flex items-center justify-center transition-all cursor-pointer"
           aria-label="Previous slide"
         >
           <ChevronLeft size={20} />
@@ -193,7 +193,7 @@ export default function HeroSection({
 
         <button
           onClick={handleNextSlide}
-          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/20 hover:bg-[#F9F7F2] hover:text-[#381932] text-white border border-white/20 rounded-full flex items-center justify-center transition-all cursor-pointer"
+          className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 bg-black/20 hover:bg-[#FFFFFF] hover:text-[#381932] text-white border border-white/20 rounded-full flex items-center justify-center transition-all cursor-pointer"
           aria-label="Next slide"
         >
           <ChevronRight size={20} />
@@ -206,7 +206,7 @@ export default function HeroSection({
               key={idx}
               onClick={() => setActiveSlide(idx)}
               className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
-                idx === activeSlide ? 'bg-[#F9F7F2] scale-125' : 'bg-white/40 hover:bg-white/60'
+                idx === activeSlide ? 'bg-[#FFFFFF] scale-125' : 'bg-white/40 hover:bg-white/60'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -247,14 +247,14 @@ export default function HeroSection({
           >
             {collectionsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
-                <div key={`col-skel-mob-${idx}`} className="h-56 bg-[#EAE8E3]/50 animate-pulse border border-[#381932]/10" />
+                <div key={`col-skel-mob-${idx}`} className="h-56 bg-[#F5F5F5]/50 animate-pulse border border-[#381932]/10" />
               ))
             ) : (
               collections.map((cat, idx) => (
                 <div
                   key={`mob-${cat.handle}`}
                   onClick={() => onNavigate('collection', cat.handle)}
-                  className="group relative h-56 bg-[#EAE8E3] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="group relative h-56 bg-[#F5F5F5] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
                 >
                   <ImageWithSkeleton
                     src={cat.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80'}
@@ -263,7 +263,7 @@ export default function HeroSection({
                     containerClassName="absolute inset-0 z-0"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="relative z-[2] space-y-1.5 text-[#F9F7F2] transition-transform duration-300 transform group-hover:translate-y-[-4px]">
+                  <div className="relative z-[2] space-y-1.5 text-[#FFFFFF] transition-transform duration-300 transform group-hover:translate-y-[-4px]">
                     <h3 className="text-xl font-serif font-bold tracking-wide drop-shadow-md">
                       {cat.title}
                     </h3>
@@ -281,7 +281,7 @@ export default function HeroSection({
             {collectionsLoading ? (
               <div className="flex flex-row justify-center gap-6 w-full">
                 {Array.from({ length: 4 }).map((_, idx) => (
-                  <div key={`col-skel-desk-${idx}`} className="h-80 w-64 bg-[#EAE8E3]/50 animate-pulse border border-[#381932]/10" />
+                  <div key={`col-skel-desk-${idx}`} className="h-80 w-64 bg-[#F5F5F5]/50 animate-pulse border border-[#381932]/10" />
                 ))}
               </div>
             ) : (
@@ -313,7 +313,7 @@ export default function HeroSection({
                       <div
                         key={`desk-${cat.handle}`}
                         onClick={() => onNavigate('collection', cat.handle)}
-                        className="flex-1 min-w-[200px] max-w-[300px] shrink-0 group relative h-80 bg-[#EAE8E3] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
+                        className="flex-1 min-w-[200px] max-w-[300px] shrink-0 group relative h-80 bg-[#F5F5F5] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
                       >
                         <ImageWithSkeleton
                           src={cat.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80'}
@@ -322,7 +322,7 @@ export default function HeroSection({
                           containerClassName="absolute inset-0 z-0"
                           referrerPolicy="no-referrer"
                         />
-                        <div className="relative z-[2] space-y-1.5 text-[#F9F7F2] transition-transform duration-300 transform group-hover:translate-y-[-4px]">
+                        <div className="relative z-[2] space-y-1.5 text-[#FFFFFF] transition-transform duration-300 transform group-hover:translate-y-[-4px]">
                           <h3 className="text-xl lg:text-2xl font-serif font-bold tracking-wide drop-shadow-md">
                             {cat.title}
                           </h3>
@@ -346,7 +346,7 @@ export default function HeroSection({
       </section>
 
       {/* ----------------- SECTION 3: BEST SELLERS ----------------- */}
-      <section className="py-20 bg-[#F9F7F2] border-b border-[#381932]/30">
+      <section className="py-20 bg-[#FFFFFF] border-b border-[#381932]/30">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           
           {/* Section title */}
@@ -378,11 +378,11 @@ export default function HeroSection({
             {productsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
                 <div key={`bs-skel-${idx}`} className="space-y-4 animate-pulse">
-                  <div className="aspect-square bg-[#EAE8E3]/50 border border-[#381932]/10" />
+                  <div className="aspect-square bg-[#F5F5F5]/50 border border-[#381932]/10" />
                   <div className="pt-4 px-2 space-y-2 text-center">
-                    <div className="h-2 w-1/4 bg-[#EAE8E3] mx-auto" />
-                    <div className="h-4 w-3/4 bg-[#EAE8E3] mx-auto" />
-                    <div className="h-3 w-1/3 bg-[#EAE8E3] mx-auto" />
+                    <div className="h-2 w-1/4 bg-[#F5F5F5] mx-auto" />
+                    <div className="h-4 w-3/4 bg-[#F5F5F5] mx-auto" />
+                    <div className="h-3 w-1/3 bg-[#F5F5F5] mx-auto" />
                   </div>
                 </div>
               ))
@@ -478,7 +478,7 @@ export default function HeroSection({
               <div className="pt-2">
                 <button
                   onClick={onEnterCollections}
-                  className="px-8 py-4 bg-[#F9F7F2] text-[#381932] font-sans text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-[#381932] hover:text-white transition-all duration-300 border border-[#F9F7F2] cursor-pointer"
+                  className="px-8 py-4 bg-[#FFFFFF] text-[#381932] font-sans text-[10px] uppercase tracking-[0.2em] font-bold hover:bg-[#381932] hover:text-white transition-all duration-300 border border-[#FFFFFF] cursor-pointer"
                 >
                   Explore Full Catalog
                 </button>
@@ -519,11 +519,11 @@ export default function HeroSection({
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`nl-skel-${idx}`} className="space-y-4 animate-pulse">
-                    <div className="aspect-square bg-[#EAE8E3]/50 border border-[#381932]/10" />
+                    <div className="aspect-square bg-[#F5F5F5]/50 border border-[#381932]/10" />
                     <div className="pt-4 px-2 space-y-2 text-center">
-                      <div className="h-2 w-1/4 bg-[#EAE8E3] mx-auto" />
-                      <div className="h-4 w-3/4 bg-[#EAE8E3] mx-auto" />
-                      <div className="h-3 w-1/3 bg-[#EAE8E3] mx-auto" />
+                      <div className="h-2 w-1/4 bg-[#F5F5F5] mx-auto" />
+                      <div className="h-4 w-3/4 bg-[#F5F5F5] mx-auto" />
+                      <div className="h-3 w-1/3 bg-[#F5F5F5] mx-auto" />
                     </div>
                   </div>
                 ))
@@ -740,7 +740,7 @@ export default function HeroSection({
       </section>
 
       {/* ----------------- SECTION 7: BLOGS AND FAQS ----------------- */}
-      <section className="py-20 bg-[#F9F7F2] space-y-24">
+      <section className="py-20 bg-[#FFFFFF] space-y-24">
         
         {/* Blogs Sub-Section */}
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -771,14 +771,14 @@ export default function HeroSection({
                 className="group flex flex-col bg-white border border-[#381932]/10 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
                 {/* Blog Image */}
-                <div className="aspect-[16/10] bg-[#EAE8E3] overflow-hidden relative border-b border-[#381932]/10">
+                <div className="aspect-[16/10] bg-[#F5F5F5] overflow-hidden relative border-b border-[#381932]/10">
                   <img
                     src={blog.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80'}
                     alt={blog.title}
                     className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute bottom-3 left-3 bg-[#381932]/90 text-[#F9F7F2] text-[8px] uppercase tracking-widest font-sans font-bold px-2 py-1">
+                  <div className="absolute bottom-3 left-3 bg-[#381932]/90 text-[#FFFFFF] text-[8px] uppercase tracking-widest font-sans font-bold px-2 py-1">
                     {blog.blog?.title || 'Journal'}
                   </div>
                 </div>
@@ -864,7 +864,7 @@ export default function HeroSection({
           </div>
 
           {/* CTA help card */}
-          <div className="p-6 bg-[#EAE8E3]/40 border border-[#381932]/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="p-6 bg-[#F5F5F5]/40 border border-[#381932]/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
             <div>
               <h4 className="text-xs font-sans uppercase tracking-widest font-bold text-[#381932]">
                 Have another inquiry?

@@ -76,7 +76,7 @@ export default function ContactUs({
   };
 
   return (
-    <div className="py-12 bg-[#F9F7F2] min-h-[80vh] font-sans text-[#381932]">
+    <div className="py-12 bg-[#FFFFFF] min-h-[80vh] font-sans text-[#381932]">
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 animate-fade-in">
         
         {/* Header section */}
@@ -89,8 +89,8 @@ export default function ContactUs({
               Contact & Inquiries
             </h1>
           </div>
-          <div className="flex items-center space-x-3 bg-[#381932] text-[#F9F7F2] border border-[#381932] px-4 py-2.5 rounded-none">
-            <ShieldCheck size={14} className="text-[#F9F7F2]" />
+          <div className="flex items-center space-x-3 bg-[#381932] text-[#FFFFFF] border border-[#381932] px-4 py-2.5 rounded-none">
+            <ShieldCheck size={14} className="text-[#FFFFFF]" />
             <span className="text-[10px] tracking-widest font-sans uppercase font-bold">
               GIA Secured Channel
             </span>
@@ -197,7 +197,7 @@ export default function ContactUs({
               )}
 
               {submitSuccess ? (
-                <div className="bg-[#EAE8E3] border border-[#381932] p-4 rounded-none text-xs text-[#381932] space-y-2">
+                <div className="bg-[#F5F5F5] border border-[#381932] p-4 rounded-none text-xs text-[#381932] space-y-2">
                   <div className="flex items-center space-x-2">
                     <Sparkles size={14} className="text-[#381932] animate-pulse" />
                     <span className="font-bold uppercase tracking-wider text-[10px]">
@@ -284,7 +284,7 @@ export default function ContactUs({
             </div>
 
             {/* Service commitments */}
-            <div className="border border-[#381932] p-6 bg-[#EAE8E3]/40 space-y-4">
+            <div className="border border-[#381932] p-6 bg-[#F5F5F5]/40 space-y-4">
               <h3 className="text-xs uppercase tracking-widest font-sans text-[#381932] font-bold">
                 Atelier Pledges
               </h3>

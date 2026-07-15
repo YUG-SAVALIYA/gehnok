@@ -226,7 +226,7 @@ export default function CollectionViewer({
     const isEarrings = product.collection === 'Earrings';
     const isBracelet = product.collection === 'Bracelets';
 
-    let jewelColor = '#F9F7F2';
+    let jewelColor = '#FFFFFF';
     let glowColor = 'rgba(26, 26, 26, 0.03)';
 
     if (product.gemstone) {
@@ -246,7 +246,7 @@ export default function CollectionViewer({
 
     return (
       <div 
-        className="w-full h-48 sm:h-72 flex items-center justify-center bg-[#EAE8E3] border border-[#381932] rounded-none relative overflow-hidden transition-colors duration-500"
+        className="w-full h-48 sm:h-72 flex items-center justify-center bg-[#F5F5F5] border border-[#381932] rounded-none relative overflow-hidden transition-colors duration-500"
         style={{ boxShadow: `inset 0 0 24px ${glowColor}` }}
       >
         {/* Fine crosshairs typical of Editorial CAD drafts */}
@@ -348,16 +348,16 @@ export default function CollectionViewer({
             <div className={`flex items-center justify-center gap-3 transition-opacity duration-1000 delay-300 ${
               mounted ? 'opacity-100' : 'opacity-0'
             }`}>
-              <span className="h-[1px] w-8 bg-[#F9F7F2]/60"></span>
-              <span className="text-[10px] tracking-[0.3em] font-sans uppercase font-bold text-[#F9F7F2]/90">
+              <span className="h-[1px] w-8 bg-[#FFFFFF]/60"></span>
+              <span className="text-[10px] tracking-[0.3em] font-sans uppercase font-bold text-[#FFFFFF]/90">
                 Haute Joaillerie
               </span>
-              <span className="h-[1px] w-8 bg-[#F9F7F2]/60"></span>
+              <span className="h-[1px] w-8 bg-[#FFFFFF]/60"></span>
             </div>
-            <h2 className="text-3xl sm:text-5.5xl font-serif-luxury tracking-wide text-[#F9F7F2] font-bold drop-shadow-md">
+            <h2 className="text-3xl sm:text-5.5xl font-serif-luxury tracking-wide text-[#FFFFFF] font-bold drop-shadow-md">
               {pageTitle}
             </h2>
-            <p className={`max-w-lg mx-auto text-xs sm:text-sm text-[#F9F7F2]/90 font-sans leading-relaxed drop-shadow-sm font-medium transition-opacity duration-1000 delay-500 ${
+            <p className={`max-w-lg mx-auto text-xs sm:text-sm text-[#FFFFFF]/90 font-sans leading-relaxed drop-shadow-sm font-medium transition-opacity duration-1000 delay-500 ${
               mounted ? 'opacity-100' : 'opacity-0'
             }`}>
               {pageDesc}
@@ -367,7 +367,7 @@ export default function CollectionViewer({
 
       {/* GPU Accelerated Content Wrapper */}
       <div 
-        className={`w-full bg-[#F9F7F2] ${
+        className={`w-full bg-[#FFFFFF] ${
           animPhase === 'done'
             ? 'relative z-20 pt-12 pb-16'
             : `absolute left-0 right-0 z-20 pt-12 pb-16 transition-transform duration-[1200ms] ease-[cubic-bezier(0.76,0,0.24,1)] top-[100vh] ${
@@ -403,7 +403,7 @@ export default function CollectionViewer({
                     }}
                     className={`px-3.5 py-1.5 text-[10px] tracking-wider font-sans uppercase font-bold transition-all duration-300 rounded-none border border-[#381932] cursor-pointer ${
                       selectedCategory === cat
-                        ? 'bg-[#381932] text-[#F9F7F2]'
+                        ? 'bg-[#381932] text-[#FFFFFF]'
                         : 'bg-transparent text-[#381932] hover:bg-[#381932] hover:text-white'
                     }`}
                   >
@@ -475,11 +475,11 @@ export default function CollectionViewer({
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-4 animate-pulse">
-                <div className="w-full h-48 sm:h-72 bg-[#EAE8E3]/50 border border-[#381932]/10" />
+                <div className="w-full h-48 sm:h-72 bg-[#F5F5F5]/50 border border-[#381932]/10" />
                 <div className="space-y-2 pl-1">
-                  <div className="h-3 w-1/3 bg-[#EAE8E3]" />
-                  <div className="h-5 w-3/4 bg-[#EAE8E3]" />
-                  <div className="h-4 w-1/4 bg-[#EAE8E3]" />
+                  <div className="h-3 w-1/3 bg-[#F5F5F5]" />
+                  <div className="h-5 w-3/4 bg-[#F5F5F5]" />
+                  <div className="h-4 w-1/4 bg-[#F5F5F5]" />
                 </div>
               </div>
             ))}

@@ -16,7 +16,7 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
   const renderArticleIllustration = (articleId: string) => {
     const isGold = articleId.includes('gold');
     return (
-      <div className="w-full h-80 flex items-center justify-center bg-[#EAE8E3] border border-[#381932] rounded-none relative overflow-hidden group">
+      <div className="w-full h-80 flex items-center justify-center bg-[#F5F5F5] border border-[#381932] rounded-none relative overflow-hidden group">
         
         {/* Fine background crosshairs or grids representing drafts */}
         <div className="absolute inset-0 pointer-events-none opacity-20">
@@ -32,7 +32,7 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
               <path d="M30,35 L70,35 L62,70 L38,70 Z" fill="none" stroke="#381932" strokeWidth="2" />
               <path d="M33,35 L67,35" stroke="#381932" strokeWidth="0.5" />
               {/* Dripping gold droplet */}
-              <path d="M50,42 Q50,75 55,75 Q60,75 50,42" fill="#F9F7F2" stroke="#381932" strokeWidth="1" />
+              <path d="M50,42 Q50,75 55,75 Q60,75 50,42" fill="#FFFFFF" stroke="#381932" strokeWidth="1" />
               <circle cx="50" cy="80" r="3" fill="#381932" className="animate-bounce" />
               {/* Sparks */}
               <circle cx="28" cy="45" r="1.5" fill="#381932" />
@@ -54,8 +54,8 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
 
         {/* Read Article Overlay */}
         <div className="absolute inset-0 bg-[#381932]/85 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center space-x-2">
-          <BookOpen size={16} className="text-[#F9F7F2]" />
-          <span className="text-[10px] tracking-[0.25em] font-sans uppercase text-[#F9F7F2] font-bold">
+          <BookOpen size={16} className="text-[#FFFFFF]" />
+          <span className="text-[10px] tracking-[0.25em] font-sans uppercase text-[#FFFFFF] font-bold">
             Read Editorial Story
           </span>
         </div>
@@ -64,7 +64,7 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
   };
 
   return (
-    <div className="py-12 bg-[#F9F7F2] min-h-[85vh]">
+    <div className="py-12 bg-[#FFFFFF] min-h-[85vh]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         
         {selectedArticle ? (
@@ -80,7 +80,7 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
 
             {/* Illustration frame inside full view */}
             {selectedArticle.image ? (
-              <div className="w-full h-80 flex items-center justify-center bg-[#EAE8E3] border border-[#381932] rounded-none relative overflow-hidden group">
+              <div className="w-full h-80 flex items-center justify-center bg-[#F5F5F5] border border-[#381932] rounded-none relative overflow-hidden group">
                 <ImageWithSkeleton
                   src={selectedArticle.image.url}
                   alt={selectedArticle.title}
@@ -146,12 +146,12 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
               {loading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`j-skel-${idx}`} className="space-y-4 animate-pulse">
-                    <div className="w-full h-80 bg-[#EAE8E3]/50 border border-[#381932]/10" />
+                    <div className="w-full h-80 bg-[#F5F5F5]/50 border border-[#381932]/10" />
                     <div className="space-y-2">
-                      <div className="h-2 w-1/4 bg-[#EAE8E3]" />
-                      <div className="h-5 w-3/4 bg-[#EAE8E3]" />
-                      <div className="h-12 w-full bg-[#EAE8E3]" />
-                      <div className="h-2 w-1/5 bg-[#EAE8E3] pt-2" />
+                      <div className="h-2 w-1/4 bg-[#F5F5F5]" />
+                      <div className="h-5 w-3/4 bg-[#F5F5F5]" />
+                      <div className="h-12 w-full bg-[#F5F5F5]" />
+                      <div className="h-2 w-1/5 bg-[#F5F5F5] pt-2" />
                     </div>
                   </div>
                 ))

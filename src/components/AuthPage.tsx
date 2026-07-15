@@ -47,11 +47,11 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F7F2] flex items-center justify-center relative px-4 sm:px-6 py-20 font-sans selection:bg-[#381932]/10">
+    <div className="min-h-screen bg-[#FFFFFF] flex items-center justify-center relative px-4 sm:px-6 py-20 font-sans selection:bg-[#381932]/10">
       
       {/* Abstract Luxury Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-[#EAE8E3]/40 to-transparent rounded-full blur-3xl opacity-50" />
+        <div className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-[#F5F5F5]/40 to-transparent rounded-full blur-3xl opacity-50" />
         <div className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-[#381932]/5 to-transparent rounded-full blur-3xl opacity-50" />
       </div>
 
@@ -88,7 +88,7 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
         </div>
 
         {/* Right Side: Auth Forms */}
-        <div className="p-8 sm:p-12 relative bg-[#F9F7F2]">
+        <div className="p-8 sm:p-12 relative bg-[#FFFFFF]">
           {/* Back Button */}
           <button 
             onClick={onBack}

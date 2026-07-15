@@ -74,7 +74,7 @@ export default function Gemstone3DViewer({ color, cut, isFullscreen = false }: G
     const palette = getColors();
     const radialGlow = ctx.createRadialGradient(width / 2, height / 2, 20, width / 2, height / 2, 140);
     radialGlow.addColorStop(0, palette.glow);
-    radialGlow.addColorStop(1, 'rgba(250, 247, 242, 0)');
+    radialGlow.addColorStop(1, 'rgba(255, 255, 255, 0)');
     ctx.fillStyle = radialGlow;
     ctx.fillRect(0, 0, width, height);
 
