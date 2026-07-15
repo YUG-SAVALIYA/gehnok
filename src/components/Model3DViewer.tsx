@@ -42,54 +42,64 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.0;
+    renderer.toneMappingExposure = 1.2;
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setSize(mount.clientWidth, mount.clientHeight);
     mount.appendChild(renderer.domElement);
 
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     pmremGenerator.compileEquirectangularShader();
-    scene.environment = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    // Start with a neutral room environment. The diamond HDR will override this once loaded.
+    const roomEnvTexture = pmremGenerator.fromScene(new RoomEnvironment(), 0.04).texture;
+    scene.environment = roomEnvTexture;
     
     let diamondEnvMap: THREE.Texture | null = null;
     const rgbeLoader = new RGBELoader();
-    rgbeLoader.load(diamondHdrUrl, (tex) => {
-      if (disposed) return;
-      diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
-      
-      // If the model loaded before the HDR, we need to update the diamond material now
-      if (modelRoot) {
-        modelRoot.traverse(child => {
-          if (child instanceof THREE.Mesh && child.material) {
-            const materials = Array.isArray(child.material) ? child.material : [child.material];
-            materials.forEach(material => {
-              const physMat = material as any;
-              const name = (material.name || '').toLowerCase();
-              const isDiamond = 
-                name.includes('diamond') || 
-                name.includes('gem') || 
-                name.includes('stone') || 
-                name.includes('crystal') || 
-                name.includes('glass') || 
-                (physMat.ior === 2.4 && physMat.metalness > 0.5); // Fallback check based on our custom assignment
+    rgbeLoader.load(
+      diamondHdrUrl,
+      (tex) => {
+        if (disposed) return;
+        tex.mapping = THREE.EquirectangularReflectionMapping;
+        diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
+        tex.dispose();
+        
+        // CRITICAL: Set the diamond HDR as the GLOBAL scene environment.
+        // This means ALL materials automatically receive the HDR reflections.
+        // The diamond, metal, everything will now reflect this.
+        scene.environment = diamondEnvMap;
 
-              if (isDiamond) {
-                physMat.envMap = diamondEnvMap;
-              }
-              physMat.needsUpdate = true;
-            });
-          }
-        });
-      }
-    });
+        // If the model loaded before the HDR, force-update all materials so they pick up the new env
+        if (modelRoot) {
+          modelRoot.traverse(child => {
+            if (child instanceof THREE.Mesh && child.material) {
+              const materials = Array.isArray(child.material) ? child.material : [child.material];
+              materials.forEach(material => {
+                // Force apply envMap directly to diamond meshes (tagged earlier)
+                if (child.userData.isDiamond) {
+                  (material as any).envMap = diamondEnvMap;
+                }
+                material.needsUpdate = true;
+              });
+            }
+          });
+        }
+      },
+      undefined,
+      (err) => { console.error('Failed to load diamond HDR:', err); }
+    );
 
-    // Add default lighting similar to standard GLTF viewers
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.0);
+    // Lighting: Dim ambient so diamond facets show real contrast from the HDR,
+    // and a focused directional light to create sparkle highlights.
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.3); // Keep low — too much washes out the diamond
     scene.add(ambientLight);
     
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 2.0);
-    directionalLight.position.set(2, 2, 2);
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 3.0);
+    directionalLight.position.set(2, 4, 3);
     scene.add(directionalLight);
+
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    fillLight.position.set(-3, 1, -2);
+    scene.add(fillLight);
 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
@@ -166,22 +176,24 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                       }
                     }
 
-                    // To get the hyper-realistic "shining" diamond look on a pure white background,
-                    // physical transmission fails because refracting white = pure white (no dark contrast).
-                    // We fake it using a highly intense transparent mirror. The opacity lets the background through,
-                    // and the metalness=1 reflects the dark/bright spots of the HDR intensely.
-                    physMat.transmission = 0; 
-                    physMat.opacity = 0.65;
-                    physMat.transparent = true; 
+                    // Tag this mesh so the HDR callback can reliably find it later
+                    child.userData.isDiamond = true;
+
+                    // Diamond material: high-sparkle transparent mirror approach
                     physMat.roughness = 0;
-                    physMat.metalness = 1.0; // Pure mirror
+                    physMat.metalness = 1.0;
+                    physMat.opacity = 0.7;
+                    physMat.transparent = true;
                     physMat.clearcoat = 1.0;
                     physMat.clearcoatRoughness = 0;
-                    physMat.envMapIntensity = 6.0; // Massive boost to make the HDR lights "pop" and shine
-                    physMat.color = new THREE.Color(0xffffff); // Must be white so reflections aren't tinted
-                    physMat.flatShading = true; // Keeps the sharp diamond facets
+                    physMat.envMapIntensity = 5.0;
+                    physMat.color = new THREE.Color(0xffffff);
+                    physMat.flatShading = true;
                     
-                    if (diamondEnvMap) physMat.envMap = diamondEnvMap;
+                    // Apply immediately if HDR is already loaded, otherwise the HDR callback will do it
+                    if (diamondEnvMap) {
+                      physMat.envMap = diamondEnvMap;
+                    }
                     
                     physMat.needsUpdate = true;
                   }
