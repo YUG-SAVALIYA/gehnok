@@ -57,6 +57,9 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
       if (disposed) return;
       diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
       
+      // Set the HDR as the global scene environment so metals also get the realistic reflections
+      scene.environment = diamondEnvMap;
+
       // If the model loaded before the HDR, we need to update the diamond material now
       if (modelRoot) {
         modelRoot.traverse(child => {
@@ -64,10 +67,19 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
             const materials = Array.isArray(child.material) ? child.material : [child.material];
             materials.forEach(material => {
               const physMat = material as any;
-              if (physMat.transmission !== undefined && physMat.transmission > 0) {
+              const name = (material.name || '').toLowerCase();
+              const isDiamond = 
+                name.includes('diamond') || 
+                name.includes('gem') || 
+                name.includes('stone') || 
+                name.includes('crystal') || 
+                name.includes('glass') || 
+                (physMat.ior === 2.4 && physMat.metalness > 0.5); // Fallback check based on our custom assignment
+
+              if (isDiamond) {
                 physMat.envMap = diamondEnvMap;
-                material.needsUpdate = true;
               }
+              physMat.needsUpdate = true;
             });
           }
         });
@@ -157,17 +169,17 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                       }
                     }
 
-                    physMat.transmission = 1.0; 
-                    physMat.opacity = 1.0;
-                    physMat.transparent = false; // False is best for physical refraction
+                    // Use transparency and metalness instead of pure transmission
+                    // because transmission on a pure white background makes it look opaque white.
+                    physMat.transmission = 0; 
+                    physMat.opacity = 0.4;
+                    physMat.transparent = true; 
                     physMat.ior = 2.4;
-                    physMat.thickness = Math.max(physMat.thickness || 0, 1.5);
                     physMat.roughness = 0;
-                    physMat.metalness = 0;
+                    physMat.metalness = 0.9;
                     physMat.clearcoat = 1.0;
                     physMat.clearcoatRoughness = 0;
-                    physMat.dispersion = 1.5; 
-                    physMat.envMapIntensity = 4.0;
+                    physMat.envMapIntensity = 5.0;
                     physMat.color = new THREE.Color(0xffffff);
                     if (diamondEnvMap) physMat.envMap = diamondEnvMap;
                     
