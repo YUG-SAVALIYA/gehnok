@@ -169,16 +169,16 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                     // Use a hybrid approach for the diamond to avoid it turning into a white blob against a white background.
                     // By relying heavily on envMap reflections (metalness) and partial transparency/transmission,
                     // it picks up the dark/light contrasts from the diamond HDR.
-                    physMat.transmission = 0.2; 
-                    physMat.opacity = 0.7;
+                    physMat.transmission = 0.3; 
+                    physMat.opacity = 0.9;
                     physMat.transparent = true; 
                     physMat.ior = 2.4;
                     physMat.roughness = 0;
-                    physMat.metalness = 0.8;
+                    physMat.metalness = 1.0; // Pure metallic to ensure ONLY the envMap and lights reflect
                     physMat.clearcoat = 1.0;
                     physMat.clearcoatRoughness = 0;
                     physMat.envMapIntensity = 3.0;
-                    physMat.color = new THREE.Color(0xffffff);
+                    physMat.color = new THREE.Color(0x000000); // Black base color so diffuse light doesn't wash it out white
                     if (diamondEnvMap) physMat.envMap = diamondEnvMap;
                     
                     physMat.needsUpdate = true;
