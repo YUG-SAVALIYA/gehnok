@@ -214,7 +214,7 @@ export default function CollectionViewer({
           imageUrl={product.images[0]}
           alt={product.name}
           forceHover={hoveredProductId === product.id}
-          containerClassName="w-full h-48 sm:h-72 bg-[#F5F5F5] group"
+          containerClassName="w-full h-48 sm:h-72 bg-transparent group"
           imageClassName="absolute inset-0 m-auto w-full h-full object-contain mix-blend-multiply z-10"
           videoClassName="absolute inset-0 m-auto w-[90%] h-[90%] object-contain mix-blend-multiply z-0 pointer-events-none"
         />
@@ -490,13 +490,13 @@ export default function CollectionViewer({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10"
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1"
           >
             {filteredProducts.map((product) => (
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
-                className="group cursor-pointer space-y-4"
+                className="group bg-[#F5F5F5] cursor-pointer flex flex-col justify-between overflow-hidden"
                 onMouseEnter={() => setHoveredProductId(product.id)}
                 onMouseLeave={() => setHoveredProductId(null)}
               >
@@ -504,7 +504,7 @@ export default function CollectionViewer({
                 {renderProductIllustration(product)}
 
                 {/* Info Text block */}
-                <div className="pt-4 space-y-1 text-left bg-transparent">
+                <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
                   <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                     {product.name.split('-')[0].trim()}
                   </h3>

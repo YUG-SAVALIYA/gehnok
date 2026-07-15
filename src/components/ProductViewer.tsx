@@ -850,9 +850,9 @@ export default function ProductViewer({
 
   const relatedGridClass = 
     displayRelatedProducts.length === 1 ? "grid grid-cols-1 max-w-sm mx-auto" :
-    displayRelatedProducts.length === 2 ? "grid grid-cols-2 max-w-3xl mx-auto gap-6 md:gap-10" :
-    displayRelatedProducts.length === 3 ? "grid grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto gap-6 md:gap-10" :
-    "grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10";
+    displayRelatedProducts.length === 2 ? "grid grid-cols-2 max-w-3xl mx-auto gap-1" :
+    displayRelatedProducts.length === 3 ? "grid grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto gap-1" :
+    "grid grid-cols-2 md:grid-cols-4 gap-1";
 
   return (
     <>
@@ -871,186 +871,86 @@ export default function ProductViewer({
         {/* Two Column Luxury View */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
           
-          {/* Left Column: Media Tabs (Interactive 3D / Photographs) & Story */}
+          {/* Left Column: Media (Photographs) & Story */}
           <div className="lg:col-span-6 space-y-8 lg:sticky lg:top-24 lg:self-start">
-            {/* Media Tab System Selector */}
-            <div className="flex pb-1 space-x-6">
-              <button
-                onClick={() => setActiveMediaTab('photos')}
-                className={`pb-3 text-[10px] uppercase tracking-widest font-sans font-bold flex items-center space-x-2 border-b-2 transition-all cursor-pointer ${
-                  activeMediaTab === 'photos'
-                    ? 'border-[#381932] text-[#381932]'
-                    : 'border-transparent text-[#381932]/50 hover:text-[#381932]'
-                }`}
-              >
-                <Image size={12} />
-                <span>Atelier Photographs</span>
-              </button>
-              <button
-                onClick={() => setActiveMediaTab('3d')}
-                className={`pb-3 text-[10px] uppercase tracking-widest font-sans font-bold flex items-center space-x-2 border-b-2 transition-all cursor-pointer ${
-                  activeMediaTab === '3d'
-                    ? 'border-[#381932] text-[#381932]'
-                    : 'border-transparent text-[#381932]/50 hover:text-[#381932]'
-                }`}
-              >
-                <Sparkles size={12} />
-                <span>3D CAD Studio</span>
-              </button>
-            </div>
-
+            
             {/* Media Window Render */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="animate-fade-in relative">
-              {activeMediaTab === '3d' ? (
-                <div className="space-y-2 relative">
-                  <button
-                    onClick={() => setIsFullscreen3DOpen(true)}
-                    className="absolute top-2 right-2 z-[20] p-2 bg-[#381932]/10 hover:bg-[#381932]/20 text-[#381932] rounded-full transition-colors cursor-pointer"
-                    title="View Fullscreen"
-                  >
-                    <Maximize2 size={16} />
-                  </button>
-                  {model3DUrl ? (
-                    <Suspense
-                      fallback={
-                        <div className="h-[400px] w-full border border-[#381932]/10 bg-[#FFFFFF] rounded-md flex items-center justify-center text-[9px] font-mono uppercase tracking-[0.18em] text-[#381932]/60">
-                          Preparing 3D studio
-                        </div>
-                      }
-                    >
-                      <Model3DViewer src={model3DUrl} poster={productPhotos[0]} title={product.name} />
-                    </Suspense>
-                  ) : (
-                    <Gemstone3DViewer
-                      color={getGemstoneColorProfile(product)}
-                      cut={product.gemstone?.cut || 'Round Brilliant'}
-                    />
-                  )}
-                  <p className="text-[9px] text-[#381932]/60 font-mono text-center uppercase tracking-wider">
-                    Drag to rotate and inspect the model
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {/* Active main media frame */}
-                  <div className="w-full h-[400px] bg-transparent relative overflow-hidden flex items-center justify-center group">
-                    {activeGalleryItem?.type === 'video' ? (
-                      activeGalleryItem.url.includes('youtube') || activeGalleryItem.url.includes('vimeo') ? (
-                        <iframe
-                          src={activeGalleryItem.url}
-                          className="absolute inset-0 w-full h-full mix-blend-multiply"
-                          frameBorder="0"
-                          allowFullScreen
-                          allow="autoplay; fullscreen"
-                        />
-                      ) : (
-                        <PreloadedVideo
-                          src={activeGalleryItem.url}
-                          posterImg={productPhotos[0]}
-                          isActive
-                          shouldPreload={videosReadyToPreload}
-                          onReady={() => setVideosReadyToPreload(true)}
-                          className="absolute inset-0 w-full h-full object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
-                        />
-                      )
-                    ) : activeGalleryItem?.type === 'image' ? (
-                      <ImageWithSkeleton
+              <div className="space-y-4">
+                {/* Active main media frame */}
+                <div className="w-full h-[500px] lg:h-[600px] bg-transparent relative overflow-hidden flex items-center justify-center group">
+                  {activeGalleryItem?.type === 'video' ? (
+                    activeGalleryItem.url.includes('youtube') || activeGalleryItem.url.includes('vimeo') ? (
+                      <iframe
                         src={activeGalleryItem.url}
-                        alt={`${product.name} Studio Photography`}
-                        style={getMetalFilterStyle(selectedMetal?.id || '')}
-                        className="object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
-                        containerClassName="absolute inset-0 z-0"
-                        referrerPolicy="no-referrer"
-                        draggable={false}
-                        loading="eager" // Main image should load instantly
-                        fetchPriority="high"
+                        className="absolute inset-0 w-full h-full mix-blend-multiply"
+                        frameBorder="0"
+                        allowFullScreen
+                        allow="autoplay; fullscreen"
                       />
-                    ) : null}
-                    
-                    {/* Protective transparent overlay to block right-click and save, but allow opening full screen */}
-                    <div 
-                      className="absolute inset-0 z-[15] cursor-pointer" 
-                      onContextMenu={(e) => e.preventDefault()} 
-                      onClick={() => setIsFullscreenGalleryOpen(true)}
+                    ) : (
+                      <PreloadedVideo
+                        src={activeGalleryItem.url}
+                        posterImg={productPhotos[0]}
+                        isActive
+                        shouldPreload={videosReadyToPreload}
+                        onReady={() => setVideosReadyToPreload(true)}
+                        className="absolute inset-0 w-full h-full object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
+                      />
+                    )
+                  ) : activeGalleryItem?.type === 'image' ? (
+                    <ImageWithSkeleton
+                      src={activeGalleryItem.url}
+                      alt={`${product.name} Studio Photography`}
+                      style={getMetalFilterStyle(selectedMetal?.id || '')}
+                      className="object-contain mix-blend-multiply transition-transform duration-1000 group-hover:scale-105"
+                      containerClassName="absolute inset-0 z-0"
+                      referrerPolicy="no-referrer"
+                      draggable={false}
+                      loading="eager" // Main image should load instantly
+                      fetchPriority="high"
                     />
-
-                    {galleryItems.length > 1 && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={showPreviousGalleryItem}
-                          className="hidden md:flex absolute left-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
-                          aria-label="Previous product media"
-                        >
-                          <ChevronLeft size={18} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={showNextGalleryItem}
-                          className="hidden md:flex absolute right-3 top-1/2 z-20 h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-[#381932]/70 bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
-                          aria-label="Next product media"
-                        >
-                          <ChevronRight size={18} />
-                        </button>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Thumbnail Row */}
-                  <style>{`.hide-scroll::-webkit-scrollbar { display: none; }`}</style>
+                  ) : null}
+                  
+                  {/* Protective transparent overlay to block right-click and save, but allow opening full screen */}
                   <div 
-                    className="flex overflow-x-auto gap-4 snap-x snap-mandatory hide-scroll"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                  >
-                    {galleryItems.map((item, index) => {
-                      if (index === safePhotoIndex) return null;
-                      return (
-                        <button
-                          key={`${item.type}-${item.url}-${index}`}
-                          onClick={() => setActivePhotoIndex(index)}
-                          className="flex-shrink-0 w-[calc(33.333%-10.66px)] aspect-square bg-transparent overflow-hidden relative cursor-pointer group transition-all duration-300 opacity-50 hover:opacity-100 snap-center"
-                        >
-                          {item.type === 'video' ? (
-                            <>
-                              {productPhotos[0] && (
-                                <ImageWithSkeleton
-                                  src={productPhotos[0]}
-                                  alt={`${product.name} Video`}
-                                  style={getMetalFilterStyle(selectedMetal?.id || '')}
-                                  className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02]"
-                                  containerClassName="absolute inset-0 z-0"
-                                  referrerPolicy="no-referrer"
-                                  draggable={false}
-                                  loading="lazy"
-                                  decoding="async"
-                                />
-                              )}
-                              <div className="absolute inset-0 z-10 flex items-center justify-center bg-[#FFFFFF]/45">
-                                <PlayCircle size={28} className="text-[#381932]" />
-                              </div>
-                            </>
-                          ) : (
-                            <ImageWithSkeleton
-                              src={item.url}
-                              alt={`${product.name} Angle ${index + 1}`}
-                              style={getMetalFilterStyle(selectedMetal?.id || '')}
-                              className="object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-[1.02]"
-                              containerClassName="absolute inset-0 z-0"
-                              referrerPolicy="no-referrer"
-                              draggable={false}
-                              loading="lazy" // Thumbnails must be lazy loaded so they don't block the network
-                              decoding="async"
-                            />
-                          )}
+                    className="absolute inset-0 z-[15] cursor-pointer" 
+                    onContextMenu={(e) => e.preventDefault()} 
+                    onClick={() => setIsFullscreenGalleryOpen(true)}
+                  />
 
-                          {/* Protective overlay for thumbnail */}
-                          <div className="absolute inset-0 z-15" onContextMenu={(e) => e.preventDefault()} />
-                        </button>
-                      );
-                    })}
-                  </div>
+                  {/* Navigation Buttons Side-by-Side (Right) */}
+                  {galleryItems.length > 1 && (
+                    <div className="absolute right-4 bottom-4 z-20 flex space-x-2">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); showPreviousGalleryItem(); }}
+                        className="h-10 w-10 border border-[#381932]/70 rounded-full flex items-center justify-center bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
+                        aria-label="Previous product media"
+                      >
+                        <ChevronLeft size={18} />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); showNextGalleryItem(); }}
+                        className="h-10 w-10 border border-[#381932]/70 rounded-full flex items-center justify-center bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
+                        aria-label="Next product media"
+                      >
+                        <ChevronRight size={18} />
+                      </button>
+                    </div>
+                  )}
+
+                  {/* 3D Button Overlay (Left) */}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setIsFullscreen3DOpen(true); }}
+                    className="absolute left-4 bottom-4 z-20 h-10 w-10 border border-[#381932]/70 rounded-full flex items-center justify-center bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
+                    title="View 3D Model"
+                  >
+                    <Sparkles size={18} />
+                  </button>
                 </div>
-              )}
+              </div>
             </motion.div>
 
             {/* In-depth story card */}
@@ -1128,9 +1028,6 @@ export default function ProductViewer({
                   <div className="flex justify-between items-baseline">
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {metalOptionName}:
-                    </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#FFFFFF] px-2 py-0.5">
-                      {selectedMetal?.name}
                     </span>
                   </div>
                   
@@ -1223,9 +1120,6 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select Purity:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#FFFFFF] px-2 py-0.5">
-                      {selectedPurity}
-                    </span>
                   </div>
                   <div className="flex gap-2">
                     {availablePurities.map(p => (
@@ -1248,15 +1142,12 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {sizeOptionName}:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#FFFFFF] px-2 py-0.5">
-                      {selectedSize}
-                    </span>
                   </div>
                   <div className="relative w-full mt-2">
                     <select
                       value={selectedSize}
                       onChange={(e) => setSelectedSize(e.target.value)}
-                      className="w-full appearance-none bg-transparent border border-[#381932]/30 text-[#381932] px-4 py-3 font-mono text-xs font-bold focus:outline-none focus:border-[#381932] transition-colors cursor-pointer rounded-none"
+                      className="w-full appearance-none bg-[#FFFFFF] border border-[#381932] text-[#381932] px-4 py-3 font-mono text-xs font-bold focus:outline-none focus:border-[#381932] transition-colors cursor-pointer rounded-none"
                     >
                       {availableSizes.map(size => (
                         <option key={size} value={size}>{size}</option>
@@ -1416,6 +1307,7 @@ export default function ProductViewer({
                       <div 
                         className="flex items-stretch min-h-[105px] w-full h-full bg-gradient-to-r from-[#FDF8F0] to-white rounded-xl"
                         style={{
+                          filter: 'drop-shadow(0px 0px 1px rgba(56, 25, 50, 0.5))',
                           boxShadow: '0 10px 24px rgba(56, 25, 50, 0.08)',
                           WebkitMaskImage: 'radial-gradient(circle at 0 50%, transparent 12px, black 12.5px), radial-gradient(circle at 100% 50%, transparent 12px, black 12.5px)',
                           WebkitMaskSize: '51% 100%',
@@ -1515,20 +1407,20 @@ export default function ProductViewer({
 
               {/* Trust Badges */}
               <div className="grid grid-cols-4 gap-3 sm:gap-4 mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#FFFFFF]/70">
-                <div className="flex flex-col items-center justify-center space-y-3 opacity-80 hover:opacity-100 transition-all mix-blend-multiply group cursor-default">
-                  <img src={bisHallmarkImg} alt="BIS Hallmark" className="h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+                <div className="flex flex-col items-center justify-center space-y-3 mix-blend-multiply cursor-default">
+                  <img src={bisHallmarkImg} alt="BIS Hallmark" className="h-16 w-auto object-contain" />
                   <span className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#381932]/70 text-center leading-[1.2]">BIS Hallmark</span>
                 </div>
-                <div className="flex flex-col items-center justify-center space-y-3 opacity-80 hover:opacity-100 transition-all mix-blend-multiply group cursor-default">
-                  <img src={easyReturnImg} alt="Easy Return & Exchange" className="h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+                <div className="flex flex-col items-center justify-center space-y-3 mix-blend-multiply cursor-default">
+                  <img src={easyReturnImg} alt="Easy Return & Exchange" className="h-16 w-auto object-contain" />
                   <span className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#381932]/70 text-center leading-[1.2]">Easy Return Exchange</span>
                 </div>
-                <div className="flex flex-col items-center justify-center space-y-3 opacity-80 hover:opacity-100 transition-all mix-blend-multiply group cursor-default">
-                  <img src={secureDeliveryImg} alt="Secure Delivery" className="h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+                <div className="flex flex-col items-center justify-center space-y-3 mix-blend-multiply cursor-default">
+                  <img src={secureDeliveryImg} alt="Secure Delivery" className="h-16 w-auto object-contain" />
                   <span className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#381932]/70 text-center leading-[1.2]">Secure Delivery</span>
                 </div>
-                <div className="flex flex-col items-center justify-center space-y-3 opacity-80 hover:opacity-100 transition-all mix-blend-multiply group cursor-default">
-                  <img src={skinFriendlyImg} alt="Skin Friendly" className="h-12 w-auto object-contain transition-transform group-hover:scale-105" />
+                <div className="flex flex-col items-center justify-center space-y-3 mix-blend-multiply cursor-default">
+                  <img src={skinFriendlyImg} alt="Skin Friendly" className="h-16 w-auto object-contain" />
                   <span className="text-[8px] font-sans font-bold uppercase tracking-widest text-[#381932]/70 text-center leading-[1.2]">Skin Friendly</span>
                 </div>
               </div>
@@ -1735,7 +1627,7 @@ export default function ProductViewer({
         {/* ----------------- SECTOR: POLICIES SIDE-BY-SIDE ----------------- */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-16 pt-12 border-t border-[#381932]/20">
           <div>
-            <AccordionItem title="Shipping Details" defaultOpen={true}>
+            <AccordionItem title="Shipping Details" defaultOpen={false}>
               <div className="flex items-center space-x-2 font-serif text-[16px] text-gray-900 mb-2">
                 <Clock size={18} strokeWidth={1.5} />
                 <span>Processing Time</span>
@@ -1781,7 +1673,7 @@ export default function ProductViewer({
           </div>
           
           <div>
-            <AccordionItem title="Return & Exchange" defaultOpen={true}>
+            <AccordionItem title="Return & Exchange" defaultOpen={false}>
               <p>We accept returns within <strong className="font-semibold">15 days</strong> from the date of delivery.</p>
               
               <hr className="border-gray-200 my-4" />
@@ -2032,9 +1924,9 @@ export default function ProductViewer({
                       video.currentTime = 0;
                     }
                   }}
-                  className="group flex flex-col justify-between cursor-pointer animate-fade-in"
+                  className="group bg-[#F5F5F5] flex flex-col justify-between overflow-hidden cursor-pointer animate-fade-in"
                 >
-                  <div className="aspect-[4/5] bg-[#F5F5F5] relative overflow-hidden flex items-center justify-center mb-6">
+                  <div className="aspect-[4/5] bg-transparent relative overflow-hidden flex items-center justify-center">
                     {(() => {
                       const videoMedia = item.media?.find(m => m.mediaContentType === 'VIDEO' || m.mediaContentType === 'EXTERNAL_VIDEO');
                       let videoUrl = videoMedia?.url;
@@ -2068,7 +1960,7 @@ export default function ProductViewer({
                     })()}
                   </div>
 
-                  <div className="pt-4 space-y-1 text-left bg-transparent">
+                  <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
                     <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                       {item.name.split('-')[0].trim()}
                     </h3>

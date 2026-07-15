@@ -373,7 +373,7 @@ export default function HeroSection({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
+            className="grid grid-cols-2 md:grid-cols-4 gap-1"
           >
             {productsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
@@ -390,7 +390,7 @@ export default function HeroSection({
               bestSellers.slice(0, 4).map((product, idx) => (
                 <div 
                   key={product.id}
-                  className="group bg-transparent flex flex-col justify-between overflow-hidden cursor-pointer"
+                  className="group bg-[#F5F5F5] flex flex-col justify-between overflow-hidden cursor-pointer"
                   onMouseEnter={() => setHoveredBestSellerId(product.id)}
                   onMouseLeave={() => setHoveredBestSellerId(null)}
                 >
@@ -411,7 +411,7 @@ export default function HeroSection({
                         imageUrl={product.images[0]}
                         alt={product.name}
                         forceHover={hoveredBestSellerId === product.id}
-                        containerClassName="aspect-square bg-[#F5F5F5] flex items-center justify-center"
+                        containerClassName="aspect-square bg-transparent flex items-center justify-center"
                         imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
                         videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
                         onClick={() => onSelectProduct(product)}
@@ -420,7 +420,7 @@ export default function HeroSection({
                   })()}
   
                   {/* Product Details Panel */}
-                  <div className="pt-4 space-y-1 text-left bg-transparent">
+                  <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
                     <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                       {product.name.split('-')[0].trim()}
                     </h3>
@@ -508,7 +508,7 @@ export default function HeroSection({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8"
+              className="grid grid-cols-2 md:grid-cols-4 gap-1"
             >
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
@@ -525,7 +525,7 @@ export default function HeroSection({
                 newlyLaunched.slice(0, 4).map((product) => (
                   <div 
                     key={product.id}
-                    className="group bg-transparent flex flex-col justify-between overflow-hidden cursor-pointer"
+                    className="group bg-[#F5F5F5] flex flex-col justify-between overflow-hidden cursor-pointer"
                     onMouseEnter={() => setHoveredNewLaunchId(product.id)}
                     onMouseLeave={() => setHoveredNewLaunchId(null)}
                   >
@@ -546,7 +546,7 @@ export default function HeroSection({
                           imageUrl={product.images[0]}
                           alt={product.name}
                           forceHover={hoveredNewLaunchId === product.id}
-                          containerClassName="aspect-square bg-[#F5F5F5] flex items-center justify-center"
+                          containerClassName="aspect-square bg-transparent flex items-center justify-center"
                           imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
                           videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
                           onClick={() => onSelectProduct(product)}
@@ -555,7 +555,7 @@ export default function HeroSection({
                     })()}
   
                     {/* Product Details Panel */}
-                    <div className="pt-4 space-y-1 text-left bg-transparent">
+                    <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
                       <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                         {product.name.split('-')[0].trim()}
                       </h3>
