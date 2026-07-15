@@ -1910,7 +1910,7 @@ export default function ProductViewer({
                       video.currentTime = 0;
                     }
                   }}
-                  className="group bg-[#F5F5F5] flex flex-col justify-between overflow-hidden cursor-pointer animate-fade-in"
+                  className="group bg-gradient-to-r from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer animate-fade-in"
                 >
                   <div className="aspect-[4/5] bg-transparent relative overflow-hidden flex items-center justify-center">
                     {(() => {
@@ -1938,7 +1938,7 @@ export default function ProductViewer({
                               muted 
                               playsInline 
                               preload="metadata"
-                              className="absolute inset-0 m-auto w-4/5 h-4/5 object-contain opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0 mix-blend-multiply pointer-events-none" 
+                              className="absolute inset-0 m-auto w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0 mix-blend-multiply pointer-events-none scale-[1.05]" 
                             />
                           )}
                         </>

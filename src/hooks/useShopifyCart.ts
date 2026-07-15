@@ -125,13 +125,13 @@ interface UseShopifyCartResult {
 
 function findLineId(
   lines: NormalizedCartLine[],
-  productHandle: string,
+  productIdOrHandle: string,
   metal?: string,
   size?: string
 ): string | undefined {
   return lines.find(
     l =>
-      l.productHandle === productHandle &&
+      (l.productHandle === productIdOrHandle || l.productId === productIdOrHandle || l.productId.includes(productIdOrHandle)) &&
       (!metal || l.selectedMetal === metal) &&
       (!size || l.selectedSize === size)
   )?.lineId;
@@ -268,20 +268,32 @@ export function useShopifyCart(): UseShopifyCartResult {
       const cartId = cart?.shopifyCartId ?? localStorage.getItem(CART_ID_KEY);
       if (!cartId) throw new Error('No cart ID');
 
-      // Find the matching variant for this product+options
-      const variantRes = await fetch(
-        createShopifyApiUrl(`products/${encodeURIComponent(product.id)}/variant?metal=${encodeURIComponent(metalName)}&size=${encodeURIComponent(size)}`)
-      );
-      const variantData = await variantRes.json();
-      const variantId = variantData.variantId;
+      // Check if it already exists in the Shopify cart
+      const existingLineId = findLineId(cartLines, product.id, metalName, size) || findLineId(cartLines, product.handle || '', metalName, size);
+      
+      let res;
+      if (existingLineId) {
+        const currentQty = cartLines.find(l => l.lineId === existingLineId)?.quantity || 0;
+        res = await fetch(createShopifyApiUrl(`cart/${encodeURIComponent(cartId)}/lines/${encodeURIComponent(existingLineId)}`), {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: currentQty + quantity }),
+        });
+      } else {
+        const variantRes = await fetch(
+          createShopifyApiUrl(`products/${encodeURIComponent(product.id)}/variant?metal=${encodeURIComponent(metalName)}&size=${encodeURIComponent(size)}`)
+        );
+        const variantData = await variantRes.json();
+        const variantId = variantData.variantId;
 
-      if (!variantId) throw new Error('Variant not found for options');
+        if (!variantId) throw new Error('Variant not found for options');
 
-      const res = await fetch(createShopifyApiUrl(`cart/${encodeURIComponent(cartId)}/lines`), {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lines: [{ merchandiseId: variantId, quantity }] }),
-      });
+        res = await fetch(createShopifyApiUrl(`cart/${encodeURIComponent(cartId)}/lines`), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lines: [{ merchandiseId: variantId, quantity }] }),
+        });
+      }
       if (!res.ok) throw new Error(`Add to cart failed: ${res.status}`);
       const data = await res.json();
       if (data.error) throw new Error(data.error);

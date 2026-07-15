@@ -15,9 +15,8 @@ export default function ContactUs({
   products,
   onBackToProducts
 }: ContactUsProps) {
-  // Form state
-  const [name, setName] = useState('Savaliya Yug');
-  const [email, setEmail] = useState('savaliyayug85@gmail.com');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('Private Chamber Viewing');
   const [selectedProductId, setSelectedProductId] = useState('');
   const [message, setMessage] = useState('');

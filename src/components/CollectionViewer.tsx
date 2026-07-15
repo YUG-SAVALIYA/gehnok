@@ -216,7 +216,7 @@ export default function CollectionViewer({
           forceHover={hoveredProductId === product.id}
           containerClassName="w-full h-48 sm:h-72 bg-transparent group"
           imageClassName="absolute inset-0 m-auto w-full h-full object-contain mix-blend-multiply z-10"
-          videoClassName="absolute inset-0 m-auto w-[90%] h-[90%] object-contain mix-blend-multiply z-0 pointer-events-none"
+          videoClassName="absolute inset-0 m-auto w-full h-full object-cover mix-blend-multiply z-0 pointer-events-none scale-[1.05]"
         />
       );
     }
@@ -497,7 +497,7 @@ export default function CollectionViewer({
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
-                className="group bg-[#F5F5F5] cursor-pointer flex flex-col justify-between overflow-hidden"
+                className="group bg-gradient-to-r from-white to-[#381932]/5 cursor-pointer flex flex-col justify-between overflow-hidden"
                 onMouseEnter={() => setHoveredProductId(product.id)}
                 onMouseLeave={() => setHoveredProductId(null)}
               >

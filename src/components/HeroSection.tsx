@@ -392,7 +392,7 @@ export default function HeroSection({
               bestSellers.slice(0, 4).map((product, idx) => (
                 <div 
                   key={product.id}
-                  className="group bg-[#F5F5F5] flex flex-col justify-between overflow-hidden cursor-pointer"
+                  className="group bg-gradient-to-r from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer"
                   onMouseEnter={() => setHoveredBestSellerId(product.id)}
                   onMouseLeave={() => setHoveredBestSellerId(null)}
                 >
@@ -414,8 +414,8 @@ export default function HeroSection({
                         alt={product.name}
                         forceHover={hoveredBestSellerId === product.id}
                         containerClassName="aspect-square bg-transparent flex items-center justify-center"
-                        imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
-                        videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
+                        imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10 mix-blend-multiply"
+                        videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none mix-blend-multiply scale-[1.05]"
                         onClick={() => onSelectProduct(product)}
                       />
                     );
@@ -548,7 +548,7 @@ export default function HeroSection({
                 newlyLaunched.slice(0, 4).map((product) => (
                   <div 
                     key={product.id}
-                    className="group bg-[#F5F5F5] flex flex-col justify-between overflow-hidden cursor-pointer"
+                    className="group bg-gradient-to-r from-white to-[#381932]/5 flex flex-col justify-between overflow-hidden cursor-pointer"
                     onMouseEnter={() => setHoveredNewLaunchId(product.id)}
                     onMouseLeave={() => setHoveredNewLaunchId(null)}
                   >
@@ -570,8 +570,8 @@ export default function HeroSection({
                           alt={product.name}
                           forceHover={hoveredNewLaunchId === product.id}
                           containerClassName="aspect-square bg-transparent flex items-center justify-center"
-                          imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10"
-                          videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none"
+                          imageClassName="absolute inset-0 m-auto w-full h-full object-contain p-6 z-10 mix-blend-multiply"
+                          videoClassName="absolute inset-0 m-auto w-full h-full object-cover z-0 pointer-events-none mix-blend-multiply scale-[1.05]"
                           onClick={() => onSelectProduct(product)}
                         />
                       );
