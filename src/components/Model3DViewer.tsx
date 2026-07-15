@@ -3,10 +3,9 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 
 // @ts-ignore - Vite will resolve these as static URLs
-import diamondHdrUrl from '../assets/textures/dimond.hdr';
+import diamondTexUrl from '../assets/textures/texture (1).png';
 
 interface Model3DViewerProps {
   src: string;
@@ -75,18 +74,20 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
       });
     };
 
-    const rgbeLoader = new RGBELoader();
-    rgbeLoader.load(
-      diamondHdrUrl,
+    // Load PNG texture as the diamond environment map using standard TextureLoader
+    const texLoader = new THREE.TextureLoader();
+    texLoader.load(
+      diamondTexUrl,
       (tex) => {
         if (disposed) return;
         tex.mapping = THREE.EquirectangularReflectionMapping;
+        tex.colorSpace = THREE.SRGBColorSpace;
         diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
         tex.dispose();
         applyDiamondHDR(); // Try applying — works if model is already loaded
       },
       undefined,
-      (err) => { console.error('Failed to load diamond HDR:', err); }
+      (err) => { console.error('Failed to load diamond texture:', err); }
     );
 
     // Lighting: Keep ambient very low so the diamond HDR can show full contrast.
