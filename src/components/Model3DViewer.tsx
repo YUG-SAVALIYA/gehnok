@@ -29,7 +29,9 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
 
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#FFFFFF');
+    // Use light grey instead of pure white — pure white makes physical transmission
+    // look completely invisible (refracts white = shows white = dead diamond look)
+    scene.background = new THREE.Color(0xEEEEEE);
 
     const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     camera.position.set(0, 1.2, 4);
@@ -181,19 +183,23 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                     // Tag this mesh so the HDR callback can reliably find it later
                     child.userData.isDiamond = true;
 
-                    // Diamond material: max-sparkle mirror approach
-                    // envMapIntensity=10 means the HDR is applied at FULL POWER, not diluted
-                    physMat.roughness = 0;
-                    physMat.metalness = 1.0;
-                    physMat.opacity = 0.75;
-                    physMat.transparent = true;
-                    physMat.clearcoat = 1.0;
+                    // TRUE PHYSICAL DIAMOND: light enters, refracts internally, exits
+                    // This creates the "fire" and internal glow diamonds are known for.
+                    physMat.transmission = 1.0;    // Full physical light transmission
+                    physMat.ior = 2.4;             // Diamond IOR (real value: 2.417)
+                    physMat.thickness = 1.0;       // Gem volume — light travels this far inside
+                    physMat.roughness = 0;         // Perfect polish
+                    physMat.metalness = 0;         // NOT metallic — it's a crystal
+                    physMat.clearcoat = 1.0;       // Top polish layer (like table facet shine)
                     physMat.clearcoatRoughness = 0;
-                    physMat.envMapIntensity = 10.0; // Maximum — full HDR power only on this diamond mesh
+                    physMat.attenuationColor = new THREE.Color(0xCCE4FF); // Real diamonds have a very faint blue tint
+                    physMat.attenuationDistance = 0.4; // Makes deep facets darker = visible depth!
+                    physMat.dispersion = 2.0;      // Rainbow fire effect (light splits into spectrum)
+                    physMat.envMapIntensity = 4.0;
                     physMat.color = new THREE.Color(0xffffff);
-                    physMat.flatShading = true;
+                    physMat.flatShading = true;    // Keeps sharp geometric facets
                     
-                    // Apply immediately if HDR is already loaded, otherwise the HDR callback will do it
+                    // Apply immediately if texture is already loaded, otherwise the callback will do it
                     if (diamondEnvMap) {
                       physMat.envMap = diamondEnvMap;
                     }
