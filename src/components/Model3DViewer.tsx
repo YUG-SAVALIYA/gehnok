@@ -166,24 +166,20 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                       }
                     }
 
-                    // Use true physical transmission for refraction, but critically,
-                    // set flatShading to true. If the GLTF model was exported with smoothed normals,
-                    // it will look like a smooth piece of glass. Flat shading forces sharp, distinct facets.
-                    physMat.transmission = 1.0; 
-                    physMat.opacity = 1.0;
+                    // To get the hyper-realistic "shining" diamond look on a pure white background,
+                    // physical transmission fails because refracting white = pure white (no dark contrast).
+                    // We fake it using a highly intense transparent mirror. The opacity lets the background through,
+                    // and the metalness=1 reflects the dark/bright spots of the HDR intensely.
+                    physMat.transmission = 0; 
+                    physMat.opacity = 0.65;
                     physMat.transparent = true; 
-                    physMat.ior = 2.4;
-                    physMat.thickness = 2.5; // Increased thickness for more volume
-                    physMat.attenuationColor = new THREE.Color(0x666666); // Darken the light as it passes through so it's highly visible on a white background!
-                    physMat.attenuationDistance = 2.0; 
                     physMat.roughness = 0;
-                    physMat.metalness = 0.05;
+                    physMat.metalness = 1.0; // Pure mirror
                     physMat.clearcoat = 1.0;
                     physMat.clearcoatRoughness = 0;
-                    physMat.dispersion = 2.0; 
-                    physMat.envMapIntensity = 4.0;
-                    physMat.color = new THREE.Color(0xffffff);
-                    physMat.flatShading = true; // This makes the diamond facets sharp instead of smooth glass!
+                    physMat.envMapIntensity = 6.0; // Massive boost to make the HDR lights "pop" and shine
+                    physMat.color = new THREE.Color(0xffffff); // Must be white so reflections aren't tinted
+                    physMat.flatShading = true; // Keeps the sharp diamond facets
                     
                     if (diamondEnvMap) physMat.envMap = diamondEnvMap;
                     
