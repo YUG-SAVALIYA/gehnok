@@ -57,9 +57,6 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
       if (disposed) return;
       diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
       
-      // Set the HDR as the global scene environment so metals also get the realistic reflections
-      scene.environment = diamondEnvMap;
-
       // If the model loaded before the HDR, we need to update the diamond material now
       if (modelRoot) {
         modelRoot.traverse(child => {
@@ -169,17 +166,18 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                       }
                     }
 
-                    // Use transparency and metalness instead of pure transmission
-                    // because transmission on a pure white background makes it look opaque white.
-                    physMat.transmission = 0; 
-                    physMat.opacity = 0.4;
+                    // Use a hybrid approach for the diamond to avoid it turning into a white blob against a white background.
+                    // By relying heavily on envMap reflections (metalness) and partial transparency/transmission,
+                    // it picks up the dark/light contrasts from the diamond HDR.
+                    physMat.transmission = 0.2; 
+                    physMat.opacity = 0.7;
                     physMat.transparent = true; 
                     physMat.ior = 2.4;
                     physMat.roughness = 0;
-                    physMat.metalness = 0.9;
+                    physMat.metalness = 0.8;
                     physMat.clearcoat = 1.0;
                     physMat.clearcoatRoughness = 0;
-                    physMat.envMapIntensity = 5.0;
+                    physMat.envMapIntensity = 3.0;
                     physMat.color = new THREE.Color(0xffffff);
                     if (diamondEnvMap) physMat.envMap = diamondEnvMap;
                     
