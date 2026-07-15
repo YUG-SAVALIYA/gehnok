@@ -100,7 +100,7 @@ export default function ContactUs({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           {/* Left Column: Inquiry Form */}
-          <div className="lg:col-span-7 bg-[#FAF7F2] border border-[#381932] p-8 rounded-none space-y-6">
+          <div className="lg:col-span-7 bg-[#FFFFFF] border border-[#381932] p-8 rounded-none space-y-6">
             <div>
               <h2 className="text-xl font-serif font-bold text-[#381932]">
                 Transmit an Inquiry
@@ -197,7 +197,7 @@ export default function ContactUs({
               )}
 
               {submitSuccess ? (
-                <div className="bg-[#F5F5F5] border border-[#381932] p-4 rounded-none text-xs text-[#381932] space-y-2">
+                <div className="bg-[#FFFFFF] border border-[#381932] p-4 rounded-none text-xs text-[#381932] space-y-2">
                   <div className="flex items-center space-x-2">
                     <Sparkles size={14} className="text-[#381932] animate-pulse" />
                     <span className="font-bold uppercase tracking-wider text-[10px]">
@@ -284,7 +284,7 @@ export default function ContactUs({
             </div>
 
             {/* Service commitments */}
-            <div className="border border-[#381932] p-6 bg-[#F5F5F5]/40 space-y-4">
+            <div className="border border-[#381932] p-6 bg-[#FFFFFF]/40 space-y-4">
               <h3 className="text-xs uppercase tracking-widest font-sans text-[#381932] font-bold">
                 Atelier Pledges
               </h3>

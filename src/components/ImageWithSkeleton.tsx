@@ -32,7 +32,7 @@ export default function ImageWithSkeleton({
   alt,
   className = '',
   containerClassName = '',
-  skeletonClassName = 'bg-[#F5F5F5]/50',
+  skeletonClassName = 'bg-[#FFFFFF]/50',
   noFade = false,
   ...props
 }: ImageWithSkeletonProps) {

@@ -100,7 +100,7 @@ export default function Concierge({ isOpen, onClose, onExamineProduct }: Concier
       <div className="relative w-full max-w-lg h-full bg-[#FFFFFF] text-[#381932] flex flex-col border-l border-[#381932] shadow-2xl transition-transform duration-500 transform translate-x-0 font-sans">
         
         {/* Panel Header */}
-        <div className="p-6 border-b border-[#381932] flex items-center justify-between bg-[#F5F5F5]/40">
+        <div className="p-6 border-b border-[#381932] flex items-center justify-between bg-[#FFFFFF]/40">
           <div className="flex items-center space-x-3">
             <Compass className="text-[#381932] animate-pulse-slow" size={20} />
             <div>
@@ -140,7 +140,7 @@ export default function Concierge({ isOpen, onClose, onExamineProduct }: Concier
                   className={`p-4 rounded-none text-xs leading-relaxed ${
                     isClient
                       ? 'bg-[#381932] text-white border border-[#381932]'
-                      : 'bg-[#F5F5F5]/30 border border-[#381932] text-[#381932]'
+                      : 'bg-[#FFFFFF]/30 border border-[#381932] text-[#381932]'
                   }`}
                 >
                   <p className="whitespace-pre-line font-serif italic text-sm">{msg.text}</p>
@@ -159,7 +159,7 @@ export default function Concierge({ isOpen, onClose, onExamineProduct }: Concier
                           onExamineProduct(prod);
                           onClose();
                         }}
-                        className="bg-white border border-[#381932] p-3 rounded-none flex items-center justify-between cursor-pointer hover:bg-[#F5F5F5]/40 transition-colors group"
+                        className="bg-white border border-[#381932] p-3 rounded-none flex items-center justify-between cursor-pointer hover:bg-[#FFFFFF]/40 transition-colors group"
                       >
                         <div className="space-y-1 pr-4">
                           <h4 className="text-xs font-serif font-bold text-[#381932]">
@@ -190,7 +190,7 @@ export default function Concierge({ isOpen, onClose, onExamineProduct }: Concier
               <span className="text-[7px] font-mono tracking-[0.15em] text-[#8A7F7A] uppercase mb-1">
                 Private Concierge • reflecting...
               </span>
-              <div className="bg-[#F5F5F5]/30 border border-[#381932] p-3 rounded-none flex items-center space-x-2">
+              <div className="bg-[#FFFFFF]/30 border border-[#381932] p-3 rounded-none flex items-center space-x-2">
                 <div className="w-1.5 h-1.5 bg-[#381932] rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                 <div className="w-1.5 h-1.5 bg-[#381932] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
                 <div className="w-1.5 h-1.5 bg-[#381932] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
@@ -202,7 +202,7 @@ export default function Concierge({ isOpen, onClose, onExamineProduct }: Concier
         </div>
 
         {/* Form Inputs */}
-        <form onSubmit={handleSend} className="p-4 bg-[#F5F5F5]/40 border-t border-[#381932]">
+        <form onSubmit={handleSend} className="p-4 bg-[#FFFFFF]/40 border-t border-[#381932]">
           <div className="relative flex items-center">
             <input
               type="text"

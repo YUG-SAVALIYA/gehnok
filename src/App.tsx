@@ -622,7 +622,7 @@ export default function App() {
           {/* Floating Action Button for the Private Concierge */}
           <button
             onClick={() => setIsConciergeOpen(true)}
-            className="fixed bottom-6 right-6 z-35 bg-[#381932] text-white hover:bg-[#F5F5F5] hover:text-[#381932] border border-[#381932] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer"
+            className="fixed bottom-6 right-6 z-35 bg-[#381932] text-white hover:bg-[#FFFFFF] hover:text-[#381932] border border-[#381932] w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 active:scale-95 group cursor-pointer"
             title="Consult private concierge"
           >
             <Compass size={22} className="group-hover:rotate-45 transition-transform duration-700" />

@@ -27,7 +27,7 @@ export default function Gemstone3DViewer({ color, cut, isFullscreen = false }: G
       case 'blue':
         return {
           primary: 'rgba(48, 148, 178, 0.45)', // Lagoon blue
-          wireframe: '#FAF7F2',
+          wireframe: '#FFFFFF',
           glow: 'rgba(48, 148, 178, 0.12)',
           facetSpecular: 'rgba(255, 255, 255, 0.5)',
           facets: ['rgba(48, 148, 178, 0.5)', 'rgba(16, 80, 110, 0.65)', 'rgba(5, 40, 60, 0.8)']
@@ -247,7 +247,7 @@ export default function Gemstone3DViewer({ color, cut, isFullscreen = false }: G
 
     // Draw little floating spark particles
     const time = Date.now() * 0.001;
-    ctx.fillStyle = '#FAF7F2';
+    ctx.fillStyle = '#FFFFFF';
     for (let i = 0; i < 4; i++) {
       const angle = time + i * (Math.PI / 2);
       const px = width / 2 + Math.cos(angle) * 110 * Math.sin(time * 0.5);
@@ -296,7 +296,7 @@ export default function Gemstone3DViewer({ color, cut, isFullscreen = false }: G
   }, [isDragging]);
 
   return (
-    <div className={`flex flex-col items-center justify-center relative overflow-hidden group select-none ${isFullscreen ? 'w-full h-[100dvh] bg-transparent' : 'bg-[#FAF7F2] border border-[#C9A96E]/10 p-6 rounded-lg'}`}>
+    <div className={`flex flex-col items-center justify-center relative overflow-hidden group select-none ${isFullscreen ? 'w-full h-[100dvh] bg-transparent' : 'bg-[#FFFFFF] border border-[#C9A96E]/10 p-6 rounded-lg'}`}>
       
       {/* HUD overlay for luxury precision */}
       <div className="absolute top-4 left-4 flex items-center space-x-2 font-mono text-[8px] tracking-[0.2em] text-[#8A7F7A] uppercase">

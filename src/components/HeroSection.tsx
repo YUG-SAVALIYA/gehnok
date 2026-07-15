@@ -247,14 +247,14 @@ export default function HeroSection({
           >
             {collectionsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
-                <div key={`col-skel-mob-${idx}`} className="h-56 bg-[#F5F5F5]/50 animate-pulse border border-[#381932]/10" />
+                <div key={`col-skel-mob-${idx}`} className="h-56 bg-[#FFFFFF]/50 animate-pulse border border-[#381932]/10" />
               ))
             ) : (
               collections.map((cat, idx) => (
                 <div
                   key={`mob-${cat.handle}`}
                   onClick={() => onNavigate('collection', cat.handle)}
-                  className="group relative h-56 bg-[#F5F5F5] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
+                  className="group relative h-56 bg-[#FFFFFF] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
                 >
                   <ImageWithSkeleton
                     src={cat.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80'}
@@ -281,7 +281,7 @@ export default function HeroSection({
             {collectionsLoading ? (
               <div className="flex flex-row justify-center gap-6 w-full">
                 {Array.from({ length: 4 }).map((_, idx) => (
-                  <div key={`col-skel-desk-${idx}`} className="h-80 w-64 bg-[#F5F5F5]/50 animate-pulse border border-[#381932]/10" />
+                  <div key={`col-skel-desk-${idx}`} className="h-80 w-64 bg-[#FFFFFF]/50 animate-pulse border border-[#381932]/10" />
                 ))}
               </div>
             ) : (
@@ -313,7 +313,7 @@ export default function HeroSection({
                       <div
                         key={`desk-${cat.handle}`}
                         onClick={() => onNavigate('collection', cat.handle)}
-                        className="flex-1 min-w-[200px] max-w-[300px] shrink-0 group relative h-80 bg-[#F5F5F5] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
+                        className="flex-1 min-w-[200px] max-w-[300px] shrink-0 group relative h-80 bg-[#FFFFFF] border border-[#381932]/30 hover:border-[#381932] overflow-hidden flex flex-col justify-end p-6 cursor-pointer transition-all duration-300 shadow-sm hover:shadow-md"
                       >
                         <ImageWithSkeleton
                           src={cat.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1600&q=80'}
@@ -378,11 +378,11 @@ export default function HeroSection({
             {productsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
                 <div key={`bs-skel-${idx}`} className="space-y-4 animate-pulse">
-                  <div className="aspect-square bg-[#F5F5F5]/50 border border-[#381932]/10" />
+                  <div className="aspect-square bg-[#FFFFFF]/50 border border-[#381932]/10" />
                   <div className="pt-4 px-2 space-y-2 text-center">
-                    <div className="h-2 w-1/4 bg-[#F5F5F5] mx-auto" />
-                    <div className="h-4 w-3/4 bg-[#F5F5F5] mx-auto" />
-                    <div className="h-3 w-1/3 bg-[#F5F5F5] mx-auto" />
+                    <div className="h-2 w-1/4 bg-[#FFFFFF] mx-auto" />
+                    <div className="h-4 w-3/4 bg-[#FFFFFF] mx-auto" />
+                    <div className="h-3 w-1/3 bg-[#FFFFFF] mx-auto" />
                   </div>
                 </div>
               ))
@@ -519,11 +519,11 @@ export default function HeroSection({
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`nl-skel-${idx}`} className="space-y-4 animate-pulse">
-                    <div className="aspect-square bg-[#F5F5F5]/50 border border-[#381932]/10" />
+                    <div className="aspect-square bg-[#FFFFFF]/50 border border-[#381932]/10" />
                     <div className="pt-4 px-2 space-y-2 text-center">
-                      <div className="h-2 w-1/4 bg-[#F5F5F5] mx-auto" />
-                      <div className="h-4 w-3/4 bg-[#F5F5F5] mx-auto" />
-                      <div className="h-3 w-1/3 bg-[#F5F5F5] mx-auto" />
+                      <div className="h-2 w-1/4 bg-[#FFFFFF] mx-auto" />
+                      <div className="h-4 w-3/4 bg-[#FFFFFF] mx-auto" />
+                      <div className="h-3 w-1/3 bg-[#FFFFFF] mx-auto" />
                     </div>
                   </div>
                 ))
@@ -771,7 +771,7 @@ export default function HeroSection({
                 className="group flex flex-col bg-white border border-[#381932]/10 overflow-hidden shadow-sm hover:shadow-md transition-shadow"
               >
                 {/* Blog Image */}
-                <div className="aspect-[16/10] bg-[#F5F5F5] overflow-hidden relative border-b border-[#381932]/10">
+                <div className="aspect-[16/10] bg-[#FFFFFF] overflow-hidden relative border-b border-[#381932]/10">
                   <img
                     src={blog.image?.url || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=600&q=80'}
                     alt={blog.title}
@@ -864,7 +864,7 @@ export default function HeroSection({
           </div>
 
           {/* CTA help card */}
-          <div className="p-6 bg-[#F5F5F5]/40 border border-[#381932]/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+          <div className="p-6 bg-[#FFFFFF]/40 border border-[#381932]/20 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
             <div>
               <h4 className="text-xs font-sans uppercase tracking-widest font-bold text-[#381932]">
                 Have another inquiry?

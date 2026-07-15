@@ -30,7 +30,7 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
 
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#FAF7F2');
+    scene.background = new THREE.Color('#FFFFFF');
 
     const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     camera.position.set(0, 1.2, 4);
@@ -233,7 +233,7 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
 
   return (
     <div 
-      className={`relative w-full overflow-hidden ${isFullscreen ? 'h-[100dvh] flex-1 bg-transparent' : 'h-[400px] border border-[#381932]/10 bg-[#FAF7F2] rounded-md'}`}
+      className={`relative w-full overflow-hidden ${isFullscreen ? 'h-[100dvh] flex-1 bg-transparent' : 'h-[400px] border border-[#381932]/10 bg-[#FFFFFF] rounded-md'}`}
       data-lenis-prevent="true"
       data-lenis-prevent-wheel="true"
       style={{ touchAction: 'none', overscrollBehavior: 'none' }}

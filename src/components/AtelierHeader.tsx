@@ -65,7 +65,7 @@ export default function AtelierHeader({
     <header className={`sticky top-0 z-40 w-full bg-[#FFFFFF]/95 backdrop-blur-md border-b border-[#381932] transition-transform duration-300 ease-in-out ${isVisible ? 'translate-y-0' : '-translate-y-full'}`}>
 
       {/* Gliding Ticker of Luxury Promises */}
-      <div className="w-full bg-[#381932] text-[#FAF7F2] overflow-hidden py-1.5 border-b border-[#381932]">
+      <div className="w-full bg-[#381932] text-[#FFFFFF] overflow-hidden py-1.5 border-b border-[#381932]">
         <div className="scrolling-ticker text-[8px] tracking-[0.25em] font-sans font-bold uppercase">
           <div className="flex space-x-16 pr-16 shrink-0">
             <span>Complimentary white-glove courier delivery worldwide</span>

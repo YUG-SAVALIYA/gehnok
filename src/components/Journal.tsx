@@ -16,7 +16,7 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
   const renderArticleIllustration = (articleId: string) => {
     const isGold = articleId.includes('gold');
     return (
-      <div className="w-full h-80 flex items-center justify-center bg-[#F5F5F5] border border-[#381932] rounded-none relative overflow-hidden group">
+      <div className="w-full h-80 flex items-center justify-center bg-[#FFFFFF] border border-[#381932] rounded-none relative overflow-hidden group">
         
         {/* Fine background crosshairs or grids representing drafts */}
         <div className="absolute inset-0 pointer-events-none opacity-20">
@@ -80,7 +80,7 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
 
             {/* Illustration frame inside full view */}
             {selectedArticle.image ? (
-              <div className="w-full h-80 flex items-center justify-center bg-[#F5F5F5] border border-[#381932] rounded-none relative overflow-hidden group">
+              <div className="w-full h-80 flex items-center justify-center bg-[#FFFFFF] border border-[#381932] rounded-none relative overflow-hidden group">
                 <ImageWithSkeleton
                   src={selectedArticle.image.url}
                   alt={selectedArticle.title}
@@ -146,12 +146,12 @@ export default function Journal({ onBackToAtelier }: JournalProps) {
               {loading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`j-skel-${idx}`} className="space-y-4 animate-pulse">
-                    <div className="w-full h-80 bg-[#F5F5F5]/50 border border-[#381932]/10" />
+                    <div className="w-full h-80 bg-[#FFFFFF]/50 border border-[#381932]/10" />
                     <div className="space-y-2">
-                      <div className="h-2 w-1/4 bg-[#F5F5F5]" />
-                      <div className="h-5 w-3/4 bg-[#F5F5F5]" />
-                      <div className="h-12 w-full bg-[#F5F5F5]" />
-                      <div className="h-2 w-1/5 bg-[#F5F5F5] pt-2" />
+                      <div className="h-2 w-1/4 bg-[#FFFFFF]" />
+                      <div className="h-5 w-3/4 bg-[#FFFFFF]" />
+                      <div className="h-12 w-full bg-[#FFFFFF]" />
+                      <div className="h-2 w-1/5 bg-[#FFFFFF] pt-2" />
                     </div>
                   </div>
                 ))

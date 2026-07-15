@@ -60,7 +60,7 @@ export default function Cart({
   const renderProductThumbnail = (product: Product) => {
     if (product.images && product.images.length > 0) {
       return (
-        <div className="w-16 h-16 rounded-none bg-[#F5F5F5] border border-[#381932] flex items-center justify-center shrink-0 relative overflow-hidden">
+        <div className="w-16 h-16 rounded-none bg-[#FFFFFF] border border-[#381932] flex items-center justify-center shrink-0 relative overflow-hidden">
           <img 
             src={product.images[0]} 
             alt={product.name} 
@@ -80,7 +80,7 @@ export default function Cart({
 
     return (
       <div 
-        className="w-16 h-16 rounded-none bg-[#F5F5F5] border border-[#381932] flex items-center justify-center shrink-0 relative overflow-hidden"
+        className="w-16 h-16 rounded-none bg-[#FFFFFF] border border-[#381932] flex items-center justify-center shrink-0 relative overflow-hidden"
       >
         <div className="absolute w-6 h-6 rounded-full opacity-10 blur-sm bg-[#381932]" />
         {/* Draw a tiny geometric ring representation */}
@@ -102,7 +102,7 @@ export default function Cart({
       <div className="relative w-full max-w-md h-full bg-[#FFFFFF] text-[#381932] flex flex-col border-l border-[#381932] shadow-2xl transition-transform duration-500 transform translate-x-0 font-sans">
         
         {/* Header */}
-        <div className="p-6 border-b border-[#381932] flex items-center justify-between bg-[#F5F5F5]/40">
+        <div className="p-6 border-b border-[#381932] flex items-center justify-between bg-[#FFFFFF]/40">
           <div className="flex items-center space-x-3">
             <ShoppingBag className="text-[#381932]" size={18} />
             <div>
@@ -163,7 +163,7 @@ export default function Cart({
                           <div className="flex items-center space-x-2 pt-2">
                             <button
                               onClick={() => onUpdateQuantity(item.product.id, Math.max(1, item.quantity - 1), item.selectedMetal, item.selectedSize)}
-                              className="w-5 h-5 bg-[#F5F5F5] text-[#381932] rounded-none flex items-center justify-center font-mono text-[10px] hover:bg-[#381932] hover:text-white transition-colors cursor-pointer"
+                              className="w-5 h-5 bg-[#FFFFFF] text-[#381932] rounded-none flex items-center justify-center font-mono text-[10px] hover:bg-[#381932] hover:text-white transition-colors cursor-pointer"
                             >
                               -
                             </button>
@@ -172,7 +172,7 @@ export default function Cart({
                             </span>
                             <button
                               onClick={() => onUpdateQuantity(item.product.id, item.quantity + 1, item.selectedMetal, item.selectedSize)}
-                              className="w-5 h-5 bg-[#F5F5F5] text-[#381932] rounded-none flex items-center justify-center font-mono text-[10px] hover:bg-[#381932] hover:text-white transition-colors cursor-pointer"
+                              className="w-5 h-5 bg-[#FFFFFF] text-[#381932] rounded-none flex items-center justify-center font-mono text-[10px] hover:bg-[#381932] hover:text-white transition-colors cursor-pointer"
                             >
                               +
                             </button>
@@ -196,7 +196,7 @@ export default function Cart({
 
             {/* Price block & Checkout triggers */}
             {cartItems.length > 0 && (
-              <div className="p-6 bg-[#F5F5F5]/40 border-t border-[#381932] space-y-4">
+              <div className="p-6 bg-[#FFFFFF]/40 border-t border-[#381932] space-y-4">
                 
                 <div className="space-y-2 text-xs border-b border-[#381932] pb-4">
                   <div className="flex justify-between">
@@ -276,7 +276,7 @@ export default function Cart({
               <p className="text-xs text-[#381932]/70 leading-relaxed max-w-sm mx-auto font-serif">
                 Your private collection transaction has been securely authorized. A senior Gehknok concierge has been assigned to coordinate your private delivery schedule.
               </p>
-              <div className="bg-[#F5F5F5] border border-[#381932] p-4 rounded-none text-left space-y-2 mt-4 max-w-xs mx-auto">
+              <div className="bg-[#FFFFFF] border border-[#381932] p-4 rounded-none text-left space-y-2 mt-4 max-w-xs mx-auto">
                 <p className="text-[10px] font-mono text-[#381932]">
                   <strong className="text-[#381932] uppercase font-bold">Client:</strong> Savaliya Yug
                 </p>

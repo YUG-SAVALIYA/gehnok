@@ -246,7 +246,7 @@ export default function CollectionViewer({
 
     return (
       <div 
-        className="w-full h-48 sm:h-72 flex items-center justify-center bg-[#F5F5F5] border border-[#381932] rounded-none relative overflow-hidden transition-colors duration-500"
+        className="w-full h-48 sm:h-72 flex items-center justify-center bg-[#FFFFFF] border border-[#381932] rounded-none relative overflow-hidden transition-colors duration-500"
         style={{ boxShadow: `inset 0 0 24px ${glowColor}` }}
       >
         {/* Fine crosshairs typical of Editorial CAD drafts */}
@@ -300,7 +300,7 @@ export default function CollectionViewer({
             <g>
               {/* Sculptural wrist cuff */}
               <path d="M20,50 Q50,20 80,50 Q50,80 20,50" fill="none" stroke={metalColor} strokeWidth="3" strokeLinecap="round" />
-              <path d="M26,50 Q50,26 74,50" fill="none" stroke="#FAF7F2" strokeWidth="0.75" opacity="0.6" />
+              <path d="M26,50 Q50,26 74,50" fill="none" stroke="#FFFFFF" strokeWidth="0.75" opacity="0.6" />
               {/* Accent diamonds on band */}
               <circle cx="35" cy="42" r="1.5" fill="#381932" />
               <circle cx="50" cy="38" r="1.5" fill="#381932" />
@@ -475,11 +475,11 @@ export default function CollectionViewer({
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-4 animate-pulse">
-                <div className="w-full h-48 sm:h-72 bg-[#F5F5F5]/50 border border-[#381932]/10" />
+                <div className="w-full h-48 sm:h-72 bg-[#FFFFFF]/50 border border-[#381932]/10" />
                 <div className="space-y-2 pl-1">
-                  <div className="h-3 w-1/3 bg-[#F5F5F5]" />
-                  <div className="h-5 w-3/4 bg-[#F5F5F5]" />
-                  <div className="h-4 w-1/4 bg-[#F5F5F5]" />
+                  <div className="h-3 w-1/3 bg-[#FFFFFF]" />
+                  <div className="h-5 w-3/4 bg-[#FFFFFF]" />
+                  <div className="h-4 w-1/4 bg-[#FFFFFF]" />
                 </div>
               </div>
             ))}

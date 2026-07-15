@@ -51,7 +51,7 @@ export default function AuthPage({ onBack, onSuccess }: AuthPageProps) {
       
       {/* Abstract Luxury Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-[#F5F5F5]/40 to-transparent rounded-full blur-3xl opacity-50" />
+        <div className="absolute -top-1/4 -right-1/4 w-[800px] h-[800px] bg-gradient-to-br from-[#FFFFFF]/40 to-transparent rounded-full blur-3xl opacity-50" />
         <div className="absolute -bottom-1/4 -left-1/4 w-[600px] h-[600px] bg-gradient-to-tr from-[#381932]/5 to-transparent rounded-full blur-3xl opacity-50" />
       </div>
 

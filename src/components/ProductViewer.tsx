@@ -913,7 +913,7 @@ export default function ProductViewer({
                   {model3DUrl ? (
                     <Suspense
                       fallback={
-                        <div className="h-[400px] w-full border border-[#381932]/10 bg-[#FAF7F2] rounded-md flex items-center justify-center text-[9px] font-mono uppercase tracking-[0.18em] text-[#381932]/60">
+                        <div className="h-[400px] w-full border border-[#381932]/10 bg-[#FFFFFF] rounded-md flex items-center justify-center text-[9px] font-mono uppercase tracking-[0.18em] text-[#381932]/60">
                           Preparing 3D studio
                         </div>
                       }
@@ -1054,7 +1054,7 @@ export default function ProductViewer({
             </motion.div>
 
             {/* In-depth story card */}
-            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="hidden lg:block bg-[#FAF7F2] border border-[#381932] p-8 rounded-none space-y-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="hidden lg:block bg-[#FFFFFF] border border-[#381932] p-8 rounded-none space-y-4">
               <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932] opacity-60">
                 Provenance & Story
               </span>
@@ -1100,7 +1100,7 @@ export default function ProductViewer({
                   {formattedPrice}
                 </p>
                 {selectedMetal?.priceFactor !== 1 && selectedMetal?.priceFactor !== undefined && (
-                  <span className="text-[9px] tracking-wider uppercase font-mono bg-[#F5F5F5] text-[#381932] px-2 py-0.5 font-bold">
+                  <span className="text-[9px] tracking-wider uppercase font-mono bg-[#FFFFFF] text-[#381932] px-2 py-0.5 font-bold">
                     Alloy Rate Adjusted
                   </span>
                 )}
@@ -1129,7 +1129,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {metalOptionName}:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#FFFFFF] px-2 py-0.5">
                       {selectedMetal?.name}
                     </span>
                   </div>
@@ -1223,7 +1223,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select Purity:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#FFFFFF] px-2 py-0.5">
                       {selectedPurity}
                     </span>
                   </div>
@@ -1232,7 +1232,7 @@ export default function ProductViewer({
                       <button
                         key={p}
                         onClick={() => setSelectedPurity(p)}
-                        className={`px-6 py-2.5 border ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#F5F5F5] bg-[#F5F5F5] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
+                        className={`px-6 py-2.5 border ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#FFFFFF] bg-[#FFFFFF] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
                       >
                         {p}
                       </button>
@@ -1248,7 +1248,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {sizeOptionName}:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#FFFFFF] px-2 py-0.5">
                       {selectedSize}
                     </span>
                   </div>
@@ -1281,7 +1281,7 @@ export default function ProductViewer({
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
                       Select {option.name}:
                     </span>
-                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#F5F5F5] px-2 py-0.5">
+                    <span className="text-[9px] font-mono font-bold text-[#381932] bg-[#FFFFFF] px-2 py-0.5">
                       {otherSelections[option.name]}
                     </span>
                   </div>
@@ -1352,7 +1352,7 @@ export default function ProductViewer({
               })()}
 
               {/* In-depth story card (Mobile Only, moved below Qty) */}
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="block lg:hidden bg-[#FAF7F2] border border-[#381932] p-6 sm:p-8 rounded-none space-y-4 mt-6">
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="block lg:hidden bg-[#FFFFFF] border border-[#381932] p-6 sm:p-8 rounded-none space-y-4 mt-6">
                 <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932] opacity-60">
                   Provenance & Story
                 </span>
@@ -1560,7 +1560,7 @@ export default function ProductViewer({
                   </button>
                   {activeAccordion === 'materials' && (
                     <div className="mt-4 space-y-3 pl-1 text-xs text-[#381932]/80 leading-relaxed">
-                      <div className="grid grid-cols-2 gap-y-2 border border-[#381932] p-4 rounded-none bg-[#F5F5F5]/40">
+                      <div className="grid grid-cols-2 gap-y-2 border border-[#381932] p-4 rounded-none bg-[#FFFFFF]/40">
                         <div>
                           <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Gemstone Type</span>
                           <span className="text-[#381932] font-bold">{product.gemstone.type}</span>
@@ -1839,7 +1839,7 @@ export default function ProductViewer({
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               {/* Form: Add Signature Review */}
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-[#381932] bg-[#FAF7F2] p-6 sm:p-8 rounded-none">
+              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-[#381932] bg-[#FFFFFF] p-6 sm:p-8 rounded-none">
                 <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block mb-2">
                   Leave a Statement
                 </span>
@@ -1848,7 +1848,7 @@ export default function ProductViewer({
                 </h4>
 
                 {reviewSuccessMsg ? (
-                  <div className="p-4 bg-[#F5F5F5] border border-[#381932] text-xs text-[#381932] flex items-center space-x-2 font-bold uppercase font-sans tracking-wide">
+                  <div className="p-4 bg-[#FFFFFF] border border-[#381932] text-xs text-[#381932] flex items-center space-x-2 font-bold uppercase font-sans tracking-wide">
                     <CheckCircle size={14} />
                     <span>Appraisal successfully committed to our registers.</span>
                   </div>
@@ -1919,7 +1919,7 @@ export default function ProductViewer({
               </motion.div>
 
             {/* List of Verified Appraisals */}
-            <div className="space-y-6 border border-[#381932] bg-[#FAF7F2] p-6 sm:p-8">
+            <div className="space-y-6 border border-[#381932] bg-[#FFFFFF] p-6 sm:p-8">
               <h4 className="text-[10px] tracking-widest font-sans font-bold uppercase text-[#381932] border-b border-[#381932]/30 pb-2">
                 Logged Registers ({totalReviewsCount})
               </h4>
@@ -1951,7 +1951,7 @@ export default function ProductViewer({
                         <div className="flex items-center space-x-2 text-[10px] text-[#381932]/50">
                           <span>{review.date}</span>
                           {review.isVerified && (
-                            <span className="flex items-center space-x-1 text-[9px] font-sans font-bold uppercase text-[#381932] bg-[#F5F5F5] px-2 py-0.5 font-bold">
+                            <span className="flex items-center space-x-1 text-[9px] font-sans font-bold uppercase text-[#381932] bg-[#FFFFFF] px-2 py-0.5 font-bold">
                               <CheckCircle size={8} />
                               <span>Verified Owner</span>
                             </span>
@@ -2008,11 +2008,11 @@ export default function ProductViewer({
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
                   <div key={`rel-skel-${idx}`} className="group flex flex-col justify-between cursor-pointer animate-pulse">
-                    <div className="aspect-[4/5] bg-[#F5F5F5]/50 border border-[#381932]/10 flex items-center justify-center mb-6" />
+                    <div className="aspect-[4/5] bg-[#FFFFFF]/50 border border-[#381932]/10 flex items-center justify-center mb-6" />
                     <div className="space-y-2 text-center px-4">
-                      <div className="h-2 w-1/3 bg-[#F5F5F5] mx-auto" />
-                      <div className="h-4 w-3/4 bg-[#F5F5F5] mx-auto" />
-                      <div className="h-3 w-1/4 bg-[#F5F5F5] mx-auto" />
+                      <div className="h-2 w-1/3 bg-[#FFFFFF] mx-auto" />
+                      <div className="h-4 w-3/4 bg-[#FFFFFF] mx-auto" />
+                      <div className="h-3 w-1/4 bg-[#FFFFFF] mx-auto" />
                     </div>
                   </div>
                 ))
