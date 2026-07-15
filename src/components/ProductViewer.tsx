@@ -258,6 +258,51 @@ const AccordionItem = ({ title, defaultOpen = false, children }: { title: string
   );
 };
 
+const CustomDropdown = ({ value, onChange, options, prefix = "" }: { value: string, onChange: (v: string) => void, options: string[], prefix?: string }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative w-full mt-2" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full bg-[#FFFFFF] border border-[#381932] text-[#381932] px-4 py-3 font-mono text-xs font-bold focus:outline-none focus:ring-1 focus:ring-[#381932] transition-colors cursor-pointer rounded-md flex justify-between items-center text-left"
+      >
+        <span>{prefix}{value}</span>
+        <ChevronDown size={14} className={`transition-transform duration-200 text-[#381932] ${isOpen ? 'rotate-180' : ''}`} />
+      </button>
+      {isOpen && (
+        <div className="absolute z-50 w-full mt-1 bg-white border border-[#381932] rounded-md shadow-2xl max-h-60 overflow-y-auto scrollbar-none">
+          {options.map(opt => (
+            <div
+              key={opt}
+              onClick={() => { onChange(opt); setIsOpen(false); }}
+              className={`px-4 py-3 font-mono text-xs font-bold cursor-pointer transition-colors ${
+                value === opt 
+                  ? 'bg-[#381932] text-white' 
+                  : 'text-[#381932] hover:bg-[#381932]/10'
+              }`}
+            >
+              {prefix}{opt}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function ProductViewer({
   product,
   cartItems,
@@ -278,21 +323,7 @@ export default function ProductViewer({
   // Custom configuration states
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
 
-  // Lenis smooth scroll configuration
-  useEffect(() => {
-    const lenis = new Lenis({
-      lerp: 0.1,
-      duration: 1.5,
-      smoothWheel: true,
-      wheelMultiplier: 0.8,
-    });
-    const raf = (time: number) => {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    };
-    requestAnimationFrame(raf);
-    return () => lenis.destroy();
-  }, []);
+
 
   // Dynamic available metals from variants (100% data-driven from Shopify)
   const availableMetals = useMemo(() => {
