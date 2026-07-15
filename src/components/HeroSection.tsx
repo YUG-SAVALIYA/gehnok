@@ -347,24 +347,26 @@ export default function HeroSection({
 
       {/* ----------------- SECTION 3: BEST SELLERS ----------------- */}
       <section className="py-20 bg-[#FFFFFF] border-b border-[#381932]/30">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="w-full space-y-12">
           
           {/* Section title */}
-          <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[#381932]/30 pb-6 gap-4">
-            <div className="space-y-2">
-              <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
-                Acclaimed Masterpieces
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#381932] tracking-tight">
-                Maison Best Sellers
-              </h2>
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex flex-col md:flex-row md:items-end justify-between border-b border-[#381932]/30 pb-6 gap-4">
+              <div className="space-y-2">
+                <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
+                  Acclaimed Masterpieces
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#381932] tracking-tight">
+                  Maison Best Sellers
+                </h2>
+              </div>
+              <button
+                onClick={onEnterCollections}
+                className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#381932] border-b border-[#381932] pb-1 hover:text-opacity-70 transition-all cursor-pointer self-start md:self-auto"
+              >
+                Browse Full Catalog
+              </button>
             </div>
-            <button
-              onClick={onEnterCollections}
-              className="text-[10px] font-sans font-bold uppercase tracking-widest text-[#381932] border-b border-[#381932] pb-1 hover:text-opacity-70 transition-all cursor-pointer self-start md:self-auto"
-            >
-              Browse Full Catalog
-            </button>
           </div>
 
           {/* Best Sellers Grid */}
@@ -373,7 +375,7 @@ export default function HeroSection({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="grid grid-cols-2 md:grid-cols-4 gap-1"
+            className="grid grid-cols-2 md:grid-cols-4 gap-0"
           >
             {productsLoading ? (
               Array.from({ length: 4 }).map((_, idx) => (
@@ -421,7 +423,7 @@ export default function HeroSection({
   
                   {/* Product Details Panel */}
                   <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
-                    <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                       {product.name.split('-')[0].trim()}
                     </h3>
                     <div className="pt-0.5">
@@ -481,26 +483,27 @@ export default function HeroSection({
           </div>
         </div>
 
-        {/* Newly Launched Products */}
         <div className="py-20 bg-[#FAF8F4]">
-          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+          <div className="w-full space-y-12">
             
             {/* Header */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              className="text-center space-y-2"
-            >
-              <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
-                Fresh From The Atelier Forge
-              </span>
-              <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#381932] tracking-tight">
-                Newly Launched Designs
-              </h2>
-              <div className="w-12 h-[1px] bg-[#381932] mx-auto mt-3" />
-            </motion.div>
+            <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="text-center space-y-2"
+              >
+                <span className="text-[10px] tracking-[0.3em] font-sans font-bold uppercase text-[#381932]/60 block">
+                  Fresh From The Atelier Forge
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-serif font-bold text-[#381932] tracking-tight">
+                  Newly Launched Designs
+                </h2>
+                <div className="w-12 h-[1px] bg-[#381932] mx-auto mt-3" />
+              </motion.div>
+            </div>
 
             {/* Newly Launched Grid */}
             <motion.div 
@@ -508,7 +511,7 @@ export default function HeroSection({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-1"
+              className="grid grid-cols-2 md:grid-cols-4 gap-0"
             >
               {productsLoading ? (
                 Array.from({ length: 4 }).map((_, idx) => (
@@ -556,7 +559,7 @@ export default function HeroSection({
   
                     {/* Product Details Panel */}
                     <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
-                      <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                      <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                         {product.name.split('-')[0].trim()}
                       </h3>
                       <div className="pt-0.5">

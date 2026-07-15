@@ -365,7 +365,6 @@ export default function CollectionViewer({
           </div>
         </div>
 
-      {/* GPU Accelerated Content Wrapper */}
       <div 
         className={`w-full bg-[#FFFFFF] ${
           animPhase === 'done'
@@ -376,7 +375,9 @@ export default function CollectionViewer({
         }`}
         style={animPhase !== 'done' ? { height: 'calc(100vh - 24rem)', overflow: 'hidden' } : {}}
       >
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full">
+          {/* Filters section - Needs padding */}
+          <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Curated Filter Bar System */}
         <div className="border-t border-b border-[#381932] py-6 mb-12 space-y-6">
@@ -462,11 +463,11 @@ export default function CollectionViewer({
             </div>
 
           </div>
-        </div>
+          </div>
 
         {/* Product Grid of Masterworks */}
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 lg:gap-10">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-4 animate-pulse">
                 <div className="w-full h-48 sm:h-72 bg-[#FFFFFF]/50 border border-[#381932]/10" />
@@ -479,7 +480,7 @@ export default function CollectionViewer({
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-24 border border-[#381932] rounded-none bg-white">
+          <div className="text-center py-24 border border-[#381932] rounded-none bg-white max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 mt-8">
             <p className="text-sm text-[#381932] font-sans opacity-60 italic">
               No bespoke masterworks matching this specific metallurgy filter are currently resting in our vaults.
             </p>
@@ -490,7 +491,7 @@ export default function CollectionViewer({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-50px" }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-1"
+            className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0 mt-8"
           >
             {filteredProducts.map((product) => (
               <div
@@ -505,7 +506,7 @@ export default function CollectionViewer({
 
                 {/* Info Text block */}
                 <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
-                  <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                  <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                     {product.name.split('-')[0].trim()}
                   </h3>
                   <div className="pt-0.5">

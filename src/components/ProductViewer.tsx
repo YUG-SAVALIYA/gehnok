@@ -11,7 +11,8 @@ import { motion } from 'motion/react';
 import { 
   Heart, Sparkles, Calendar, ArrowLeft, 
   ChevronDown, ChevronUp, Star, CheckCircle, Image, Scissors, PlayCircle,
-  ChevronLeft, ChevronRight, Truck, Clock, X, Maximize2
+  ChevronDown, ChevronUp, Star, CheckCircle, Image, Scissors, PlayCircle,
+  ChevronLeft, ChevronRight, Truck, Clock, X, Maximize2, Cuboid
 } from 'lucide-react';
 import paymentGatewayImg from '../assets/payment_gateway.svg';
 import bisHallmarkImg from '../assets/BIS_Hallmark.svg';
@@ -850,9 +851,9 @@ export default function ProductViewer({
 
   const relatedGridClass = 
     displayRelatedProducts.length === 1 ? "grid grid-cols-1 max-w-sm mx-auto" :
-    displayRelatedProducts.length === 2 ? "grid grid-cols-2 max-w-3xl mx-auto gap-1" :
-    displayRelatedProducts.length === 3 ? "grid grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto gap-1" :
-    "grid grid-cols-2 md:grid-cols-4 gap-1";
+    displayRelatedProducts.length === 2 ? "grid grid-cols-2 max-w-3xl mx-auto gap-0" :
+    displayRelatedProducts.length === 3 ? "grid grid-cols-2 md:grid-cols-3 max-w-6xl mx-auto gap-0" :
+    "grid grid-cols-2 md:grid-cols-4 gap-0";
 
   return (
     <>
@@ -947,7 +948,7 @@ export default function ProductViewer({
                     className="absolute left-4 bottom-4 z-20 h-10 w-10 border border-[#381932]/70 rounded-full flex items-center justify-center bg-[#FFFFFF]/85 text-[#381932] shadow-sm backdrop-blur-sm transition-colors hover:bg-[#381932] hover:text-white cursor-pointer"
                     title="View 3D Model"
                   >
-                    <Sparkles size={18} />
+                    <Cuboid size={18} />
                   </button>
                 </div>
               </div>
@@ -989,12 +990,23 @@ export default function ProductViewer({
           {/* Right Column: Configuration Options, Title, Core Actions */}
           <div className="lg:col-span-6 space-y-8">
             <div>
-              <span className="text-[10px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block mb-2">
-                {product.collection} • Private Viewing
-              </span>
-              <h1 className="text-3xl sm:text-4xl font-serif-luxury tracking-wide text-[#381932] font-bold mb-3">
-                {product.name}
-              </h1>
+              <div className="flex justify-between items-start">
+                <div>
+                  <span className="text-[10px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block mb-2">
+                    {product.collection} • Private Viewing
+                  </span>
+                  <h1 className="text-3xl sm:text-4xl font-serif-luxury tracking-wide text-[#381932] font-bold mb-3">
+                    {product.name}
+                  </h1>
+                </div>
+                <button
+                  onClick={() => onAddToWishlist(product)}
+                  className="text-[#381932] hover:opacity-70 transition-opacity mt-1 cursor-pointer"
+                  title="Add to Wishlist"
+                >
+                  <Heart size={24} className={isInWishlist ? 'fill-[#381932]' : ''} />
+                </button>
+              </div>
               <div className="flex items-center space-x-3 mb-2">
                 <p className="text-xl font-mono text-[#381932] font-bold">
                   {formattedPrice}
@@ -1008,9 +1020,9 @@ export default function ProductViewer({
               
               {/* Star review summary badge */}
               <div className="flex items-center space-x-2 mt-1">
-                <div className="flex text-amber-500">
+                <div className="flex">
                   {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} size={11} className="fill-current" />
+                    <Star key={s} size={11} className={s <= Math.round(Number(averageRating)) ? "fill-[#381932] text-[#381932]" : "fill-[#e5e7eb] text-[#e5e7eb]"} />
                   ))}
                 </div>
                 <span className="text-[10px] font-sans text-[#381932] font-bold">
@@ -1126,7 +1138,7 @@ export default function ProductViewer({
                       <button
                         key={p}
                         onClick={() => setSelectedPurity(p)}
-                        className={`px-6 py-2.5 border ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#FFFFFF] bg-[#FFFFFF] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
+                        className={`px-6 py-2.5 border rounded-md ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#FFFFFF] bg-[#FFFFFF] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
                       >
                         {p}
                       </button>
@@ -1179,7 +1191,7 @@ export default function ProductViewer({
                           key={val.name}
                           type="button"
                           onClick={() => setOtherSelections(prev => ({ ...prev, [option.name]: val.name }))}
-                          className={`px-4 py-2 text-[10px] font-mono tracking-wider transition-all duration-300 border cursor-pointer ${
+                          className={`px-4 py-2 rounded-md text-[10px] font-mono tracking-wider transition-all duration-300 border cursor-pointer ${
                             isActive
                               ? 'bg-[#381932] text-white border-[#381932] font-bold'
                               : 'bg-transparent text-[#381932] border-[#381932]/30 hover:border-[#381932]'
@@ -1193,49 +1205,7 @@ export default function ProductViewer({
                 </div>
               ))}
 
-              {/* 3. Quantity Adjuster (Only if in collection) */}
-              {(() => {
-                const currentCartItem = cartItems?.find(item => 
-                  item.product.id === product.id && 
-                  (item.selectedMetal === (selectedMetal?.name || product.metal) || (!item.selectedMetal)) && 
-                  (item.selectedSize === (selectedSize || 'Standard') || (!item.selectedSize))
-                );
 
-                if (currentCartItem && onUpdateQuantity) {
-                  return (
-                    <div className="space-y-3">
-                      <span className="block text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/80 bg-[#381932]/10 px-3 py-1.5 inline-block rounded-none border border-[#381932]/20">
-                        {currentCartItem.quantity} ITEM(S) ALREADY IN COLLECTION
-                      </span>
-                      <div className="flex items-center space-x-3 mt-2">
-                        <div className="flex items-center border border-[#381932] bg-white">
-                          <button
-                            type="button"
-                            onClick={() => onUpdateQuantity(product.id, Math.max(0, currentCartItem.quantity - 1), selectedMetal?.name || product.metal, selectedSize || 'Standard')}
-                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-r border-[#381932] cursor-pointer"
-                          >
-                            -
-                          </button>
-                          <span className="px-5 text-xs font-mono font-bold text-[#381932]">
-                            {currentCartItem.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => onUpdateQuantity(product.id, currentCartItem.quantity + 1, selectedMetal?.name || product.metal, selectedSize || 'Standard')}
-                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-l border-[#381932] cursor-pointer"
-                          >
-                            +
-                          </button>
-                        </div>
-                        <span className="text-[9px] font-mono text-[#381932]/60 uppercase">
-                          Adjust Collection Quantity
-                        </span>
-                      </div>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
 
               {/* In-depth story card (Mobile Only, moved below Qty) */}
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="block lg:hidden bg-[#FFFFFF] border border-[#381932] p-6 sm:p-8 rounded-none space-y-4 mt-6">
@@ -1305,9 +1275,9 @@ export default function ProductViewer({
                   ].map((coupon) => (
                     <div key={coupon.code} className="relative flex-shrink-0 w-[300px] sm:w-[320px] snap-center drop-shadow-[0_1px_3px_rgba(0,0,0,0.06)]">
                       <div 
-                        className="flex items-stretch min-h-[105px] w-full h-full bg-gradient-to-r from-[#FDF8F0] to-white rounded-xl"
+                        className="flex items-stretch min-h-[105px] w-full h-full bg-gradient-to-r from-[#FDF8F0] to-white rounded-md"
                         style={{
-                          filter: 'drop-shadow(0px 0px 1px rgba(56, 25, 50, 0.5))',
+                          filter: 'drop-shadow(1px 0px 0px #381932) drop-shadow(-1px 0px 0px #381932) drop-shadow(0px 1px 0px #381932) drop-shadow(0px -1px 0px #381932)',
                           boxShadow: '0 10px 24px rgba(56, 25, 50, 0.08)',
                           WebkitMaskImage: 'radial-gradient(circle at 0 50%, transparent 12px, black 12.5px), radial-gradient(circle at 100% 50%, transparent 12px, black 12.5px)',
                           WebkitMaskSize: '51% 100%',
@@ -1378,32 +1348,63 @@ export default function ProductViewer({
             {/* Core Action Zone */}
             <div className="space-y-4 pt-6 border-t border-[#381932]">
               
-              {/* Primary CTA: Add to Collection (Never Buy Now) */}
-              <button
-                onClick={handleAddClick}
-                className={`w-full py-4 text-xs uppercase tracking-widest font-sans font-bold border rounded-none transition-all duration-300 relative overflow-hidden cursor-pointer ${
-                  isAdded
-                    ? 'bg-[#381932] text-[#FFFFFF] border-[#381932]'
-                    : 'bg-[#381932] text-white border-[#381932] hover:bg-transparent hover:text-[#381932]'
-                }`}
-              >
-                {isAdded ? 'Added to Collection' : 'Add to Collection'}
-              </button>
+              {/* Primary CTA / Quantity Adjuster */}
+              {(() => {
+                const currentCartItem = cartItems?.find(item => 
+                  item.product.id === product.id && 
+                  (item.selectedMetal === (selectedMetal?.name || product.metal) || (!item.selectedMetal)) && 
+                  (item.selectedSize === (selectedSize || 'Standard') || (!item.selectedSize))
+                );
 
-              {/* Secondary Boutique Actions */}
-              <div className="block mt-4">
-                <button
-                  onClick={() => onAddToWishlist(product)}
-                  className={`w-full py-3.5 text-[10px] uppercase tracking-widest font-sans font-bold border rounded-none flex items-center justify-center space-x-2 transition-colors cursor-pointer ${
-                    isInWishlist
-                      ? 'border-[#381932] text-[#381932] bg-[#381932]/10'
-                      : 'border-[#381932] text-[#381932] hover:bg-[#381932] hover:text-white'
-                  }`}
-                >
-                  <Heart size={12} className={isInWishlist ? 'fill-[#381932]' : ''} />
-                  <span>{isInWishlist ? 'Saved to Wishlist' : 'Save to Wishlist'}</span>
-                </button>
-              </div>
+                if (currentCartItem && onUpdateQuantity) {
+                  return (
+                    <div className="space-y-3">
+                      <span className="block text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/80 bg-[#381932]/10 px-3 py-1.5 inline-block border border-[#381932]/20 rounded-sm">
+                        {currentCartItem.quantity} ITEM(S) ALREADY IN COLLECTION
+                      </span>
+                      <div className="flex items-center space-x-3 mt-2">
+                        <div className="flex items-center border border-[#381932] bg-white rounded-sm overflow-hidden">
+                          <button
+                            type="button"
+                            onClick={() => onUpdateQuantity(product.id, Math.max(0, currentCartItem.quantity - 1), selectedMetal?.name || product.metal, selectedSize || 'Standard')}
+                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-r border-[#381932] cursor-pointer"
+                          >
+                            -
+                          </button>
+                          <span className="px-5 text-xs font-mono font-bold text-[#381932]">
+                            {currentCartItem.quantity}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => onUpdateQuantity(product.id, currentCartItem.quantity + 1, selectedMetal?.name || product.metal, selectedSize || 'Standard')}
+                            className="px-3 py-2 text-xs font-mono font-bold hover:bg-[#381932] hover:text-white transition-colors border-l border-[#381932] cursor-pointer"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <span className="text-[9px] font-mono text-[#381932]/60 uppercase">
+                          Adjust Collection Quantity
+                        </span>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <button
+                    onClick={handleAddClick}
+                    className="w-full py-4 text-xs uppercase tracking-widest font-sans font-bold border rounded-md transition-all duration-300 relative overflow-hidden cursor-pointer bg-[#381932] text-white border-[#381932] hover:bg-transparent hover:text-[#381932]"
+                  >
+                    Add to Collection
+                  </button>
+                );
+              })()}
+
+              <button
+                className="w-full py-4 text-xs uppercase tracking-widest font-sans font-bold border rounded-md transition-all duration-300 cursor-pointer bg-white text-[#381932] border-[#381932] hover:bg-[#381932] hover:text-white"
+              >
+                Buy Now
+              </button>
 
               {/* Trust Badges */}
               <div className="grid grid-cols-4 gap-3 sm:gap-4 mt-4 p-4 border border-[#381932]/10 rounded-md bg-[#FFFFFF]/70">
@@ -1625,8 +1626,8 @@ export default function ProductViewer({
         )}
         
         {/* ----------------- SECTOR: POLICIES SIDE-BY-SIDE ----------------- */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-16 pt-12 border-t border-[#381932]/20">
-          <div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-16 pt-12 border-t border-[#381932]/20 items-start">
+          <div className="space-y-0">
             <AccordionItem title="Shipping Details" defaultOpen={false}>
               <div className="flex items-center space-x-2 font-serif text-[16px] text-gray-900 mb-2">
                 <Clock size={18} strokeWidth={1.5} />
@@ -1665,14 +1666,14 @@ export default function ProductViewer({
               
               <hr className="border-gray-200 my-4" />
               
-              <p className="mt-4">
+              <p className="mt-4 mb-4">
                 <span className="font-bold text-[#381932]">Know more about </span>
                 <a href="/policies/shipping-policy" className="text-[#381932] underline underline-offset-4 decoration-[#381932]/40 hover:decoration-[#381932] transition-colors">shipping Policy</a>
               </p>
             </AccordionItem>
-          </div>
-          
-          <div>
+            
+            <div className="h-[1px] w-full bg-gray-200 my-0"></div>
+
             <AccordionItem title="Return & Exchange" defaultOpen={false}>
               <p>We accept returns within <strong className="font-semibold">15 days</strong> from the date of delivery.</p>
               
@@ -1709,6 +1710,33 @@ export default function ProductViewer({
                 <a href="/policies/refund-policy" className="text-[#381932] underline underline-offset-4 decoration-[#381932]/40 hover:decoration-[#381932] transition-colors">Return Policy</a>
               </p>
             </AccordionItem>
+          </div>
+
+          <div className="w-full">
+            <h4 className="font-serif text-[18px] text-[#381932] font-bold mb-4">Product Specifications</h4>
+            <div className="bg-[#F5F5F5] rounded-[24px] p-6 md:p-8 w-full border border-[#381932]/5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-[13px] font-sans">
+                {/* Left Column Data */}
+                <div className="space-y-4">
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Brand</span><span className="w-[55%] font-bold text-[#381932]">Gehnok</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">{product.purity} {product.metal}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Style</span><span className="w-[55%] font-bold text-[#381932]">{product.collection}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Centerpiece</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.type || 'Diamond'}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Stone Type</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.cut || 'Round Brilliant'} {product.gemstone?.type || 'Diamond'}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Total Carat Wt.</span><span className="w-[55%] font-bold text-[#381932]">≈ {product.gemstone?.carat || '1.00'} ctw</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Diamond Color</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.color || 'G-H'}</span></div>
+                </div>
+                {/* Right Column Data */}
+                <div className="space-y-4 border-t border-[#381932]/10 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-8">
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Diamond Clarity</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.clarity || 'VS-SI'}</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Band Style</span><span className="w-[45%] font-bold text-[#381932]">Classic Form</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Closure</span><span className="w-[45%] font-bold text-[#381932]">Secure</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Size</span><span className="w-[45%] font-bold text-[#381932]">{selectedSize || 'Standard'}</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Conflict-Free</span><span className="w-[45%] font-bold text-[#381932]">Yes</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Hallmarked</span><span className="w-[45%] font-bold text-[#381932]">Yes</span></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -1770,7 +1798,7 @@ export default function ProductViewer({
                             >
                               <Star
                                 size={16}
-                                className={s <= reviewFormRating ? 'fill-amber-500 text-amber-500' : 'text-[#381932]/30'}
+                                className={s <= reviewFormRating ? 'fill-[#381932] text-[#381932]' : 'fill-[#e5e7eb] text-[#e5e7eb]'}
                               />
                             </button>
                           ))}
@@ -1822,12 +1850,12 @@ export default function ProductViewer({
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                         <div className="flex items-center space-x-2">
                           {/* 5-Star Rating rendered precisely with Star component */}
-                          <div className="flex text-amber-500">
+                          <div className="flex">
                             {Array.from({ length: 5 }).map((_, i) => (
                               <Star 
                                 key={i} 
                                 size={12} 
-                                className={i < review.rating ? 'fill-current' : 'text-[#381932]/20'} 
+                                className={i < review.rating ? 'fill-[#381932] text-[#381932]' : 'fill-[#e5e7eb] text-[#e5e7eb]'} 
                               />
                             ))}
                           </div>
@@ -1868,7 +1896,7 @@ export default function ProductViewer({
 
         {/* OTHER PRODUCTS SECTION ("You May Also Like") */}
         <section className="py-20 bg-white w-full overflow-hidden">
-          <div className="w-full px-4 sm:px-8 lg:px-12">
+          <div className="w-full">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -1961,7 +1989,7 @@ export default function ProductViewer({
                   </div>
 
                   <div className="pt-2 pb-6 px-4 space-y-1 text-left bg-transparent">
-                    <h3 className="text-sm sm:text-base font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
+                    <h3 className="text-base sm:text-lg font-serif font-bold text-[#381932] leading-snug group-hover:text-[#381932]/80 transition-colors duration-300">
                       {item.name.split('-')[0].trim()}
                     </h3>
                     <div className="pt-0.5">
