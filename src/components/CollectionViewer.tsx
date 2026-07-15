@@ -526,6 +526,7 @@ export default function CollectionViewer({
 
         </div>
       </div>
+      </div>
     </section>
   );
 }
