@@ -4,8 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-// @ts-ignore - Vite will resolve these as static URLs
-import diamondTexUrl from '../assets/textures/texture (1).png';
+
 
 interface Model3DViewerProps {
   src: string;
@@ -29,9 +28,9 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
 
 
     const scene = new THREE.Scene();
-    // Use light grey instead of pure white — pure white makes physical transmission
-    // look completely invisible (refracts white = shows white = dead diamond look)
-    scene.background = new THREE.Color(0xEEEEEE);
+    // null background = transparent canvas. The webpage's CSS white background shows through.
+    // This lets the diamond refract the ENVIRONMENT MAP (dark studio) not the webpage background.
+    scene.background = null;
 
     const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     camera.position.set(0, 1.2, 4);
@@ -76,21 +75,50 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
       });
     };
 
-    // Load PNG texture as the diamond environment map using standard TextureLoader
-    const texLoader = new THREE.TextureLoader();
-    texLoader.load(
-      diamondTexUrl,
-      (tex) => {
-        if (disposed) return;
-        tex.mapping = THREE.EquirectangularReflectionMapping;
-        tex.colorSpace = THREE.SRGBColorSpace;
-        diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
-        tex.dispose();
-        applyDiamondHDR(); // Try applying — works if model is already loaded
-      },
-      undefined,
-      (err) => { console.error('Failed to load diamond texture:', err); }
-    );
+    // Create a high-contrast STUDIO environment programmatically.
+    // Professional jewelry renders use a dark environment with bright spot lights.
+    // The diamond refracts this dark+bright contrast = it looks alive and sparkly.
+    const studioCanvas = document.createElement('canvas');
+    studioCanvas.width = 1024;
+    studioCanvas.height = 512;
+    const ctx2d = studioCanvas.getContext('2d')!;
+    
+    // Very dark base (like a professional photography studio)
+    ctx2d.fillStyle = '#0a0a0a';
+    ctx2d.fillRect(0, 0, 1024, 512);
+    
+    // Helper to draw a studio light
+    const addStudioLight = (x: number, y: number, radius: number, alpha: number, color = '255,255,255') => {
+      const grad = ctx2d.createRadialGradient(x, y, 0, x, y, radius);
+      grad.addColorStop(0, `rgba(${color},${alpha})`);
+      grad.addColorStop(0.3, `rgba(${color},${alpha * 0.6})`);
+      grad.addColorStop(1, `rgba(${color},0)`);
+      ctx2d.fillStyle = grad;
+      ctx2d.fillRect(0, 0, 1024, 512);
+    };
+    
+    // Main studio key light (top-left — creates the primary sparkle)
+    addStudioLight(200, 80, 180, 1.0);
+    // Secondary fill light (top-right)
+    addStudioLight(820, 100, 150, 0.85);
+    // Rim light (bottom centre — creates the back-lighting glow)
+    addStudioLight(512, 420, 200, 0.4);
+    // Small accent lights (creates diamond fire — tiny bright points)
+    addStudioLight(50, 200, 60, 0.9);
+    addStudioLight(950, 300, 70, 0.8);
+    addStudioLight(512, 30, 80, 0.7);
+    // Slight warm tint ground bounce
+    addStudioLight(512, 480, 250, 0.2, '200,180,160');
+
+    const studioTex = new THREE.CanvasTexture(studioCanvas);
+    studioTex.mapping = THREE.EquirectangularReflectionMapping;
+    studioTex.colorSpace = THREE.SRGBColorSpace;
+    diamondEnvMap = pmremGenerator.fromEquirectangular(studioTex).texture;
+    studioTex.dispose();
+    
+    // Apply globally — metals reflect the studio, diamonds refract it
+    scene.environment = diamondEnvMap;
+    applyDiamondHDR(); // No-op until modelRoot is set, but calling now in case
 
     // Lighting: Keep ambient very low so the diamond HDR can show full contrast.
     // Scene lights are for the metal only. Diamond sparkle comes from the HDR env map.
