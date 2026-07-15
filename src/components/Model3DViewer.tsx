@@ -63,21 +63,14 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
         diamondEnvMap = pmremGenerator.fromEquirectangular(tex).texture;
         tex.dispose();
         
-        // CRITICAL: Set the diamond HDR as the GLOBAL scene environment.
-        // This means ALL materials automatically receive the HDR reflections.
-        // The diamond, metal, everything will now reflect this.
-        scene.environment = diamondEnvMap;
-
-        // If the model loaded before the HDR, force-update all materials so they pick up the new env
+        // NOTE: We do NOT set scene.environment here. That would apply to metals too.
+        // Instead we directly assign envMap ONLY to meshes tagged as diamond.
         if (modelRoot) {
           modelRoot.traverse(child => {
-            if (child instanceof THREE.Mesh && child.material) {
+            if (child instanceof THREE.Mesh && child.userData.isDiamond && child.material) {
               const materials = Array.isArray(child.material) ? child.material : [child.material];
               materials.forEach(material => {
-                // Force apply envMap directly to diamond meshes (tagged earlier)
-                if (child.userData.isDiamond) {
-                  (material as any).envMap = diamondEnvMap;
-                }
+                (material as any).envMap = diamondEnvMap;
                 material.needsUpdate = true;
               });
             }
