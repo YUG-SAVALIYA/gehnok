@@ -166,19 +166,23 @@ export default function Model3DViewer({ src, poster, title, isFullscreen = false
                       }
                     }
 
-                    // Use a hybrid approach for the diamond to avoid it turning into a white blob against a white background.
-                    // By relying heavily on envMap reflections (metalness) and partial transparency/transmission,
-                    // it picks up the dark/light contrasts from the diamond HDR.
-                    physMat.transmission = 0.2; 
-                    physMat.opacity = 0.8;
+                    // Use true physical transmission for refraction, but critically,
+                    // set flatShading to true. If the GLTF model was exported with smoothed normals,
+                    // it will look like a smooth piece of glass. Flat shading forces sharp, distinct facets.
+                    physMat.transmission = 1.0; 
+                    physMat.opacity = 1.0;
                     physMat.transparent = true; 
                     physMat.ior = 2.4;
+                    physMat.thickness = 1.5;
                     physMat.roughness = 0;
-                    physMat.metalness = 1.0; // Pure metallic so there is NO diffuse washout from the bright scene lights
+                    physMat.metalness = 0.1;
                     physMat.clearcoat = 1.0;
                     physMat.clearcoatRoughness = 0;
-                    physMat.envMapIntensity = 2.5;
-                    physMat.color = new THREE.Color(0xffffff); // MUST be white, because in PBR, metallic reflection color is multiplied by base color. Black base = black reflections!
+                    physMat.dispersion = 1.5; // Only works in newer Three.js, but good to have
+                    physMat.envMapIntensity = 5.0;
+                    physMat.color = new THREE.Color(0xffffff);
+                    physMat.flatShading = true; // This makes the diamond facets sharp instead of smooth glass!
+                    
                     if (diamondEnvMap) physMat.envMap = diamondEnvMap;
                     
                     physMat.needsUpdate = true;
