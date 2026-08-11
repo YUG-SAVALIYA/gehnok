@@ -762,11 +762,11 @@ shopifyRouter.post('/customer/recover', async (req, res) => {
 
 // ── Register the Shopify router ───────────────────────────────────────────────
 
-app.use('https://gehnok.gehnokjewels.workers.dev/api/shopify', shopifyRouter);
+app.use('/api/shopify', shopifyRouter);
 
 // ─── Clear Shopify cache (admin utility) ─────────────────────────────────────
 
-app.post('https://gehnok.gehnokjewels.workers.dev/api/shopify/cache/clear', (req, res) => {
+app.post('/api/shopify/cache/clear', (req, res) => {
   shopifyCache.clear();
   console.log('[Shopify] Cache cleared.');
   res.json({ success: true, message: 'Shopify cache cleared' });
