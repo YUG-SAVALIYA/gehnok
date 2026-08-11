@@ -106,6 +106,7 @@ export interface ShopifyProduct {
   gemstone?: ShopifyMetafield;
   metal?: ShopifyMetafield;
   purity?: ShopifyMetafield;
+  weight?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;
   artisan_hours?: ShopifyMetafield;

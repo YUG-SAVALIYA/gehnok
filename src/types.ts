@@ -48,6 +48,7 @@ export interface Product {
   price: number;
   metal: 'Champagne Gold' | 'Platinum' | 'Rose Gold' | 'Amethyst Purple Gold';
   purity: '18k' | '950 Platinum';
+  weight?: string | null;
   images: string[];
   description: string;
   descriptionHtml?: string;

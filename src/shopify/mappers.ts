@@ -251,6 +251,7 @@ export function mapShopifyProductToProduct(shopifyProduct: ShopifyProduct): Prod
     price: priceINR,
     metal,
     purity,
+    weight: metaValue(shopifyProduct.weight) || null,
     images,
     description: shopifyProduct.description.replace(/Your browser does not support.*?(\.|<\/p>|<br>|$)/gi, '').trim(),
     descriptionHtml: shopifyProduct.descriptionHtml,

@@ -1715,6 +1715,7 @@ export default function ProductViewer({
                 <div className="space-y-4">
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Brand</span><span className="w-[55%] font-bold text-[#381932]">Gehnok</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">{product.purity} {product.metal}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Weight</span><span className="w-[55%] font-bold text-[#381932]">{product.weight || '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Style</span><span className="w-[55%] font-bold text-[#381932]">{product.collection}</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Centerpiece</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.type || 'Diamond'}</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Stone Type</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.cut || 'Round Brilliant'} {product.gemstone?.type || 'Diamond'}</span></div>

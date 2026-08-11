@@ -269,7 +269,7 @@ export function useShopifyCart(): UseShopifyCartResult {
       if (!cartId) throw new Error('No cart ID');
 
       // Check if it already exists in the Shopify cart
-      const existingLineId = findLineId(cartLines, product.id, metalName, size) || findLineId(cartLines, product.handle || '', metalName, size);
+      const existingLineId = findLineId(cartLines, product.id, metalName, size) || findLineId(cartLines, (product as any).handle || '', metalName, size);
       
       let res;
       if (existingLineId) {
