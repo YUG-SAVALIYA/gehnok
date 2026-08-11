@@ -174,6 +174,7 @@ const PRODUCT_FRAG = `
     care_guide: metafield(namespace: "custom", key: "care_guide") { ...Meta }
     metal: metafield(namespace: "custom", key: "metal") { ...Meta }
     purity: metafield(namespace: "custom", key: "purity") { ...Meta }
+    weight: metafield(namespace: "custom", key: "weight") { ...Meta }
     hallmark: metafield(namespace: "custom", key: "hallmark") { ...Meta }
     editorial_story: metafield(namespace: "custom", key: "editorial_story") { ...Meta }
     artisan_hours: metafield(namespace: "custom", key: "artisan_hours") { ...Meta }
@@ -498,6 +499,7 @@ shopifyRouter.get('/search', async (req, res) => {
               variants(first: 5) { edges { node { ...Variant } } }
               metal: metafield(namespace: "custom", key: "metal") { ...Meta }
               purity: metafield(namespace: "custom", key: "purity") { ...Meta }
+              weight: metafield(namespace: "custom", key: "weight") { ...Meta }
               gemstone_type: metafield(namespace: "custom", key: "gemstone_type") { ...Meta }
             }}
           }
