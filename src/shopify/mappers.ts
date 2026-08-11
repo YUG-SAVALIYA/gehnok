@@ -60,11 +60,25 @@ function metaJsonList(
  * Safely parse a Shopify weight metafield which might be JSON like {"value":30.0,"unit":"GRAMS"}.
  * Falls back to raw string if not JSON, or null if empty.
  */
-function metaWeight(metafield: ShopifyMetafield | null | undefined): string | null {
+function metaWeight(metafield: ShopifyMetafield | null | undefined): string | string[] | null {
   const v = metafield?.value;
   if (!v) return null;
   try {
     const parsed = JSON.parse(v);
+    if (Array.isArray(parsed)) {
+      return parsed.map(item => {
+        if (item && typeof item.value === 'number') {
+          let unit = '';
+          if (item.unit === 'GRAMS') unit = 'g';
+          else if (item.unit === 'KILOGRAMS') unit = 'kg';
+          else if (item.unit === 'OUNCES') unit = 'oz';
+          else if (item.unit === 'POUNDS') unit = 'lb';
+          else if (item.unit) unit = String(item.unit).toLowerCase();
+          return `${item.value}${unit}`;
+        }
+        return typeof item === 'object' ? JSON.stringify(item) : String(item);
+      });
+    }
     if (parsed && typeof parsed.value === 'number') {
       let unit = '';
       if (parsed.unit === 'GRAMS') unit = 'g';
@@ -78,6 +92,23 @@ function metaWeight(metafield: ShopifyMetafield | null | undefined): string | nu
   } catch {
     // If it's not valid JSON, fall through and return the raw string
   }
+  return v;
+}
+
+/**
+ * Parses dimension metafield. Converts array like [1,2,3] to "1x2x3 (mm)"
+ */
+function metaDimension(metafield: ShopifyMetafield | null | undefined): string | null {
+  const v = metafield?.value;
+  if (!v) return null;
+  try {
+    const parsed = JSON.parse(v);
+    if (Array.isArray(parsed) && parsed.length >= 3) {
+      // If it's an array of objects like {"value": 1}, extract values
+      const vals = parsed.map(item => typeof item === 'object' && item.value !== undefined ? item.value : item);
+      return `${vals[0]}x${vals[1]}x${vals[2]} (mm)`;
+    }
+  } catch {}
   return v;
 }
 
@@ -277,6 +308,7 @@ export function mapShopifyProductToProduct(shopifyProduct: ShopifyProduct): Prod
     metal,
     purity,
     weight: metaWeight(shopifyProduct.weight),
+    dimension: metaDimension(shopifyProduct.dimension),
     images,
     description: shopifyProduct.description.replace(/Your browser does not support.*?(\.|<\/p>|<br>|$)/gi, '').trim(),
     descriptionHtml: shopifyProduct.descriptionHtml,

@@ -53,6 +53,12 @@ export default function CollectionViewer({
   const [maxPrice, setMaxPrice] = useState<number>(35000);
   const [sortBy, setSortBy] = useState<string>('default');
   const [hoveredProductId, setHoveredProductId] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const productsPerPage = 16;
+  
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [forcedCategory, collectionHandle, selectedCategory, maxPrice, searchQuery, sortBy]);
   
   // Cinematic Animation State
   const [mounted, setMounted] = useState(false);
@@ -178,6 +184,13 @@ export default function CollectionViewer({
 
     return result;
   }, [forcedCategory, collectionHandle, selectedCategory, maxPrice, searchQuery, sortBy, LUXURY_PRODUCTS]);
+
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * productsPerPage;
+    return filteredProducts.slice(start, start + productsPerPage);
+  }, [filteredProducts, currentPage, productsPerPage]);
+
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
 
   // Dynamic headlines
   const pageTitle = title || (collectionHandle 
@@ -493,7 +506,7 @@ export default function CollectionViewer({
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-0 mt-8"
           >
-            {filteredProducts.map((product) => (
+            {paginatedProducts.map((product) => (
               <div
                 key={product.id}
                 onClick={() => onSelectProduct(product)}
@@ -542,6 +555,35 @@ export default function CollectionViewer({
               </div>
             ))}
           </motion.div>
+        )}
+        
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-16 max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
+            <button 
+              onClick={() => {
+                setCurrentPage(p => Math.max(1, p - 1));
+                window.scrollTo({ top: 400, behavior: 'smooth' });
+              }}
+              disabled={currentPage === 1}
+              className="px-4 py-2 border border-[#381932] text-[#381932] text-xs font-sans uppercase tracking-widest disabled:opacity-30 transition-opacity"
+            >
+              Previous
+            </button>
+            <span className="text-sm font-sans text-[#381932]">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button 
+              onClick={() => {
+                setCurrentPage(p => Math.min(totalPages, p + 1));
+                window.scrollTo({ top: 400, behavior: 'smooth' });
+              }}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 border border-[#381932] text-[#381932] text-xs font-sans uppercase tracking-widest disabled:opacity-30 transition-opacity"
+            >
+              Next
+            </button>
+          </div>
         )}
 
         </div>

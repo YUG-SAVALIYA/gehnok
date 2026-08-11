@@ -84,6 +84,7 @@ const PRODUCT_FRAG = `
     metal: metafield(namespace: "custom", key: "metal") { ...Meta }
     purity: metafield(namespace: "custom", key: "purity") { ...Meta }
     weight: metafield(namespace: "custom", key: "weight") { ...Meta }
+    dimension: metafield(namespace: "custom", key: "dimension") { ...Meta }
     hallmark: metafield(namespace: "custom", key: "hallmark") { ...Meta }
     editorial_story: metafield(namespace: "custom", key: "editorial_story") { ...Meta }
     artisan_hours: metafield(namespace: "custom", key: "artisan_hours") { ...Meta }
@@ -924,6 +925,7 @@ async function searchProducts(env: Env, url: URL): Promise<Response> {
           metal: metafield(namespace: "custom", key: "metal") { ...Meta }
           purity: metafield(namespace: "custom", key: "purity") { ...Meta }
           weight: metafield(namespace: "custom", key: "weight") { ...Meta }
+          dimension: metafield(namespace: "custom", key: "dimension") { ...Meta }
           gemstone: metafield(namespace: "custom", key: "gemstone") { ...Meta }
           gemstone_type: metafield(namespace: "custom", key: "gemstone_type") { ...Meta }
           reviews: metafield(namespace: "custom", key: "reviews") { ...Meta }

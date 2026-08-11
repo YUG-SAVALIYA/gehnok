@@ -1714,19 +1714,28 @@ export default function ProductViewer({
                 {/* Left Column Data */}
                 <div className="space-y-4">
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Brand</span><span className="w-[55%] font-bold text-[#381932]">Gehnok</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">{product.purity} {product.metal}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Weight</span><span className="w-[55%] font-bold text-[#381932]">{product.weight || '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Style</span><span className="w-[55%] font-bold text-[#381932]">{product.collection}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Centerpiece</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.type || 'Diamond'}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">{selectedMetal?.name || `${product.purity} ${product.metal}`}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Weight</span><span className="w-[55%] font-bold text-[#381932]">
+                    {(() => {
+                      let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
+                      if (Array.isArray(product.weight) && selectedSize) {
+                        const sizeNum = parseInt(selectedSize, 10);
+                        if (!isNaN(sizeNum)) {
+                          if (sizeNum >= 13 && sizeNum <= 15) displayWeight = product.weight[0];
+                          else if (sizeNum >= 16 && sizeNum <= 18) displayWeight = product.weight[1] || product.weight[0];
+                        }
+                      }
+                      return displayWeight;
+                    })()}
+                  </span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Ring Type</span><span className="w-[55%] font-bold text-[#381932]">{product.collection}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Dimension</span><span className="w-[55%] font-bold text-[#381932]">{product.dimension || '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Stone Type</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.cut || 'Round Brilliant'} {product.gemstone?.type || 'Diamond'}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Total Carat Wt.</span><span className="w-[55%] font-bold text-[#381932]">≈ {product.gemstone?.carat || '1.00'} ctw</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Diamond Color</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.color || 'G-H'}</span></div>
                 </div>
                 {/* Right Column Data */}
                 <div className="space-y-4 border-t border-[#381932]/10 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-8">
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Diamond Clarity</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.clarity || 'VS-SI'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Band Style</span><span className="w-[45%] font-bold text-[#381932]">Classic Form</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Closure</span><span className="w-[45%] font-bold text-[#381932]">Secure</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Total Carat Wt.</span><span className="w-[45%] font-bold text-[#381932]">≈ {product.gemstone?.carat || '1.00'} ctw</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Diamond Color</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.color || 'G-H'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Size</span><span className="w-[45%] font-bold text-[#381932]">{selectedSize || 'Standard'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Conflict-Free</span><span className="w-[45%] font-bold text-[#381932]">Yes</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Hallmarked</span><span className="w-[45%] font-bold text-[#381932]">Yes</span></div>
