@@ -57,6 +57,31 @@ function metaJsonList(
 }
 
 /**
+ * Safely parse a Shopify weight metafield which might be JSON like {"value":30.0,"unit":"GRAMS"}.
+ * Falls back to raw string if not JSON, or null if empty.
+ */
+function metaWeight(metafield: ShopifyMetafield | null | undefined): string | null {
+  const v = metafield?.value;
+  if (!v) return null;
+  try {
+    const parsed = JSON.parse(v);
+    if (parsed && typeof parsed.value === 'number') {
+      let unit = '';
+      if (parsed.unit === 'GRAMS') unit = 'g';
+      else if (parsed.unit === 'KILOGRAMS') unit = 'kg';
+      else if (parsed.unit === 'OUNCES') unit = 'oz';
+      else if (parsed.unit === 'POUNDS') unit = 'lb';
+      else if (parsed.unit) unit = String(parsed.unit).toLowerCase();
+      
+      return `${parsed.value}${unit}`;
+    }
+  } catch {
+    // If it's not valid JSON, fall through and return the raw string
+  }
+  return v;
+}
+
+/**
  * Convert Shopify price string + currency to a numeric INR value.
  * If the store uses INR, amount is used directly.
  * If USD, a rough conversion is applied (update rate as needed).
@@ -251,7 +276,7 @@ export function mapShopifyProductToProduct(shopifyProduct: ShopifyProduct): Prod
     price: priceINR,
     metal,
     purity,
-    weight: metaValue(shopifyProduct.weight) || null,
+    weight: metaWeight(shopifyProduct.weight),
     images,
     description: shopifyProduct.description.replace(/Your browser does not support.*?(\.|<\/p>|<br>|$)/gi, '').trim(),
     descriptionHtml: shopifyProduct.descriptionHtml,
