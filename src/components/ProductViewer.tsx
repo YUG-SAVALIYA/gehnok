@@ -112,56 +112,56 @@ const metalOptions = [
     id: '9k-gold', 
     label: '9K', 
     name: '9K Yellow Gold', 
-    metallicStyle: 'linear-gradient(135deg, #FFEAA5 0%, #D4AF37 20%, #FAF0C9 40%, #AA7C11 60%, #FFF8D6 80%, #6E5300 100%)', 
-    textClass: 'text-[#4A3700] drop-shadow-sm', 
+    metallicStyle: 'linear-gradient(135deg, #FFF6D0 0%, #D1AF51 20%, #FFFFFA 40%, #9F8323 60%, #FFFFF0 80%, #6B5112 100%)', 
+    textClass: 'text-[#503E05] drop-shadow-sm', 
     priceFactor: 0.75 
   },
   { 
     id: '9k-rose', 
     label: '9K', 
     name: '9K Rose Gold', 
-    metallicStyle: 'linear-gradient(135deg, #FFD3BD 0%, #D18260 20%, #FFEBE0 40%, #A25232 60%, #FFF4ED 80%, #6C2B14 100%)', 
-    textClass: 'text-[#4A1D09] drop-shadow-sm', 
+    metallicStyle: 'linear-gradient(135deg, #FFE8DE 0%, #D47953 20%, #FFF9F5 40%, #AA4F2A 60%, #FFFBF9 80%, #762D13 100%)', 
+    textClass: 'text-[#4E1F0B] drop-shadow-sm', 
     priceFactor: 0.75 
   },
   { 
     id: 'ss-silver', 
     label: 'SS', 
     name: 'Sterling Silver 925', 
-    metallicStyle: 'linear-gradient(135deg, #FFFFFF 0%, #B8C1C4 20%, #F5F7F8 40%, #8A9396 60%, #E6EAEA 80%, #555B5D 100%)', 
-    textClass: 'text-[#2D3031] drop-shadow-sm', 
+    metallicStyle: 'linear-gradient(135deg, #FFFFFF 0%, #CDD5DA 20%, #F8FAFB 40%, #A0A9AE 60%, #F3F5F7 80%, #6D777D 100%)', 
+    textClass: 'text-[#37474F] drop-shadow-sm', 
     priceFactor: 0.50 
   },
   { 
     id: '14k-white', 
     label: '14K', 
     name: '14K White Gold', 
-    metallicStyle: 'linear-gradient(135deg, #FFFFFF 0%, #C4CBCD 20%, #F7FAFA 40%, #9AA3A6 60%, #EBF0F2 80%, #626A6C 100%)', 
-    textClass: 'text-[#34393A] drop-shadow-sm', 
+    metallicStyle: 'linear-gradient(135deg, #FFFFFF 0%, #CDD5DA 20%, #F8FAFB 40%, #A0A9AE 60%, #F3F5F7 80%, #6D777D 100%)', 
+    textClass: 'text-[#37474F] drop-shadow-sm', 
     priceFactor: 0.90 
   },
   { 
     id: '14k-rose', 
     label: '14K', 
     name: '14K Rose Gold', 
-    metallicStyle: 'linear-gradient(135deg, #FFE2D4 0%, #D38B6B 20%, #FFF2EB 40%, #A85A35 60%, #FFF6F0 80%, #6F3316 100%)', 
-    textClass: 'text-[#4A200C] drop-shadow-sm', 
+    metallicStyle: 'linear-gradient(135deg, #FFE8DE 0%, #D47953 20%, #FFF9F5 40%, #AA4F2A 60%, #FFFBF9 80%, #762D13 100%)', 
+    textClass: 'text-[#4E1F0B] drop-shadow-sm', 
     priceFactor: 0.90 
   },
   { 
     id: '14k-gold', 
     label: '14K', 
     name: '14K Yellow Gold', 
-    metallicStyle: 'linear-gradient(135deg, #FFF6BD 0%, #D3B73C 20%, #FFFEEB 40%, #A78C1C 60%, #FFFFFA 80%, #6D5400 100%)', 
-    textClass: 'text-[#4E3900] drop-shadow-sm', 
+    metallicStyle: 'linear-gradient(135deg, #FFF6D0 0%, #D1AF51 20%, #FFFFFA 40%, #9F8323 60%, #FFFFF0 80%, #6B5112 100%)', 
+    textClass: 'text-[#503E05] drop-shadow-sm', 
     priceFactor: 0.90 
   },
   { 
     id: '18k-white', 
     label: '18K', 
     name: '18K White Gold', 
-    metallicStyle: 'linear-gradient(135deg, #FFFFFF 0%, #CBD3D7 20%, #FAFAFC 40%, #9FA8AD 60%, #F1F4F6 80%, #687176 100%)', 
-    textClass: 'text-[#373E43] drop-shadow-sm', 
+    metallicStyle: 'linear-gradient(135deg, #FFFFFF 0%, #CDD5DA 20%, #F8FAFB 40%, #A0A9AE 60%, #F3F5F7 80%, #6D777D 100%)', 
+    textClass: 'text-[#37474F] drop-shadow-sm', 
     priceFactor: 1.00 
   },
   { 
