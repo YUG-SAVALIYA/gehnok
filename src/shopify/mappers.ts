@@ -105,7 +105,11 @@ function metaDimension(metafield: ShopifyMetafield | null | undefined): string |
     const parsed = JSON.parse(v);
     if (Array.isArray(parsed) && parsed.length >= 3) {
       // If it's an array of objects like {"value": 1}, extract values
-      const vals = parsed.map(item => typeof item === 'object' && item.value !== undefined ? item.value : item);
+      const vals = parsed.map(item => {
+        let val = typeof item === 'object' && item.value !== undefined ? item.value : item;
+        if (typeof val === 'string') val = val.replace(/[^0-9.]/g, '').trim();
+        return val;
+      });
       return `${vals[0]}x${vals[1]}x${vals[2]} (mm)`;
     }
   } catch {}
@@ -191,6 +195,22 @@ function derivePurity(
   return '18k';
 }
 
+function parseCaratArray(caratMeta: ShopifyMetafield | null | undefined): { center?: string; side?: string; raw?: string } {
+  const v = caratMeta?.value;
+  if (!v) return { raw: '' };
+  try {
+    const parsed = JSON.parse(v);
+    if (Array.isArray(parsed)) {
+      return {
+        center: parsed[0] ? String(parsed[0]) : undefined,
+        side: parsed[1] ? String(parsed[1]) : undefined,
+        raw: parsed.join(', ')
+      };
+    }
+  } catch {}
+  return { raw: v };
+}
+
 /**
  * Build a GemstoneDetails object from Shopify metafields.
  * Returns null if no gemstone data is present.
@@ -199,12 +219,17 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
   const gemstoneType = metaValue(product.gemstone_type) || metaValue(product.gemstone);
   if (!gemstoneType) return null;
 
+  const caratParsed = parseCaratArray(product.carat || product.gemstone_carat);
+
   return {
     type: gemstoneType,
     cut: metaValue(product.gemstone_cut) || 'Round Brilliant',
-    carat: metaNumber(product.gemstone_carat, 1.0),
+    carat: caratParsed.raw || '1.00',
+    centerDiamondCarat: caratParsed.center,
+    sideDiamondCarat: caratParsed.side,
     clarity: metaValue(product.gemstone_clarity) || 'VVS1',
     color: metaValue(product.gemstone_color) || 'Colorless',
+    origin: metaValue(product.material_origin) || 'Ethically Sourced',
   };
 }
 
@@ -309,6 +334,7 @@ export function mapShopifyProductToProduct(shopifyProduct: ShopifyProduct): Prod
     purity,
     weight: metaWeight(shopifyProduct.weight),
     dimension: metaDimension(shopifyProduct.dimension),
+    ringType: metaValue(shopifyProduct.ring_type),
     images,
     description: shopifyProduct.description.replace(/Your browser does not support.*?(\.|<\/p>|<br>|$)/gi, '').trim(),
     descriptionHtml: shopifyProduct.descriptionHtml,

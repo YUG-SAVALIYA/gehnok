@@ -1,6 +1,6 @@
 const domain = "gehnok-jewels.myshopify.com";
 const token = "586dfdde8ffecb78e52c95884c8ea9bd";
-const version = "2025-01";
+const version = "2024-01";
 const endpoint = `https://${domain}/api/${version}/graphql.json`;
 
 const query = `
@@ -10,9 +10,10 @@ const query = `
       node {
         handle
         title
-        weight: metafield(namespace: "custom", key: "weight") {
-          value
-        }
+        carat: metafield(namespace: "custom", key: "carat") { value }
+        ring_type: metafield(namespace: "custom", key: "ring_type") { value }
+        dimension: metafield(namespace: "custom", key: "dimension") { value }
+        weight: metafield(namespace: "custom", key: "weight") { value }
       }
     }
   }

@@ -108,6 +108,8 @@ export interface ShopifyProduct {
   purity?: ShopifyMetafield;
   weight?: ShopifyMetafield;
   dimension?: ShopifyMetafield;
+  carat?: ShopifyMetafield;
+  ring_type?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;
   artisan_hours?: ShopifyMetafield;

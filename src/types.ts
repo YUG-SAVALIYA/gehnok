@@ -1,9 +1,12 @@
 export interface GemstoneDetails {
   type: string;
   cut: string;
-  carat: number;
-  clarity: string;
+  carat: string; // Legacy fallback
+  centerDiamondCarat?: string;
+  sideDiamondCarat?: string;
   color: string;
+  clarity: string;
+  origin: string;
 }
 
 export interface CraftsmanshipStory {
@@ -50,6 +53,7 @@ export interface Product {
   purity: '18k' | '950 Platinum';
   weight?: string | string[] | null;
   dimension?: string | null;
+  ringType?: string | null;
   images: string[];
   description: string;
   descriptionHtml?: string;

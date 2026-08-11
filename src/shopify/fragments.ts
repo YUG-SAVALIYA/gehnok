@@ -114,6 +114,8 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
     purity: metafield(namespace: "custom", key: "purity") { ...MetafieldFragment }
     weight: metafield(namespace: "custom", key: "weight") { ...MetafieldFragment }
     dimension: metafield(namespace: "custom", key: "dimension") { ...MetafieldFragment }
+    carat: metafield(namespace: "custom", key: "carat") { ...MetafieldFragment }
+    ring_type: metafield(namespace: "custom", key: "ring_type") { ...MetafieldFragment }
     hallmark: metafield(namespace: "custom", key: "hallmark") { ...MetafieldFragment }
     editorial_story: metafield(namespace: "custom", key: "editorial_story") { ...MetafieldFragment }
     artisan_hours: metafield(namespace: "custom", key: "artisan_hours") { ...MetafieldFragment }
