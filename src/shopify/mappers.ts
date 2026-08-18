@@ -243,19 +243,27 @@ function parseCaratArray(caratMeta: ShopifyMetafield | null | undefined): { cent
  */
 function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
   const gemstoneType = extractMetaobjectValue(product.category_gemstone_type) || metaValue(product.gemstone_type) || metaValue(product.gemstone);
-  if (!gemstoneType) return null;
-
   const caratParsed = parseCaratArray(product.carat || product.gemstone_carat);
+  const totalDiamonds = parseTotalDiamonds(product.total_diamonds);
+  const centerCarat = caratParsed.center || metaValue(product.carat);
+  const sideCarat = caratParsed.side || metaValue(product.side_diamond_carat);
+  const cut = extractMetaobjectValue(product.category_gemstone_shape) || metaValue(product.gemstone_cut);
+  const color = metaValue(product.gemstone_color);
+
+  // If no gemstone details are provided at all, return null
+  if (!gemstoneType && !caratParsed.raw && !totalDiamonds && !centerCarat && !sideCarat && !cut && !color) {
+    return null;
+  }
 
   return {
-    type: gemstoneType,
-    cut: extractMetaobjectValue(product.category_gemstone_shape) || metaValue(product.gemstone_cut) || 'Round Brilliant',
-    carat: caratParsed.raw || '1.00',
-    centerDiamondCarat: caratParsed.center || metaValue(product.carat),
-    sideDiamondCarat: caratParsed.side || metaValue(product.side_diamond_carat),
-    totalDiamonds: parseTotalDiamonds(product.total_diamonds),
-    clarity: metaValue(product.gemstone_clarity) || 'VVS1',
-    color: metaValue(product.gemstone_color) || 'Colorless',
+    type: gemstoneType || '',
+    cut: cut || '',
+    carat: caratParsed.raw || '',
+    centerDiamondCarat: centerCarat || '',
+    sideDiamondCarat: sideCarat || '',
+    totalDiamonds: totalDiamonds,
+    clarity: metaValue(product.gemstone_clarity) || '',
+    color: color || '',
     origin: metaValue(product.material_origin) || 'Ethically Sourced',
   };
 }
