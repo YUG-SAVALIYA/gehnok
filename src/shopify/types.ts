@@ -117,6 +117,8 @@ export interface ShopifyProduct {
   category_gemstone_shape?: ShopifyMetafield;
   category_gemstone_color?: ShopifyMetafield;
   category_gemstone_clarity?: ShopifyMetafield;
+  shopify_gemstone_type?: ShopifyMetafield;
+  shopify_stone_shape?: ShopifyMetafield;
   custom_stone_type?: ShopifyMetafield;
   custom_stone_shape?: ShopifyMetafield;
   custom_side_diamond?: ShopifyMetafield;

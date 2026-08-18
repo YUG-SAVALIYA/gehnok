@@ -140,6 +140,8 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
     gemstone_cut: metafield(namespace: "custom", key: "gemstone_cut") { ...MetafieldFragment }
     custom_stone_type: metafield(namespace: "custom", key: "stone_type") { ...MetafieldFragment }
     custom_stone_shape: metafield(namespace: "custom", key: "stone_shape") { ...MetafieldFragment }
+    shopify_gemstone_type: metafield(namespace: "shopify", key: "gemstone-type") { ...MetafieldFragment }
+    shopify_stone_shape: metafield(namespace: "shopify", key: "stone-shape") { ...MetafieldFragment }
     custom_side_diamond: metafield(namespace: "custom", key: "side_diamond") { ...MetafieldFragment }
     custom_side_diamonds: metafield(namespace: "custom", key: "side_diamonds") { ...MetafieldFragment }
     custom_total_diamond: metafield(namespace: "custom", key: "total_diamond") { ...MetafieldFragment }

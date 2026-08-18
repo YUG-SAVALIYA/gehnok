@@ -251,6 +251,8 @@ function parseCaratArray(caratMeta: ShopifyMetafield | null | undefined): { cent
 function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
   const gemstoneType = extractMetaobjectValue(product.category_gemstone_type) 
     || metaValue(product.gemstone_type) 
+    || extractMetaobjectValue(product.shopify_gemstone_type)
+    || metaValue(product.shopify_gemstone_type)
     || extractMetaobjectValue(product.custom_stone_type)
     || metaValue(product.custom_stone_type)
     || metaValue(product.gemstone);
@@ -265,6 +267,8 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
     
   const cut = extractMetaobjectValue(product.category_gemstone_shape) 
     || metaValue(product.gemstone_cut)
+    || extractMetaobjectValue(product.shopify_stone_shape)
+    || metaValue(product.shopify_stone_shape)
     || extractMetaobjectValue(product.custom_stone_shape)
     || metaValue(product.custom_stone_shape);
     
