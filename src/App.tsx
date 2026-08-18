@@ -21,7 +21,7 @@ export type View = 'home' | 'all-product' | 'collection' | 'contact-us' | 'journ
 export type PolicyType = 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy';
 
 export default function App() {
-  const { products: LUXURY_PRODUCTS } = useShopifyProducts();
+  const { products: LUXURY_PRODUCTS, loading: productsLoading } = useShopifyProducts();
 
   // Views & Product Selection
   const [currentView, setCurrentView] = useState<View>(() => {
@@ -71,14 +71,23 @@ export default function App() {
 
   // Resolve pending product once products load
   useEffect(() => {
-    if (pendingProductId && LUXURY_PRODUCTS.length > 0) {
-      const prod = LUXURY_PRODUCTS.find(p => p.id === pendingProductId);
-      if (prod) {
-        setSelectedProduct(prod);
+    if (pendingProductId) {
+      if (LUXURY_PRODUCTS.length > 0) {
+        const prod = LUXURY_PRODUCTS.find(p => p.id === pendingProductId);
+        if (prod) {
+          setSelectedProduct(prod);
+          setPendingProductId(null);
+        } else if (!productsLoading) {
+          // Finished loading but product still not found in the first batch
+          setPendingProductId(null);
+          setCurrentView('home'); 
+        }
+      } else if (!productsLoading) {
+        // Finished loading but returned no products
         setPendingProductId(null);
       }
     }
-  }, [LUXURY_PRODUCTS, pendingProductId]);
+  }, [LUXURY_PRODUCTS, pendingProductId, productsLoading]);
 
   // Keep selectedProduct fresh: when Shopify data replaces the static fallback,
   // update the selected product so ProductViewer gets real variants + images.
