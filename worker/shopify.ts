@@ -93,6 +93,13 @@ const PRODUCT_FRAG = `
     gemstone: metafield(namespace: "custom", key: "gemstone") { ...Meta }
     gemstone_type: metafield(namespace: "custom", key: "gemstone_type") { ...Meta }
     gemstone_cut: metafield(namespace: "custom", key: "gemstone_cut") { ...Meta }
+    custom_stone_type: metafield(namespace: "custom", key: "stone_type") { ...Meta }
+    custom_stone_shape: metafield(namespace: "custom", key: "stone_shape") { ...Meta }
+    shopify_gemstone_type: metafield(namespace: "shopify", key: "gemstone-type") { ...Meta }
+    shopify_stone_shape: metafield(namespace: "shopify", key: "stone-shape") { ...Meta }
+    custom_side_diamond: metafield(namespace: "custom", key: "side_diamond") { ...Meta }
+    custom_side_diamonds: metafield(namespace: "custom", key: "side_diamonds") { ...Meta }
+    custom_total_diamond: metafield(namespace: "custom", key: "total_diamond") { ...Meta }
     gemstone_carat: metafield(namespace: "custom", key: "gemstone_carat") { ...Meta }
     gemstone_clarity: metafield(namespace: "custom", key: "gemstone_clarity") { ...Meta }
     gemstone_color: metafield(namespace: "custom", key: "gemstone_color") { ...Meta }

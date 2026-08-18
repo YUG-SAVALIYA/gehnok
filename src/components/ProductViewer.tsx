@@ -1430,42 +1430,6 @@ export default function ProductViewer({
               </div>
             </div>
 
-            {/* Gemstone Details Accordion (Moved back to right column) */}
-            {product.gemstone && (
-              <div className="border-t border-b border-[#381932] divide-y divide-[#381932]">
-                <div className="py-4">
-                  <button
-                    onClick={() => toggleAccordion('materials')}
-                    className="w-full flex justify-between items-center text-xs uppercase tracking-widest font-sans font-bold text-[#381932] py-2 text-left cursor-pointer"
-                  >
-                    <span>Gemstone & Materials</span>
-                    {activeAccordion === 'materials' ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-                  </button>
-                  {activeAccordion === 'materials' && (
-                    <div className="mt-4 space-y-3 pl-1 text-xs text-[#381932]/80 leading-relaxed">
-                      <div className="grid grid-cols-2 gap-y-2 border border-[#381932] p-4 rounded-none bg-[#FFFFFF]/40">
-                        <div>
-                          <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Gemstone Type</span>
-                          <span className="text-[#381932] font-bold">{product.gemstone.type || '-'}</span>
-                        </div>
-                        <div>
-                          <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Cut Style</span>
-                          <span className="text-[#381932] font-bold">{product.gemstone.cut || '-'}</span>
-                        </div>
-                        <div className="pt-2 border-t border-[#381932]">
-                          <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Carat Weight</span>
-                          <span className="text-[#381932] font-bold font-mono">{product.gemstone.carat ? `${product.gemstone.carat} ct` : '-'}</span>
-                        </div>
-                        <div className="pt-2 border-t border-[#381932]">
-                          <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Clarity & Color</span>
-                          <span className="text-[#381932] font-bold font-mono">{product.gemstone.clarity || '-'} / {product.gemstone.color || '-'}</span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
             {/* Shipping & Returns extracted from here */}
           </div>
         </div>
