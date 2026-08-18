@@ -1446,19 +1446,19 @@ export default function ProductViewer({
                       <div className="grid grid-cols-2 gap-y-2 border border-[#381932] p-4 rounded-none bg-[#FFFFFF]/40">
                         <div>
                           <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Gemstone Type</span>
-                          <span className="text-[#381932] font-bold">{product.gemstone.type}</span>
+                          <span className="text-[#381932] font-bold">{product.gemstone.type || '-'}</span>
                         </div>
                         <div>
                           <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Cut Style</span>
-                          <span className="text-[#381932] font-bold">{product.gemstone.cut}</span>
+                          <span className="text-[#381932] font-bold">{product.gemstone.cut || '-'}</span>
                         </div>
                         <div className="pt-2 border-t border-[#381932]">
                           <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Carat Weight</span>
-                          <span className="text-[#381932] font-bold font-mono">{product.gemstone.carat} ct</span>
+                          <span className="text-[#381932] font-bold font-mono">{product.gemstone.carat ? `${product.gemstone.carat} ct` : '-'}</span>
                         </div>
                         <div className="pt-2 border-t border-[#381932]">
                           <span className="block text-[8px] font-sans font-bold text-[#381932]/60 uppercase">Clarity & Color</span>
-                          <span className="text-[#381932] font-bold font-mono">{product.gemstone.clarity} / {product.gemstone.color}</span>
+                          <span className="text-[#381932] font-bold font-mono">{product.gemstone.clarity || '-'} / {product.gemstone.color || '-'}</span>
                         </div>
                       </div>
                     </div>
