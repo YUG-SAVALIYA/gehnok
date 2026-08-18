@@ -123,7 +123,10 @@ export interface ShopifyProduct {
   custom_stone_shape?: ShopifyMetafield;
   custom_side_diamond?: ShopifyMetafield;
   custom_side_diamonds?: ShopifyMetafield;
+  custom_side_diamond_carat?: ShopifyMetafield;
   custom_total_diamond?: ShopifyMetafield;
+  custom_total_diamonds?: ShopifyMetafield;
+  custom_diamond_quantity?: ShopifyMetafield;
   ring_type?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;

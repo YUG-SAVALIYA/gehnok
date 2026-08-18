@@ -267,7 +267,7 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
     || metaValue(product.gemstone);
     
   const caratParsed = parseCaratArray(product.carat || product.gemstone_carat);
-  const totalDiamonds = parseTotalDiamonds(product.total_diamonds) || parseTotalDiamonds(product.custom_total_diamonds) || parseTotalDiamonds(product.custom_total_diamond);
+  const totalDiamonds = parseTotalDiamonds(product.total_diamonds) || parseTotalDiamonds(product.custom_diamond_quantity) || parseTotalDiamonds(product.custom_total_diamonds) || parseTotalDiamonds(product.custom_total_diamond);
   const centerCarat = caratParsed.center || metaValue(product.carat);
   const sideCarat = caratParsed.side 
     || metaValue(product.side_diamond_carat) 
