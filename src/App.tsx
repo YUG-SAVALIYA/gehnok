@@ -78,9 +78,25 @@ export default function App() {
           setSelectedProduct(prod);
           setPendingProductId(null);
         } else if (!productsLoading) {
-          // Finished loading but product still not found in the first batch
-          setPendingProductId(null);
-          setCurrentView('home'); 
+          // Finished loading but product still not found in the first batch.
+          // Fetch it explicitly by handle from the proxy.
+          import('./shopify/api').then(({ createShopifyApiUrl }) => {
+            fetch(createShopifyApiUrl(`products/${encodeURIComponent(pendingProductId)}`))
+              .then(res => res.json())
+              .then(data => {
+                if (data.product) {
+                  import('./shopify/mappers').then(({ mapShopifyProductToProduct }) => {
+                    setSelectedProduct(mapShopifyProductToProduct(data.product));
+                    setPendingProductId(null);
+                  });
+                } else {
+                  setPendingProductId(null);
+                }
+              })
+              .catch(() => {
+                setPendingProductId(null);
+              });
+          });
         }
       } else if (!productsLoading) {
         // Finished loading but returned no products
