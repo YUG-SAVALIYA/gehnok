@@ -103,17 +103,43 @@ function metaDimension(metafield: ShopifyMetafield | null | undefined): string |
   if (!v) return null;
   try {
     const parsed = JSON.parse(v);
-    if (Array.isArray(parsed) && parsed.length >= 3) {
+    if (Array.isArray(parsed) && parsed.length >= 2) {
       // If it's an array of objects like {"value": 1}, extract values
       const vals = parsed.map(item => {
         let val = typeof item === 'object' && item.value !== undefined ? item.value : item;
         if (typeof val === 'string') val = val.replace(/[^0-9.]/g, '').trim();
         return val;
       });
-      return `${vals[0]}x${vals[1]}x${vals[2]} (mm)`;
+      return `${vals[0]}x${vals[1]} (mm)`;
     }
   } catch {}
   return v;
+}
+
+function extractMetaobjectValue(metafield: ShopifyMetafield | null | undefined): string | null {
+  if (!metafield) return null;
+  if (metafield.reference?.fields) {
+    const nameField = metafield.reference.fields.find(f => f.key === 'name' || f.key === 'label' || f.key === 'title' || f.key === 'type');
+    if (nameField) return nameField.value;
+    if (metafield.reference.fields.length > 0) return metafield.reference.fields[0].value;
+  }
+  if (metafield.reference?.handle) {
+    return metafield.reference.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  }
+  if (metafield.value?.startsWith('gid://')) return null;
+  return metafield.value;
+}
+
+function parseTotalDiamonds(metafield: ShopifyMetafield | null | undefined): string[] | undefined {
+  const v = metafield?.value;
+  if (!v) return undefined;
+  try {
+    const parsed = JSON.parse(v);
+    if (Array.isArray(parsed)) {
+      return parsed.map(String);
+    }
+  } catch {}
+  return [v];
 }
 
 /**
@@ -216,17 +242,18 @@ function parseCaratArray(caratMeta: ShopifyMetafield | null | undefined): { cent
  * Returns null if no gemstone data is present.
  */
 function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
-  const gemstoneType = metaValue(product.gemstone_type) || metaValue(product.gemstone);
+  const gemstoneType = extractMetaobjectValue(product.category_gemstone_type) || metaValue(product.gemstone_type) || metaValue(product.gemstone);
   if (!gemstoneType) return null;
 
   const caratParsed = parseCaratArray(product.carat || product.gemstone_carat);
 
   return {
     type: gemstoneType,
-    cut: metaValue(product.gemstone_cut) || 'Round Brilliant',
+    cut: extractMetaobjectValue(product.category_gemstone_shape) || metaValue(product.gemstone_cut) || 'Round Brilliant',
     carat: caratParsed.raw || '1.00',
-    centerDiamondCarat: caratParsed.center,
-    sideDiamondCarat: caratParsed.side,
+    centerDiamondCarat: caratParsed.center || metaValue(product.carat),
+    sideDiamondCarat: caratParsed.side || metaValue(product.side_diamond_carat),
+    totalDiamonds: parseTotalDiamonds(product.total_diamonds),
     clarity: metaValue(product.gemstone_clarity) || 'VVS1',
     color: metaValue(product.gemstone_color) || 'Colorless',
     origin: metaValue(product.material_origin) || 'Ethically Sourced',
@@ -334,7 +361,7 @@ export function mapShopifyProductToProduct(shopifyProduct: ShopifyProduct): Prod
     purity,
     weight: metaWeight(shopifyProduct.weight),
     dimension: metaDimension(shopifyProduct.dimension),
-    ringType: metaValue(shopifyProduct.ring_type),
+    ringType: extractMetaobjectValue(shopifyProduct.ring_type),
     images,
     description: shopifyProduct.description.replace(/Your browser does not support.*?(\.|<\/p>|<br>|$)/gi, '').trim(),
     descriptionHtml: shopifyProduct.descriptionHtml,

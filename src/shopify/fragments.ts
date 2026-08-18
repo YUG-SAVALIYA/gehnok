@@ -115,7 +115,22 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
     weight: metafield(namespace: "custom", key: "weight") { ...MetafieldFragment }
     dimension: metafield(namespace: "custom", key: "dimension") { ...MetafieldFragment }
     carat: metafield(namespace: "custom", key: "carat") { ...MetafieldFragment }
-    ring_type: metafield(namespace: "custom", key: "ring_type") { ...MetafieldFragment }
+    side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...MetafieldFragment }
+    total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...MetafieldFragment }
+    category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...MetafieldFragment }
+    category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...MetafieldFragment }
+    ring_type: metafield(namespace: "custom", key: "ring_type") { 
+      ...MetafieldFragment
+      reference {
+        ... on Metaobject {
+          handle
+          fields {
+            key
+            value
+          }
+        }
+      }
+    }
     hallmark: metafield(namespace: "custom", key: "hallmark") { ...MetafieldFragment }
     editorial_story: metafield(namespace: "custom", key: "editorial_story") { ...MetafieldFragment }
     artisan_hours: metafield(namespace: "custom", key: "artisan_hours") { ...MetafieldFragment }

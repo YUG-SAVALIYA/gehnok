@@ -43,6 +43,8 @@ export interface ShopifyMetafield {
   reference?: {
     mediaContentType?: string;
     image?: ShopifyImage;
+    handle?: string;
+    fields?: Array<{ key: string; value: string }>;
   };
 }
 
@@ -109,6 +111,10 @@ export interface ShopifyProduct {
   weight?: ShopifyMetafield;
   dimension?: ShopifyMetafield;
   carat?: ShopifyMetafield;
+  side_diamond_carat?: ShopifyMetafield;
+  total_diamonds?: ShopifyMetafield;
+  category_gemstone_type?: ShopifyMetafield;
+  category_gemstone_shape?: ShopifyMetafield;
   ring_type?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;

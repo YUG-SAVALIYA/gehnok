@@ -4,6 +4,7 @@ export interface GemstoneDetails {
   carat: string; // Legacy fallback
   centerDiamondCarat?: string;
   sideDiamondCarat?: string;
+  totalDiamonds?: string[];
   color: string;
   clarity: string;
   origin: string;

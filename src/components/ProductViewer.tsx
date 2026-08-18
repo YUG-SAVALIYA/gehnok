@@ -1713,7 +1713,6 @@ export default function ProductViewer({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-[13px] font-sans">
                 {/* Left Column Data */}
                 <div className="space-y-4">
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Brand</span><span className="w-[55%] font-bold text-[#381932]">Gehnok</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">{selectedMetal?.name || `${product.purity} ${product.metal}`}</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Weight</span><span className="w-[55%] font-bold text-[#381932]">
                     {(() => {
@@ -1734,14 +1733,13 @@ export default function ProductViewer({
                 </div>
                 {/* Right Column Data */}
                 <div className="space-y-4 border-t border-[#381932]/10 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-8">
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Center Diamond Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.centerDiamondCarat || product.gemstone?.carat || '-'} ctw</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Total Diamonds</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.totalDiamonds ? `${product.gemstone.totalDiamonds[0] || '1'} Center, ${product.gemstone.totalDiamonds[1] || '0'} Side` : '-'}</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Center Diamond Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.centerDiamondCarat || '-'} ctw</span></div>
                   {product.gemstone?.sideDiamondCarat && (
                     <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Diamond Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone.sideDiamondCarat} ctw</span></div>
                   )}
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Diamond Color</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.color || 'G-H'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Size</span><span className="w-[45%] font-bold text-[#381932]">{selectedSize || 'Standard'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Conflict-Free</span><span className="w-[45%] font-bold text-[#381932]">Yes</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Hallmarked</span><span className="w-[45%] font-bold text-[#381932]">Yes</span></div>
                 </div>
               </div>
             </div>
