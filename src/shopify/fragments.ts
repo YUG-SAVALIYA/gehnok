@@ -119,6 +119,8 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
     total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...MetafieldFragment }
     category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...MetafieldFragment }
     category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...MetafieldFragment }
+    category_gemstone_color: metafield(namespace: "shopify", key: "diamond_color") { ...MetafieldFragment }
+    category_gemstone_clarity: metafield(namespace: "shopify", key: "diamond_clarity") { ...MetafieldFragment }
     ring_type: metafield(namespace: "custom", key: "ring_type") { 
       ...MetafieldFragment
       reference {

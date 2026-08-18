@@ -177,7 +177,24 @@ const PRODUCT_FRAG = `
     weight: metafield(namespace: "custom", key: "weight") { ...Meta }
     dimension: metafield(namespace: "custom", key: "dimension") { ...Meta }
     carat: metafield(namespace: "custom", key: "carat") { ...Meta }
-    ring_type: metafield(namespace: "custom", key: "ring_type") { ...Meta }
+    side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
+    total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
+    category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...Meta }
+    category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...Meta }
+    category_gemstone_color: metafield(namespace: "shopify", key: "diamond_color") { ...Meta }
+    category_gemstone_clarity: metafield(namespace: "shopify", key: "diamond_clarity") { ...Meta }
+    ring_type: metafield(namespace: "custom", key: "ring_type") { 
+      ...Meta
+      reference {
+        ... on Metaobject {
+          handle
+          fields {
+            key
+            value
+          }
+        }
+      }
+    }
     hallmark: metafield(namespace: "custom", key: "hallmark") { ...Meta }
     editorial_story: metafield(namespace: "custom", key: "editorial_story") { ...Meta }
     artisan_hours: metafield(namespace: "custom", key: "artisan_hours") { ...Meta }
@@ -505,7 +522,24 @@ shopifyRouter.get('/search', async (req, res) => {
               weight: metafield(namespace: "custom", key: "weight") { ...Meta }
               dimension: metafield(namespace: "custom", key: "dimension") { ...Meta }
               carat: metafield(namespace: "custom", key: "carat") { ...Meta }
-              ring_type: metafield(namespace: "custom", key: "ring_type") { ...Meta }
+              side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
+              total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
+              category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...Meta }
+              category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...Meta }
+              category_gemstone_color: metafield(namespace: "shopify", key: "diamond_color") { ...Meta }
+              category_gemstone_clarity: metafield(namespace: "shopify", key: "diamond_clarity") { ...Meta }
+              ring_type: metafield(namespace: "custom", key: "ring_type") { 
+                ...Meta
+                reference {
+                  ... on Metaobject {
+                    handle
+                    fields {
+                      key
+                      value
+                    }
+                  }
+                }
+              }
               gemstone_type: metafield(namespace: "custom", key: "gemstone_type") { ...Meta }
             }}
           }

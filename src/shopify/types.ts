@@ -115,6 +115,8 @@ export interface ShopifyProduct {
   total_diamonds?: ShopifyMetafield;
   category_gemstone_type?: ShopifyMetafield;
   category_gemstone_shape?: ShopifyMetafield;
+  category_gemstone_color?: ShopifyMetafield;
+  category_gemstone_clarity?: ShopifyMetafield;
   ring_type?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;
