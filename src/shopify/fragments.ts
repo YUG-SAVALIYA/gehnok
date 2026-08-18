@@ -27,6 +27,8 @@ export const METAFIELD_FRAGMENT = /* GraphQL */ `
     key
     value
     type
+    reference { ... on Metaobject { handle } }
+    references(first: 10) { edges { node { ... on Metaobject { handle } } } }
   }
 `;
 

@@ -125,6 +125,15 @@ function metaDimension(metafield: ShopifyMetafield | null | undefined): string |
 
 function extractMetaobjectValue(metafield: ShopifyMetafield | null | undefined): string | null {
   if (!metafield) return null;
+
+  if (metafield.references?.edges?.length) {
+    const handles = metafield.references.edges
+      .map(e => e.node?.handle)
+      .filter(Boolean)
+      .map(h => h!.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
+    if (handles.length > 0) return handles.join(', ');
+  }
+
   if (metafield.reference?.fields) {
     const nameField = metafield.reference.fields.find(f => f.key === 'name' || f.key === 'label' || f.key === 'title' || f.key === 'type');
     if (nameField) return nameField.value;
@@ -133,7 +142,7 @@ function extractMetaobjectValue(metafield: ShopifyMetafield | null | undefined):
   if (metafield.reference?.handle) {
     return metafield.reference.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
-  if (metafield.value?.startsWith('gid://')) return null;
+  if (metafield.value?.startsWith('gid://') || metafield.value?.startsWith('["gid://')) return null;
   return metafield.value;
 }
 
@@ -258,10 +267,11 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
     || metaValue(product.gemstone);
     
   const caratParsed = parseCaratArray(product.carat || product.gemstone_carat);
-  const totalDiamonds = parseTotalDiamonds(product.total_diamonds) || parseTotalDiamonds(product.custom_total_diamond);
+  const totalDiamonds = parseTotalDiamonds(product.total_diamonds) || parseTotalDiamonds(product.custom_total_diamonds) || parseTotalDiamonds(product.custom_total_diamond);
   const centerCarat = caratParsed.center || metaValue(product.carat);
   const sideCarat = caratParsed.side 
     || metaValue(product.side_diamond_carat) 
+    || metaValue(product.custom_side_diamond_carat)
     || metaValue(product.custom_side_diamond) 
     || metaValue(product.custom_side_diamonds);
     

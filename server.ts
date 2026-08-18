@@ -206,7 +206,9 @@ const PRODUCT_FRAG = `
     shopify_stone_shape: metafield(namespace: "shopify", key: "stone-shape") { ...Meta }
     custom_side_diamond: metafield(namespace: "custom", key: "side_diamond") { ...Meta }
     custom_side_diamonds: metafield(namespace: "custom", key: "side_diamonds") { ...Meta }
+    custom_side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
     custom_total_diamond: metafield(namespace: "custom", key: "total_diamond") { ...Meta }
+    custom_total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
     gemstone_carat: metafield(namespace: "custom", key: "gemstone_carat") { ...Meta }
     gemstone_clarity: metafield(namespace: "custom", key: "gemstone_clarity") { ...Meta }
     gemstone_color: metafield(namespace: "custom", key: "gemstone_color") { ...Meta }

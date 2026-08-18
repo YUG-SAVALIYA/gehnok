@@ -41,8 +41,12 @@ const CORS_BASE_HEADERS = {
 const MONEY_FRAG = `fragment Money on MoneyV2 { amount currencyCode }`;
 const IMAGE_FRAG =
   `fragment Img on Image { id url(transform: { maxWidth: 1200 }) altText width height }`;
-const META_FRAG =
-  `fragment Meta on Metafield { id namespace key value type }`;
+const META_FRAG = `
+  fragment Meta on Metafield { 
+    id namespace key value type 
+    reference { ... on Metaobject { handle } }
+    references(first: 10) { edges { node { ... on Metaobject { handle } } } }
+  }`;
 
 const VARIANT_FRAG = `
   fragment Variant on ProductVariant {
@@ -99,7 +103,9 @@ const PRODUCT_FRAG = `
     shopify_stone_shape: metafield(namespace: "shopify", key: "stone-shape") { ...Meta }
     custom_side_diamond: metafield(namespace: "custom", key: "side_diamond") { ...Meta }
     custom_side_diamonds: metafield(namespace: "custom", key: "side_diamonds") { ...Meta }
+    custom_side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
     custom_total_diamond: metafield(namespace: "custom", key: "total_diamond") { ...Meta }
+    custom_total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
     gemstone_carat: metafield(namespace: "custom", key: "gemstone_carat") { ...Meta }
     gemstone_clarity: metafield(namespace: "custom", key: "gemstone_clarity") { ...Meta }
     gemstone_color: metafield(namespace: "custom", key: "gemstone_color") { ...Meta }
