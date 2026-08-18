@@ -26,7 +26,14 @@ import {
  * Safely read a metafield value as a string.
  */
 function metaValue(metafield: ShopifyMetafield | null | undefined): string {
-  return metafield?.value ?? '';
+  if (!metafield?.value) return '';
+  try {
+    const parsed = JSON.parse(metafield.value);
+    if (Array.isArray(parsed)) {
+      return parsed.join(', ');
+    }
+  } catch {}
+  return metafield.value;
 }
 
 /**
