@@ -249,12 +249,25 @@ function parseCaratArray(caratMeta: ShopifyMetafield | null | undefined): { cent
  * Returns null if no gemstone data is present.
  */
 function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
-  const gemstoneType = extractMetaobjectValue(product.category_gemstone_type) || metaValue(product.gemstone_type) || metaValue(product.gemstone);
+  const gemstoneType = extractMetaobjectValue(product.category_gemstone_type) 
+    || metaValue(product.gemstone_type) 
+    || extractMetaobjectValue(product.custom_stone_type)
+    || metaValue(product.custom_stone_type)
+    || metaValue(product.gemstone);
+    
   const caratParsed = parseCaratArray(product.carat || product.gemstone_carat);
-  const totalDiamonds = parseTotalDiamonds(product.total_diamonds);
+  const totalDiamonds = parseTotalDiamonds(product.total_diamonds) || parseTotalDiamonds(product.custom_total_diamond);
   const centerCarat = caratParsed.center || metaValue(product.carat);
-  const sideCarat = caratParsed.side || metaValue(product.side_diamond_carat);
-  const cut = extractMetaobjectValue(product.category_gemstone_shape) || metaValue(product.gemstone_cut);
+  const sideCarat = caratParsed.side 
+    || metaValue(product.side_diamond_carat) 
+    || metaValue(product.custom_side_diamond) 
+    || metaValue(product.custom_side_diamonds);
+    
+  const cut = extractMetaobjectValue(product.category_gemstone_shape) 
+    || metaValue(product.gemstone_cut)
+    || extractMetaobjectValue(product.custom_stone_shape)
+    || metaValue(product.custom_stone_shape);
+    
   const color = extractMetaobjectValue(product.category_gemstone_color) || metaValue(product.gemstone_color);
   const clarity = extractMetaobjectValue(product.category_gemstone_clarity) || metaValue(product.gemstone_clarity);
 
