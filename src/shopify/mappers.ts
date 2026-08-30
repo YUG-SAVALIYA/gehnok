@@ -59,6 +59,10 @@ function metaJsonList(
     const parsed = JSON.parse(v);
     return Array.isArray(parsed) ? parsed : fallback;
   } catch {
+    const v = metafield?.value;
+    if (v && typeof v === 'string') {
+      return [v];
+    }
     return fallback;
   }
 }
