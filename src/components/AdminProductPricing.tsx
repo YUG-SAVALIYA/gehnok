@@ -14,6 +14,7 @@ export default function AdminProductPricing() {
 
   const [preview, setPreview] = useState<PricingResult | null>(null);
   const [loading, setLoading] = useState(false);
+  const [bulkLoading, setBulkLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [history, setHistory] = useState<PricingHistoryRecord[]>([]);
 
@@ -66,6 +67,24 @@ export default function AdminProductPricing() {
     setLoading(false);
   };
 
+  const handleBulkReprice = async () => {
+    if (!confirm('Are you sure you want to reprice ALL products in your Shopify store based on today\'s rates?')) return;
+    setBulkLoading(true);
+    try {
+      const res = await fetch('/api/products/reprice-all', { method: 'POST' });
+      const data = await res.json();
+      if (res.ok) {
+        alert(`Bulk repricing complete!\nProcessed: ${data.processed}\nSuccess: ${data.success}\nFailed: ${data.failed}`);
+        fetchHistory();
+      } else {
+        alert(`Failed: ${data.error}`);
+      }
+    } catch (err: any) {
+      alert(`Error: ${err.message}`);
+    }
+    setBulkLoading(false);
+  };
+
   const fetchHistory = async () => {
     try {
       const res = await fetch('/api/products/test/pricing/history');
@@ -83,7 +102,16 @@ export default function AdminProductPricing() {
       
       {/* Configuration Form */}
       <div>
-        <h2 className="text-xl font-bold mb-4 border-b border-gray-300 pb-2">Product Pricing Config (Simplified)</h2>
+        <div className="flex justify-between items-center mb-4 border-b border-gray-300 pb-2">
+          <h2 className="text-xl font-bold">Product Pricing Config (Simplified)</h2>
+          <button 
+            onClick={handleBulkReprice}
+            disabled={bulkLoading}
+            className="bg-purple-800 hover:bg-purple-900 text-white font-bold py-1.5 px-4 rounded text-xs transition"
+          >
+            {bulkLoading ? 'Processing...' : 'Run Global Bulk Reprice Now'}
+          </button>
+        </div>
         <p className="text-xs text-gray-500 mb-4 font-sans">
           Your product already uses custom.metal, custom.purity, and custom.weight.
           To enable automatic pricing, you just need to create the 'custom.making_charge' and 'custom.tax' metafields!

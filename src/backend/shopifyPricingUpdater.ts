@@ -4,11 +4,11 @@ import { getActiveRates } from './metalRatesScheduler';
 const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
 // Needs Admin API Token to update variants (Storefront API is read-only)
 const SHOPIFY_ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
-const SHOPIFY_API_VERSION = process.env.SHOPIFY_API_VERSION || '2025-01';
+const SHOPIFY_API_VERSION = process.env.SHOPIFY_API_VERSION || '2024-01'; // Using stable version
 
 async function shopifyAdminGraphQL(query: string, variables: any = {}) {
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_ADMIN_TOKEN) {
-    throw new Error('Shopify Admin credentials are not configured.');
+    throw new Error('Shopify Admin credentials (SHOPIFY_ADMIN_ACCESS_TOKEN) are not configured in .env');
   }
 
   const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
@@ -47,8 +47,6 @@ export async function updateShopifyVariantPrice(variantId: string, finalPrice: n
     }
   `;
 
-  // Final price rounding logic: Shopify requires a string/number that represents currency.
-  // We'll round it to 2 decimal places to be safe.
   const priceString = finalPrice.toFixed(2);
 
   const variables = {
@@ -104,20 +102,95 @@ export async function repriceVariant(config: ProductPricingConfig) {
 }
 
 /**
- * This function fetches all variants that have custom_pricing metafields set and auto_pricing_enabled = true.
- * In a real application, you might sync these from webhooks or poll Shopify.
- * We'll use GraphQL to fetch products with custom_pricing namespace.
+ * Fetches all products and their variants with required custom metafields.
  */
 export async function getAutoPricedVariantsConfig(): Promise<ProductPricingConfig[]> {
-  // Real Implementation:
-  // Use Shopify Admin GraphQL to query all jewelry products.
-  // For each variant, build the ProductPricingConfig using custom.metal, weight, making_charge, etc.
+  console.log('[ShopifyUpdater] Fetching products for bulk pricing from Shopify Admin API...');
   
-  console.log('[ShopifyUpdater] Fetching products for bulk pricing...');
-  // This is a placeholder for the actual GraphQL fetch of variants
-  // In production, we'd paginate through products and variants.
-  
-  return []; 
+  if (!SHOPIFY_ADMIN_TOKEN) {
+    console.warn('[ShopifyUpdater] Missing SHOPIFY_ADMIN_ACCESS_TOKEN. Cannot fetch products.');
+    return [];
+  }
+
+  const query = `
+    query getProductsWithMetafields($cursor: String) {
+      products(first: 50, after: $cursor) {
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+        edges {
+          node {
+            id
+            metal: metafield(namespace: "custom", key: "metal") { value }
+            purity: metafield(namespace: "custom", key: "purity") { value }
+            weight: metafield(namespace: "custom", key: "weight") { value }
+            making_charge: metafield(namespace: "custom", key: "making_charge") { value }
+            tax: metafield(namespace: "custom", key: "tax") { value }
+            variants(first: 100) {
+              edges {
+                node {
+                  id
+                  price
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  `;
+
+  let hasNextPage = true;
+  let cursor = null;
+  const configs: ProductPricingConfig[] = [];
+
+  while (hasNextPage) {
+    try {
+      const data = await shopifyAdminGraphQL(query, { cursor });
+      const products = data?.products?.edges || [];
+      
+      for (const { node: product } of products) {
+        if (!product.metal?.value || !product.purity?.value || !product.weight?.value) {
+          continue; // Skip products without base pricing data
+        }
+
+        // Shopify weight metafield might be a list or a string. Parse it safely.
+        let weightStr = product.weight.value;
+        if (weightStr.startsWith('[')) {
+          const arr = JSON.parse(weightStr);
+          weightStr = arr.length > 0 ? arr[0] : '0';
+        }
+        
+        let metalWeight = parseFloat(weightStr);
+        if (isNaN(metalWeight)) metalWeight = 0;
+        
+        const makingCharge = product.making_charge?.value ? parseFloat(product.making_charge.value) : 0;
+        const tax = product.tax?.value ? parseFloat(product.tax.value) : 0;
+
+        for (const { node: variant } of product.variants.edges) {
+          configs.push({
+            product_id: product.id,
+            variant_id: variant.id,
+            metal_type: product.metal.value,
+            metal_purity: product.purity.value,
+            metal_weight_g: metalWeight,
+            making_charge: makingCharge,
+            tax: tax
+          });
+        }
+      }
+
+      hasNextPage = data?.products?.pageInfo?.hasNextPage;
+      cursor = data?.products?.pageInfo?.endCursor;
+    } catch (err) {
+      console.error('[ShopifyUpdater] Failed to fetch products:', err);
+      break;
+    }
+  }
+
+  console.log(`[ShopifyUpdater] Found ${configs.length} variants eligible for repricing.`);
+  return configs;
 }
 
 /**
@@ -142,8 +215,8 @@ export async function repriceAllProducts() {
         console.error(`[ShopifyUpdater] Failed to update variant ${config.variant_id}:`, err.message);
       }
       
-      // Delay to respect Shopify API rate limits (e.g., 500ms between calls)
-      await new Promise(r => setTimeout(r, 500));
+      // Delay to respect Shopify API rate limits
+      await new Promise(r => setTimeout(r, 600));
     }
     
     console.log(`[ShopifyUpdater] Bulk repricing complete. Processed: ${processed}, Success: ${success}, Failed: ${failed}`);
