@@ -1738,7 +1738,7 @@ export default function ProductViewer({
                   </div>
                   <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
                     <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                      <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Metal</span>
+                      <span className="text-[#381932]/60 font-bold min-w-[120px]">Metal</span>
                       <span className="font-medium text-[#381932]">
                         {(() => {
                           const metalName = selectedMetal?.name || product.metal;
@@ -1751,7 +1751,7 @@ export default function ProductViewer({
                       </span>
                     </div>
                     <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                      <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Net Weight</span>
+                      <span className="text-[#381932]/60 font-bold min-w-[120px]">Net Weight</span>
                       <span className="font-medium text-[#381932]">
                         {(() => {
                           let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
@@ -1785,11 +1785,11 @@ export default function ProductViewer({
                       return (
                         <>
                           <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                            <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Width</span>
+                            <span className="text-[#381932]/60 font-bold min-w-[120px]">Width</span>
                             <span className="font-medium text-[#381932]">{width}</span>
                           </div>
                           <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                            <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Height</span>
+                            <span className="text-[#381932]/60 font-bold min-w-[120px]">Height</span>
                             <span className="font-medium text-[#381932]">{height}</span>
                           </div>
                         </>
@@ -1809,7 +1809,7 @@ export default function ProductViewer({
                     </div>
                     <div className="col-span-12 md:col-span-8 flex flex-col gap-3">
                       <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                        <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Type</span>
+                        <span className="text-[#381932]/60 font-bold min-w-[120px]">Type</span>
                         <span className="font-medium text-[#381932]">{product.gemstone.type}</span>
                       </div>
                     </div>
@@ -1831,15 +1831,15 @@ export default function ProductViewer({
                         return (
                           <div key={idx} className="flex flex-col gap-4">
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Color/Clarity</span>
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Color/Clarity</span>
                               <span className="font-medium text-[#381932]">{parts[0] || '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
                               <span className="font-medium text-[#381932]">{parts[1] ? `${parts[1].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Dimond</span>
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Dimond</span>
                               <span className="font-medium text-[#381932]">{parts[2] || '-'}</span>
                             </div>
                           </div>
@@ -1864,15 +1864,15 @@ export default function ProductViewer({
                         return (
                           <div key={idx} className="flex flex-col gap-4">
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Gemstone</span>
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Gemstone</span>
                               <span className="font-medium text-[#381932]">{parts[0] || '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Size</span>
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Size</span>
                               <span className="font-medium text-[#381932]">{parts[1] ? `${parts[1].replace(/mm/i, '').trim()} mm` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
                               <span className="font-medium text-[#381932]">{parts[2] ? `${parts[2].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                           </div>
