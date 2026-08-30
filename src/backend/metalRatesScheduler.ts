@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { repriceAllProducts } from './shopifyPricingUpdater';
+import { repriceAllProducts, updateShopMetalRates } from './shopifyPricingUpdater';
 
 export interface DailyMetalRatesData {
   date: string;
@@ -110,6 +110,11 @@ export async function fetchDailyRatesFromAPI() {
       saveRates(newRates);
       console.log(`[MetalRates] Successfully fetched and saved new rates for ${istDate}`);
       
+      // Push the rates directly to Shopify Store Settings
+      updateShopMetalRates(newRates).catch(err => {
+        console.error('[MetalRates] Failed to push rates to Shopify Shop Metafields:', err);
+      });
+
       // Fire and forget bulk repricing for auto-enabled products
       repriceAllProducts().catch(err => {
         console.error('[MetalRates] Background bulk repricing failed:', err);

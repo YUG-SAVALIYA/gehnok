@@ -66,6 +66,73 @@ export async function updateShopifyVariantPrice(variantId: string, finalPrice: n
 }
 
 /**
+ * Updates the global shop metafields with the daily metal rates so they can be viewed in Shopify Admin.
+ */
+export async function updateShopMetalRates(rates: ReturnType<typeof getActiveRates>) {
+  if (!rates || rates.status !== 'success') return false;
+
+  console.log('[ShopifyUpdater] Pushing daily metal rates to Shopify Shop Metafields...');
+
+  // 1. Get the Shop ID
+  const shopQuery = `query { shop { id } }`;
+  const shopData = await shopifyAdminGraphQL(shopQuery);
+  const shopId = shopData?.shop?.id;
+
+  if (!shopId) throw new Error('Could not retrieve Shop ID from Shopify.');
+
+  // 2. Set the Metafields
+  const mutation = `
+    mutation metafieldsSet($metafields: [MetafieldsSetInput!]!) {
+      metafieldsSet(metafields: $metafields) {
+        metafields {
+          key
+          value
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const variables = {
+    metafields: [
+      {
+        ownerId: shopId,
+        namespace: "custom",
+        key: "daily_gold_rate",
+        type: "number_decimal",
+        value: rates.rawRates.gold999.toString()
+      },
+      {
+        ownerId: shopId,
+        namespace: "custom",
+        key: "daily_silver_rate",
+        type: "number_decimal",
+        value: rates.rawRates.silver999.toString()
+      },
+      {
+        ownerId: shopId,
+        namespace: "custom",
+        key: "rates_updated_at",
+        type: "single_line_text_field",
+        value: rates.date
+      }
+    ]
+  };
+
+  const data = await shopifyAdminGraphQL(mutation, variables);
+  if (data?.metafieldsSet?.userErrors?.length > 0) {
+    console.error('[ShopifyUpdater] Failed to set shop metafields:', data.metafieldsSet.userErrors);
+    return false;
+  }
+
+  console.log('[ShopifyUpdater] Successfully pushed daily metal rates to Shopify Shop Metafields.');
+  return true;
+}
+
+/**
  * Perform a full reprice of a product variant and update Shopify.
  */
 export async function repriceVariant(config: ProductPricingConfig) {
