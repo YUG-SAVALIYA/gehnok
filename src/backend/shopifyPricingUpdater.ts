@@ -110,10 +110,10 @@ export async function repriceVariant(config: ProductPricingConfig) {
  */
 export async function getAutoPricedVariantsConfig(): Promise<ProductPricingConfig[]> {
   // Real Implementation:
-  // Use Shopify Admin GraphQL to query products with custom_pricing metafields.
-  // For each variant, build the ProductPricingConfig.
+  // Use Shopify Admin GraphQL to query all jewelry products.
+  // For each variant, build the ProductPricingConfig using custom.metal, weight, making_charge, etc.
   
-  console.log('[ShopifyUpdater] Fetching products with auto_pricing_enabled...');
+  console.log('[ShopifyUpdater] Fetching products for bulk pricing...');
   // This is a placeholder for the actual GraphQL fetch of variants
   // In production, we'd paginate through products and variants.
   
@@ -121,19 +121,18 @@ export async function getAutoPricedVariantsConfig(): Promise<ProductPricingConfi
 }
 
 /**
- * Bulk reprice all auto-enabled products safely.
+ * Bulk reprice all products safely.
  */
 export async function repriceAllProducts() {
-  console.log('[ShopifyUpdater] Starting bulk reprice of all auto-enabled products.');
+  console.log('[ShopifyUpdater] Starting bulk reprice of all products.');
   try {
     const configs = await getAutoPricedVariantsConfig();
-    const enabledConfigs = configs.filter(c => c.auto_pricing_enabled);
     
     let processed = 0;
     let success = 0;
     let failed = 0;
     
-    for (const config of enabledConfigs) {
+    for (const config of configs) {
       processed++;
       try {
         await repriceVariant(config);

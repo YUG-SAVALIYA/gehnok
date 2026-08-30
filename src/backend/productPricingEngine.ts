@@ -13,8 +13,6 @@ export interface ProductPricingConfig {
 
   making_charge: number; // From custom.making_charge (Fixed ₹ amount)
   tax_percentage: number; // From custom.tax (Percentage, e.g. 3)
-
-  auto_pricing_enabled: boolean;
 }
 
 export interface PricingResult {

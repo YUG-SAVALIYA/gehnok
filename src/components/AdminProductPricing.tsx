@@ -9,8 +9,7 @@ export default function AdminProductPricing() {
     metal_purity: '18K',
     metal_weight_g: 2.35,
     making_charge: 500,
-    tax_percentage: 3,
-    auto_pricing_enabled: false
+    tax_percentage: 3
   });
 
   const [preview, setPreview] = useState<PricingResult | null>(null);
@@ -87,7 +86,7 @@ export default function AdminProductPricing() {
         <h2 className="text-xl font-bold mb-4 border-b border-gray-300 pb-2">Product Pricing Config (Simplified)</h2>
         <p className="text-xs text-gray-500 mb-4 font-sans">
           Your product already uses custom.metal, custom.purity, and custom.weight.
-          To enable pricing, you only need to create 'making_charge' and 'auto_pricing_enabled' metafields!
+          To enable automatic pricing, you just need to create the 'custom.making_charge' and 'custom.tax' metafields!
         </p>
 
         <div className="space-y-4">
