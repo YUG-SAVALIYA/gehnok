@@ -565,6 +565,8 @@ export default function ProductViewer({
   // Copied coupon indicator state
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
   const [showPriceBreakup, setShowPriceBreakup] = useState(false);
+  const [activeSpecTab, setActiveSpecTab] = useState<'spec' | 'price'>('spec');
+  const specSectionRef = useRef<HTMLDivElement>(null);
   const couponScrollRef = useRef<HTMLDivElement>(null);
 
   const scrollCoupons = (direction: 'left' | 'right') => {
@@ -1142,85 +1144,16 @@ export default function ProductViewer({
                 </span>
               </div>
               
-              {/* Price Breakup Trigger & Panel */}
+              {/* Price Breakup Trigger */}
               <button 
-                onClick={() => setShowPriceBreakup(!showPriceBreakup)}
+                onClick={() => {
+                  setActiveSpecTab('price');
+                  specSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }}
                 className="text-[11px] font-bold text-[#381932]/60 underline underline-offset-2 hover:text-[#381932] transition-colors mt-2 mb-2 block"
               >
-                {showPriceBreakup ? "Hide Price Breakup" : "View Price Breakup"}
+                View Price Breakup
               </button>
-              
-              {showPriceBreakup && (
-                <div className="bg-[#F5F5F5] rounded-[16px] p-5 mb-4 w-full text-[12px] font-sans">
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-[#381932]/10">
-                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[40%]">Component</th>
-                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%]">Weight</th>
-                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%]">Rate</th>
-                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%] text-right">Value</th>
-                      </tr>
-                    </thead>
-                    <tbody className="text-[#381932]">
-                      {/* Metal Row */}
-                      <tr className="border-b border-[#381932]/10">
-                        <td colSpan={4} className="py-4">
-                          <div className="flex justify-between font-bold text-[#381932] mb-1">
-                            <span>Metal</span>
-                            <span>{new Intl.NumberFormat('en-IN').format(baseMetalValue)}</span>
-                          </div>
-                          <div className="flex text-[#381932]/60">
-                            <span className="w-[40%] font-semibold">{selectedPurity || product.purity} {(selectedMetal?.name || product.metal)}</span>
-                            <span className="w-[20%] font-semibold">{parsedWeightNum} g</span>
-                            <span className="w-[20%] font-semibold">{new Intl.NumberFormat('en-IN').format(activeMetalRate)}</span>
-                            <span className="w-[20%] text-right font-semibold">{new Intl.NumberFormat('en-IN').format(baseMetalValue)}</span>
-                          </div>
-                        </td>
-                      </tr>
-                      {/* Stone Row */}
-                      {totalStoneValue > 0 && (
-                        <tr className="border-b border-[#381932]/10">
-                          <td colSpan={4} className="py-4">
-                            <div className="flex justify-between font-bold text-[#381932] mb-1">
-                              <span>Stone</span>
-                              <span>{new Intl.NumberFormat('en-IN').format(totalStoneValue)}</span>
-                            </div>
-                            {stonesForBreakup.map((stone, idx) => (
-                              <div key={idx} className="flex text-[#381932]/60 mt-1">
-                                <span className="w-[40%] font-semibold">{stone.name}</span>
-                                <span className="w-[20%] font-semibold">{stone.carat ? `${stone.carat} ct` : '-'}</span>
-                                <span className="w-[20%] font-semibold">-</span>
-                                <span className="w-[20%] text-right font-semibold">{new Intl.NumberFormat('en-IN').format(stone.value)}</span>
-                              </div>
-                            ))}
-                          </td>
-                        </tr>
-                      )}
-                      {/* Making Charges */}
-                      <tr className="border-b border-[#381932]/10">
-                        <td className="py-4 font-bold text-[#381932]">Making Charges</td>
-                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
-                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
-                        <td className="py-4 text-right font-bold text-[#381932]">{new Intl.NumberFormat('en-IN').format(makingCharges)}</td>
-                      </tr>
-                      {/* Tax */}
-                      <tr className="border-b border-[#381932]/10">
-                        <td className="py-4 font-bold text-[#381932]">TAX</td>
-                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
-                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
-                        <td className="py-4 text-right font-bold text-[#381932]">{new Intl.NumberFormat('en-IN').format(tax)}</td>
-                      </tr>
-                      {/* Total */}
-                      <tr>
-                        <td className="py-4 font-bold text-[#381932] text-[14px]">Total</td>
-                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
-                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
-                        <td className="py-4 text-right font-bold text-[#381932] text-[14px]">{new Intl.NumberFormat('en-IN').format(finalPriceAmount)}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              )}
             </div>
 
             {/* Custom Interactive Configuration Form Panel */}
@@ -1835,10 +1768,27 @@ export default function ProductViewer({
             </AccordionItem>
           </div>
 
-          <div className="w-full sticky top-32">
-            <h4 className="font-serif text-[18px] text-[#381932] font-bold mb-4">Product Specifications</h4>
+          <div ref={specSectionRef} className="w-full sticky top-32 scroll-mt-24">
+            <div className="flex gap-6 mb-4">
+              <button 
+                onClick={() => setActiveSpecTab('spec')}
+                className={`font-serif text-[18px] font-bold pb-2 transition-colors relative ${activeSpecTab === 'spec' ? 'text-[#381932]' : 'text-[#381932]/40'}`}
+              >
+                Product Specifications
+                {activeSpecTab === 'spec' && <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[#381932]" />}
+              </button>
+              <button 
+                onClick={() => setActiveSpecTab('price')}
+                className={`font-serif text-[18px] font-bold pb-2 transition-colors relative ${activeSpecTab === 'price' ? 'text-[#381932]' : 'text-[#381932]/40'}`}
+              >
+                Price Breakup
+                {activeSpecTab === 'price' && <div className="absolute bottom-[-1px] left-0 w-full h-[2px] bg-[#381932]" />}
+              </button>
+            </div>
+            
             <div className="bg-[#F5F5F5] rounded-[20px] p-5 md:p-6 w-full border border-[#381932]/5">
-              <div className="flex flex-col gap-y-4 text-[13px] font-sans">
+              {activeSpecTab === 'spec' ? (
+                <div className="flex flex-col gap-y-4 text-[13px] font-sans">
                 
                 {/* METAL SECTION */}
                 <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
@@ -1984,6 +1934,72 @@ export default function ProductViewer({
                   </div>
                 )}
               </div>
+              ) : (
+                <div className="w-full text-[12px] font-sans">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-[#381932]/10">
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[40%]">Component</th>
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%]">Weight</th>
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%]">Rate</th>
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%] text-right">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[#381932]">
+                      <tr className="border-b border-[#381932]/10">
+                        <td colSpan={4} className="py-4">
+                          <div className="flex justify-between font-bold text-[#381932] mb-1">
+                            <span>Metal</span>
+                            <span>{new Intl.NumberFormat('en-IN').format(baseMetalValue)}</span>
+                          </div>
+                          <div className="flex text-[#381932]/60">
+                            <span className="w-[40%] font-semibold">{selectedPurity || product.purity} {(selectedMetal?.name || product.metal)}</span>
+                            <span className="w-[20%] font-semibold">{parsedWeightNum} g</span>
+                            <span className="w-[20%] font-semibold">{new Intl.NumberFormat('en-IN').format(activeMetalRate)}</span>
+                            <span className="w-[20%] text-right font-semibold">{new Intl.NumberFormat('en-IN').format(baseMetalValue)}</span>
+                          </div>
+                        </td>
+                      </tr>
+                      {totalStoneValue > 0 && (
+                        <tr className="border-b border-[#381932]/10">
+                          <td colSpan={4} className="py-4">
+                            <div className="flex justify-between font-bold text-[#381932] mb-1">
+                              <span>Stone</span>
+                              <span>{new Intl.NumberFormat('en-IN').format(totalStoneValue)}</span>
+                            </div>
+                            {stonesForBreakup.map((stone, idx) => (
+                              <div key={idx} className="flex text-[#381932]/60 mt-1">
+                                <span className="w-[40%] font-semibold">{stone.name}</span>
+                                <span className="w-[20%] font-semibold">{stone.carat ? `${stone.carat} ct` : '-'}</span>
+                                <span className="w-[20%] font-semibold">-</span>
+                                <span className="w-[20%] text-right font-semibold">{new Intl.NumberFormat('en-IN').format(stone.value)}</span>
+                              </div>
+                            ))}
+                          </td>
+                        </tr>
+                      )}
+                      <tr className="border-b border-[#381932]/10">
+                        <td className="py-4 font-bold text-[#381932]">Making Charges</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-right font-bold text-[#381932]">{new Intl.NumberFormat('en-IN').format(makingCharges)}</td>
+                      </tr>
+                      <tr className="border-b border-[#381932]/10">
+                        <td className="py-4 font-bold text-[#381932]">TAX</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-right font-bold text-[#381932]">{new Intl.NumberFormat('en-IN').format(tax)}</td>
+                      </tr>
+                      <tr>
+                        <td className="py-4 font-bold text-[#381932] text-[14px]">Total</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-right font-bold text-[#381932] text-[14px]">{new Intl.NumberFormat('en-IN').format(finalPriceAmount)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </div>
