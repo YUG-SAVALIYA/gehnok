@@ -673,10 +673,8 @@ export default function ProductViewer({
     return isMetalMatch && isPurityMatch && isSizeMatch && isOtherMatch;
   });
 
-  // Calculate price dynamically from weight and metal rate
-  let variantPriceAmount = selectedVariant 
-    ? selectedVariant.price 
-    : product.price;
+  // Calculate price dynamically from weight and metal rate (NEVER use Shopify price)
+  let variantPriceAmount = 0;
 
   let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
   if (Array.isArray(product.weight) && selectedSize) {
@@ -707,11 +705,13 @@ export default function ProductViewer({
     }
   }
 
-  const formattedPrice = new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0
-  }).format(variantPriceAmount);
+  const formattedPrice = variantPriceAmount > 0
+    ? new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        maximumFractionDigits: 0
+      }).format(variantPriceAmount)
+    : "Calculating...";
 
   // Compute filtered photo list and specific video for the selected metal
   const { productPhotos, currentMetalVideo, currentModel3d } = useMemo(() => {
@@ -1205,26 +1205,43 @@ export default function ProductViewer({
                 </div>
               )}
 
-              {/* 1.5. Purity Selector */}
-              {availablePurities.length > 0 && (
+              {/* 1.5. Purity/Fineness Selector */}
+              {(selectedMetal?.name.toLowerCase().includes('silver') || product.metal.toLowerCase().includes('silver')) ? (
                 <div className="space-y-3 pt-2">
                   <div className="flex justify-between items-baseline">
                     <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
-                      Select Purity:
+                      Select Fineness:
                     </span>
                   </div>
                   <div className="flex gap-2">
-                    {availablePurities.map(p => (
-                      <button
-                        key={p}
-                        onClick={() => setSelectedPurity(p)}
-                        className={`px-6 py-2.5 border rounded-md ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#FFFFFF] bg-[#FFFFFF] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
-                      >
-                        {p}
-                      </button>
-                    ))}
+                    <button
+                      className="px-6 py-2.5 border rounded-md border-[#381932] bg-[#381932] text-white font-mono text-[10px] uppercase font-bold tracking-widest shadow-sm cursor-default"
+                    >
+                      925
+                    </button>
                   </div>
                 </div>
+              ) : (
+                availablePurities.length > 0 && (
+                  <div className="space-y-3 pt-2">
+                    <div className="flex justify-between items-baseline">
+                      <span className="text-[10px] uppercase tracking-widest font-sans font-bold text-[#381932]/60">
+                        Select Purity:
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      {availablePurities.map(p => (
+                        <button
+                          key={p}
+                          onClick={() => setSelectedPurity(p)}
+                          className={`px-6 py-2.5 border rounded-md ${selectedPurity === p ? 'border-[#381932] bg-[#381932] text-white' : 'border-[#FFFFFF] bg-[#FFFFFF] text-[#381932] hover:border-[#381932]/50'} font-mono text-[10px] uppercase font-bold tracking-widest transition-all shadow-sm cursor-pointer`}
+                        >
+                          {p}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
               )}
 
               {/* 2. Sizing selector as requested */}
