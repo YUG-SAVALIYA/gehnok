@@ -1783,6 +1783,7 @@ export default function ProductViewer({
                       const width = dimParts[0] || '-';
                       const height = dimParts[1] || '-';
                       return (
+                        <>
                           <div className="flex justify-between md:justify-start md:gap-16 items-center">
                             <span className="text-[#381932]/60 font-bold min-w-[120px]">Width</span>
                             <span className="font-medium text-[#381932]">{width}</span>
