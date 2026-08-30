@@ -219,6 +219,7 @@ function deriveMetal(
 
   const lower = rawMetal.toLowerCase();
   if (lower.includes('platinum') || lower.includes('pt950') || lower.includes('pt 950')) return 'Platinum';
+  if (lower.includes('silver')) return 'Silver';
   if (lower.includes('rose')) return 'Rose Gold';
   if (lower.includes('amethyst') || lower.includes('purple')) return 'Amethyst Purple Gold';
   return 'Champagne Gold'; // default

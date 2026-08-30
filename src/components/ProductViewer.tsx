@@ -1678,7 +1678,15 @@ export default function ProductViewer({
                 {/* Left Column Data */}
                 <div className="space-y-4">
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Ring Style</span><span className="w-[55%] font-bold text-[#381932]">{product.ringType || product.collection}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">{selectedMetal?.name || `${product.purity} ${product.metal}`}</span></div>
+                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">
+                    {(() => {
+                      const metalName = selectedMetal?.name || product.metal;
+                      if (metalName.toLowerCase().includes('silver')) {
+                        return '925 Fineness Silver';
+                      }
+                      return selectedMetal?.name || `${product.purity} ${product.metal}`;
+                    })()}
+                  </span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Dimenssion</span><span className="w-[55%] font-bold text-[#381932]">{product.dimension ? product.dimension.replace(/x/g, ' x ') : '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Weight</span><span className="w-[55%] font-bold text-[#381932]">
                     {(() => {
@@ -1698,7 +1706,7 @@ export default function ProductViewer({
                 </div>
                 {/* Right Column Data */}
                 <div className="space-y-4 border-t border-[#381932]/10 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-8">
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Stone Shape</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.cut || '-'}</span></div>
+                  
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Stone Color</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.color ? `${product.gemstone.color} ${product.gemstone.clarity}`.trim() : '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Total Stone</span><span className="w-[45%] font-bold text-[#381932]">
                     {product.gemstone?.totalDiamonds ? (
