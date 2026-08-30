@@ -1725,9 +1725,8 @@ export default function ProductViewer({
 
           <div className="w-full sticky top-32">
             <h4 className="font-serif text-[18px] text-[#381932] font-bold mb-4">Product Specifications</h4>
-            {console.log('DEBUG PRODUCT:', { diamondsList: product.diamondsList, gemstonesList: product.gemstonesList })}
-            <div className="bg-[#F5F5F5] rounded-[24px] p-6 md:p-8 w-full border border-[#381932]/5">
-              <div className="flex flex-col gap-y-6 text-[13px] font-sans">
+            <div className="bg-[#F5F5F5] rounded-[20px] p-5 md:p-6 w-full border border-[#381932]/5">
+              <div className="flex flex-col gap-y-4 text-[13px] font-sans">
                 
                 {/* METAL SECTION */}
                 <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
@@ -1738,8 +1737,8 @@ export default function ProductViewer({
                     </span>
                   </div>
                   <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
-                    <div className="flex justify-between md:justify-start md:gap-16">
-                      <span className="text-[#381932]/60 font-bold min-w-[120px]">Metal</span>
+                    <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                      <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Metal</span>
                       <span className="font-bold text-[#381932]">
                         {(() => {
                           const metalName = selectedMetal?.name || product.metal;
@@ -1771,62 +1770,58 @@ export default function ProductViewer({
                 </div>
 
                 {/* DIMENSSION SECTION */}
-                <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
+                <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
                   <div className="col-span-12 md:col-span-4 flex items-start gap-2">
                     <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
                       DIMENSSION
                     </span>
                   </div>
-                  <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
+                  <div className="col-span-12 md:col-span-8 flex flex-col gap-3">
                     {(() => {
                       const dimParts = product.dimension ? product.dimension.split('x').map(s => s.trim()) : [];
                       const width = dimParts[0] || '-';
                       const height = dimParts[1] || '-';
                       return (
                         <>
-                          <div className="flex justify-between md:justify-start md:gap-16">
-                            <span className="text-[#381932]/60 font-bold min-w-[120px]">Width</span>
+                          <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                            <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Width</span>
                             <span className="font-bold text-[#381932]">{width}</span>
                           </div>
-                          <div className="flex justify-between md:justify-start md:gap-16">
-                            <span className="text-[#381932]/60 font-bold min-w-[120px]">Height</span>
+                          <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                            <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Height</span>
                             <span className="font-bold text-[#381932]">{height}</span>
                           </div>
                         </>
                       );
                     })()}
-                    <div className="flex justify-between md:justify-start md:gap-16">
-                      <span className="text-[#381932]/60 font-bold min-w-[120px]">GemStone Type</span>
-                      <span className="font-bold text-[#381932]">{product.gemstone?.type || '-'}</span>
-                    </div>
                   </div>
                 </div>
 
                 {/* DIAMOND SECTION */}
                 {product.diamondsList && product.diamondsList.length > 0 && (
-                  <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
+                  <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
                     <div className="col-span-12 md:col-span-4 flex items-start gap-2">
                       <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
                         DIMOND
                       </span>
                     </div>
-                    <div className="col-span-12 md:col-span-8 flex flex-col gap-6">
+                    <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
                       {product.diamondsList.map((diamondRow, idx) => {
                         const parts = diamondRow.split(',').map(s => s.trim());
                         return (
                           <div key={idx} className="flex flex-col gap-4">
-                            <div className="flex justify-between md:justify-start md:gap-16">
-                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Color/Clarity</span>
+                            <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Color/Clarity</span>
                               <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
                             </div>
-                            <div className="flex justify-between md:justify-start md:gap-16">
-                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
+                            <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
                               <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
-                            <div className="flex justify-between md:justify-start md:gap-16">
-                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Dimond</span>
+                            <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Dimond</span>
                               <span className="font-bold text-[#381932]">{parts[2] || '-'}</span>
                             </div>
                           </div>
@@ -1845,21 +1840,21 @@ export default function ProductViewer({
                         GEMSTONE
                       </span>
                     </div>
-                    <div className="col-span-12 md:col-span-8 flex flex-col gap-6">
+                    <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
                       {product.gemstonesList.map((gemRow, idx) => {
                         const parts = gemRow.split(',').map(s => s.trim());
                         return (
                           <div key={idx} className="flex flex-col gap-4">
-                            <div className="flex justify-between md:justify-start md:gap-16">
-                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Gemstone</span>
+                            <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Gemstone</span>
                               <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
                             </div>
-                            <div className="flex justify-between md:justify-start md:gap-16">
-                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Size</span>
+                            <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Size</span>
                               <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/mm/i, '').trim()} mm` : '-'}</span>
                             </div>
-                            <div className="flex justify-between md:justify-start md:gap-16">
-                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
+                            <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
                               <span className="font-bold text-[#381932]">{parts[2] ? `${parts[2].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                           </div>
