@@ -179,6 +179,7 @@ const PRODUCT_FRAG = `
     carat: metafield(namespace: "custom", key: "carat") { ...Meta }
     side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
     total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
+    side_stone_type: metafield(namespace: "custom", key: "side_stone_type") { ...Meta }
     side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
     side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
     side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
@@ -537,6 +538,7 @@ shopifyRouter.get('/search', async (req, res) => {
               carat: metafield(namespace: "custom", key: "carat") { ...Meta }
               side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
               total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
+              side_stone_type: metafield(namespace: "custom", key: "side_stone_type") { ...Meta }
               side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
               side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
               side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }

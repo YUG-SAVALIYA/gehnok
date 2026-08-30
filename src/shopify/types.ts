@@ -134,6 +134,7 @@ export interface ShopifyProduct {
   ring_type?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;
+  side_stone_type?: ShopifyMetafield;
   side_stone_shape?: ShopifyMetafield;
   side_stone_color?: ShopifyMetafield;
   side_stone_carat?: ShopifyMetafield;

@@ -8,6 +8,7 @@ export interface GemstoneDetails {
   color: string;
   clarity: string;
   origin: string;
+  sideStoneType?: string;
   sideStoneShape?: string;
   sideStoneColor?: string;
   sideStoneCarat?: string;

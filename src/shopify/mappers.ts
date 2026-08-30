@@ -290,7 +290,8 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
   const sideStoneCarat = extractMetaobjectValue(product.side_stone_carat) || metaValue(product.side_stone_carat);
 
   // If no gemstone details are provided at all, return null
-  if (!gemstoneType && !caratParsed.raw && !totalDiamonds && !centerCarat && !sideCarat && !cut && !color && !clarity && !sideStoneShape && !sideStoneColor && !sideStoneCarat) {
+  const sideStoneType = extractMetaobjectValue(product.side_stone_type) || metaValue(product.side_stone_type);
+  if (!gemstoneType && !caratParsed.raw && !totalDiamonds && !centerCarat && !sideCarat && !cut && !color && !clarity && !sideStoneType && !sideStoneShape && !sideStoneColor && !sideStoneCarat) {
     return null;
   }
 
@@ -304,6 +305,7 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
     clarity: clarity || '',
     color: color || '',
     origin: metaValue(product.material_origin) || 'Ethically Sourced',
+    sideStoneType: sideStoneType || '',
     sideStoneShape: sideStoneShape || '',
     sideStoneColor: sideStoneColor || '',
     sideStoneCarat: sideStoneCarat || '',

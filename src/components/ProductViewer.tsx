@@ -1700,8 +1700,17 @@ export default function ProductViewer({
                 <div className="space-y-4 border-t border-[#381932]/10 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-8">
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Stone Shape</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.cut || '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Stone Color</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.color ? `${product.gemstone.color} ${product.gemstone.clarity}`.trim() : '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Total Diamond</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.totalDiamonds || '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Center Diamond Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.centerDiamondCarat ? `${product.gemstone.centerDiamondCarat} ct` : (product.gemstone?.carat ? `${product.gemstone.carat} ct` : '-')}</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Total Stone</span><span className="w-[45%] font-bold text-[#381932]">
+                    {product.gemstone?.totalDiamonds ? (
+                      Array.isArray(product.gemstone.totalDiamonds) && product.gemstone.totalDiamonds.length === 2
+                        ? `${product.gemstone.totalDiamonds[0]} Center, ${product.gemstone.totalDiamonds[1]} Side`
+                        : Array.isArray(product.gemstone.totalDiamonds)
+                          ? product.gemstone.totalDiamonds.join(', ')
+                          : product.gemstone.totalDiamonds
+                    ) : '-'}
+                  </span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Center Stone Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.centerDiamondCarat ? `${product.gemstone.centerDiamondCarat} ct` : (product.gemstone?.carat ? `${product.gemstone.carat} ct` : '-')}</span></div>
+                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Type</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneType || '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Shape</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneShape || '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Color</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneColor || '-'}</span></div>
                   <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneCarat ? `${product.gemstone.sideStoneCarat} ct` : (product.gemstone?.sideDiamondCarat ? `${product.gemstone.sideDiamondCarat} ct` : '-')}</span></div>
@@ -1723,96 +1732,17 @@ export default function ProductViewer({
             
 
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-              {/* Form: Add Signature Review */}
-              <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="border border-[#381932] bg-[#FFFFFF] p-6 sm:p-8 rounded-none">
-                <span className="text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]/60 block mb-2">
-                  Leave a Statement
-                </span>
-                <h4 className="text-xl font-serif-luxury text-[#381932] font-bold mb-4">
-                  Log a Signature Review
-                </h4>
-
-                {reviewSuccessMsg ? (
-                  <div className="p-4 bg-[#FFFFFF] border border-[#381932] text-xs text-[#381932] flex items-center space-x-2 font-bold uppercase font-sans tracking-wide">
-                    <CheckCircle size={14} />
-                    <span>Appraisal successfully committed to our registers.</span>
-                  </div>
-                ) : (
-                  <form onSubmit={handleReviewSubmit} className="space-y-4">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-1.5">
-                        <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                          Collector Name
-                        </label>
-                        <input
-                          type="text"
-                          value={reviewFormName}
-                          onChange={(e) => setReviewFormName(e.target.value)}
-                          required
-                          placeholder="e.g. Charlotte M."
-                          className="w-full bg-[#FFFFFF] text-[#381932] border border-[#381932] rounded-none px-3.5 py-2 text-xs focus:ring-1 focus:ring-[#381932] outline-none font-mono"
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                          Commit Star Rating
-                        </label>
-                        <div className="flex min-h-[35px] items-center space-x-2 bg-[#FFFFFF] px-3.5 py-2 border border-[#381932]">
-                          {[1, 2, 3, 4, 5].map((s) => (
-                            <button
-                              key={s}
-                              type="button"
-                              onClick={() => setReviewFormRating(s)}
-                              className="text-[#381932] hover:scale-110 transition-transform focus:outline-none"
-                              aria-label={`Set rating to ${s} star${s === 1 ? '' : 's'}`}
-                            >
-                              <Star
-                                size={16}
-                                className={s <= reviewFormRating ? 'fill-[#381932] text-[#381932]' : 'fill-[#e5e7eb] text-[#e5e7eb]'}
-                              />
-                            </button>
-                          ))}
-                          <span className="text-[10px] font-mono font-bold text-[#381932] pl-2 uppercase">
-                            {reviewFormRating} Stars
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <label className="block text-[9px] tracking-widest font-sans font-bold uppercase text-[#381932]">
-                        Your Appraisal Content
-                      </label>
-                      <textarea
-                        value={reviewFormContent}
-                        onChange={(e) => setReviewFormContent(e.target.value)}
-                        required
-                        rows={4}
-                        placeholder="Share your raw assessment of the gemstone, metallurgy, or boutique courier experience..."
-                        className="w-full bg-[#FFFFFF] text-[#381932] border border-[#381932] rounded-none p-3.5 text-xs focus:ring-1 focus:ring-[#381932] outline-none"
-                      />
-                    </div>
-
-                    <button
-                      type="submit"
-                      className="px-6 py-3 text-[10px] uppercase tracking-widest font-sans font-bold bg-[#381932] text-white border border-[#381932] hover:bg-transparent hover:text-[#381932] transition-all rounded-none cursor-pointer"
-                    >
-                      Commit Review
-                    </button>
-                  </form>
-                )}
-              </motion.div>
+            <div className="flex flex-col gap-8 items-center max-w-4xl mx-auto">
 
             {/* List of Verified Appraisals */}
-            <div className="space-y-6 border border-[#381932] bg-[#FFFFFF] p-6 sm:p-8">
+            <div className="space-y-6 border border-[#381932] bg-[#FFFFFF] p-6 sm:p-8 w-full">
               <h4 className="text-[10px] tracking-widest font-sans font-bold uppercase text-[#381932] border-b border-[#381932]/30 pb-2">
                 Logged Registers ({totalReviewsCount})
               </h4>
 
               {reviews.length === 0 ? (
                 <div className="text-center py-8 text-xs italic text-[#381932]/60">
-                  No verified appraisals exist yet. Use the form beside this register to leave a signature review.
+                  No verified appraisals exist yet.
                 </div>
               ) : (
                 <div className="divide-y divide-[#381932]/30 space-y-6 max-h-[400px] overflow-y-auto scrollbar-none [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pr-2">

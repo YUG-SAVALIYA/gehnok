@@ -104,6 +104,7 @@ const PRODUCT_FRAG = `
     custom_side_diamond: metafield(namespace: "custom", key: "side_diamond") { ...Meta }
     custom_side_diamonds: metafield(namespace: "custom", key: "side_diamonds") { ...Meta }
     custom_side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
+    side_stone_type: metafield(namespace: "custom", key: "side_stone_type") { ...Meta }
     side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
     side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
     side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
@@ -946,6 +947,7 @@ async function searchProducts(env: Env, url: URL): Promise<Response> {
           weight: metafield(namespace: "custom", key: "weight") { ...Meta }
           dimension: metafield(namespace: "custom", key: "dimension") { ...Meta }
           carat: metafield(namespace: "custom", key: "carat") { ...Meta }
+          side_stone_type: metafield(namespace: "custom", key: "side_stone_type") { ...Meta }
           side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
           side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
           side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
