@@ -564,6 +564,7 @@ export default function ProductViewer({
 
   // Copied coupon indicator state
   const [copiedCoupon, setCopiedCoupon] = useState<string | null>(null);
+  const [showPriceBreakup, setShowPriceBreakup] = useState(false);
   const couponScrollRef = useRef<HTMLDivElement>(null);
 
   const scrollCoupons = (direction: 'left' | 'right') => {
@@ -674,7 +675,9 @@ export default function ProductViewer({
   });
 
   // Calculate price dynamically from weight and metal rate (NEVER use Shopify price)
-  let variantPriceAmount = 0;
+  let baseMetalValue = 0;
+  let activeMetalRate = 0;
+  let parsedWeightNum = 25;
 
   let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
   if (Array.isArray(product.weight) && selectedSize) {
@@ -687,30 +690,59 @@ export default function ProductViewer({
 
   if (metalRates) {
     const parsedWeight = parseFloat(displayWeight);
-    const actualWeight = isNaN(parsedWeight) ? 25 : parsedWeight;
+    parsedWeightNum = isNaN(parsedWeight) ? 25 : parsedWeight;
     
     const mName = (selectedMetal?.name || product.metal).toLowerCase();
     
     if (mName.includes('silver')) {
-      const rate = metalRates.silver['925'];
-      if (rate) variantPriceAmount = actualWeight * rate;
+      activeMetalRate = metalRates.silver['925'] || 0;
     } else {
       const activePurity = selectedPurity || product.purity;
       let pKey = activePurity.toUpperCase().replace(/[^0-9K]/g, '') as keyof DailyMetalRates['gold'];
-      // Default to 18K if not found
       if (!metalRates.gold[pKey]) pKey = '18K';
       
-      const rate = metalRates.gold[pKey];
-      if (rate) variantPriceAmount = actualWeight * rate;
+      activeMetalRate = metalRates.gold[pKey] || 0;
     }
+    baseMetalValue = parsedWeightNum * activeMetalRate;
   }
 
-  const formattedPrice = variantPriceAmount > 0
+  // Parse stones for breakup
+  const stonesForBreakup: { name: string; count: string; carat: string; value: number }[] = [];
+  let totalStoneValue = 0;
+
+  if (product.diamondsList && product.diamondsList.length > 0) {
+    product.diamondsList.forEach(diamondRow => {
+      const parts = diamondRow.split(',').map(s => s.trim());
+      const type = parts[0] || 'Diamond';
+      const caratStr = parts[1] || '';
+      const countStr = parts[2] || '1';
+      
+      const caratNum = parseFloat(caratStr.replace(/[^\d.]/g, '')) || 0;
+      const countNum = parseInt(countStr, 10) || 1;
+      // Mock diamond rate based on type
+      const mockRate = type.toLowerCase().includes('pear') ? 5900 : 3733; 
+      const val = caratNum > 0 ? (caratNum * mockRate) : (countNum * 1500); // fallback
+      
+      stonesForBreakup.push({
+        name: type + (countNum > 1 ? ` Diamond x ${countNum}` : ' Diamond x 1'),
+        count: countStr,
+        carat: caratStr,
+        value: Math.round(val)
+      });
+      totalStoneValue += val;
+    });
+  }
+
+  const makingCharges = Math.round(baseMetalValue * 0.15 + totalStoneValue * 0.10) || 10250;
+  const tax = Math.round((baseMetalValue + totalStoneValue + makingCharges) * 0.03);
+  const finalPriceAmount = baseMetalValue + totalStoneValue + makingCharges + tax;
+
+  const formattedPrice = finalPriceAmount > 0
     ? new Intl.NumberFormat('en-IN', {
         style: 'currency',
         currency: 'INR',
         maximumFractionDigits: 0
-      }).format(variantPriceAmount)
+      }).format(finalPriceAmount)
     : "Calculating...";
 
   // Compute filtered photo list and specific video for the selected metal
@@ -1109,6 +1141,86 @@ export default function ProductViewer({
                   {averageRating} ({totalReviewsCount} Signature Reviews)
                 </span>
               </div>
+              
+              {/* Price Breakup Trigger & Panel */}
+              <button 
+                onClick={() => setShowPriceBreakup(!showPriceBreakup)}
+                className="text-[11px] font-bold text-[#381932]/60 underline underline-offset-2 hover:text-[#381932] transition-colors mt-2 mb-2 block"
+              >
+                {showPriceBreakup ? "Hide Price Breakup" : "View Price Breakup"}
+              </button>
+              
+              {showPriceBreakup && (
+                <div className="bg-[#F5F5F5] rounded-[16px] p-5 mb-4 w-full text-[12px] font-sans">
+                  <table className="w-full text-left border-collapse">
+                    <thead>
+                      <tr className="border-b border-[#381932]/10">
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[40%]">Component</th>
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%]">Weight</th>
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%]">Rate</th>
+                        <th className="py-2 text-[10px] uppercase font-black tracking-wider text-[#381932] w-[20%] text-right">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-[#381932]">
+                      {/* Metal Row */}
+                      <tr className="border-b border-[#381932]/10">
+                        <td colSpan={4} className="py-4">
+                          <div className="flex justify-between font-bold text-[#381932] mb-1">
+                            <span>Metal</span>
+                            <span>{new Intl.NumberFormat('en-IN').format(baseMetalValue)}</span>
+                          </div>
+                          <div className="flex text-[#381932]/60">
+                            <span className="w-[40%] font-semibold">{selectedPurity || product.purity} {(selectedMetal?.name || product.metal)}</span>
+                            <span className="w-[20%] font-semibold">{parsedWeightNum} g</span>
+                            <span className="w-[20%] font-semibold">{new Intl.NumberFormat('en-IN').format(activeMetalRate)}</span>
+                            <span className="w-[20%] text-right font-semibold">{new Intl.NumberFormat('en-IN').format(baseMetalValue)}</span>
+                          </div>
+                        </td>
+                      </tr>
+                      {/* Stone Row */}
+                      {totalStoneValue > 0 && (
+                        <tr className="border-b border-[#381932]/10">
+                          <td colSpan={4} className="py-4">
+                            <div className="flex justify-between font-bold text-[#381932] mb-1">
+                              <span>Stone</span>
+                              <span>{new Intl.NumberFormat('en-IN').format(totalStoneValue)}</span>
+                            </div>
+                            {stonesForBreakup.map((stone, idx) => (
+                              <div key={idx} className="flex text-[#381932]/60 mt-1">
+                                <span className="w-[40%] font-semibold">{stone.name}</span>
+                                <span className="w-[20%] font-semibold">{stone.carat ? `${stone.carat} ct` : '-'}</span>
+                                <span className="w-[20%] font-semibold">-</span>
+                                <span className="w-[20%] text-right font-semibold">{new Intl.NumberFormat('en-IN').format(stone.value)}</span>
+                              </div>
+                            ))}
+                          </td>
+                        </tr>
+                      )}
+                      {/* Making Charges */}
+                      <tr className="border-b border-[#381932]/10">
+                        <td className="py-4 font-bold text-[#381932]">Making Charges</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-right font-bold text-[#381932]">{new Intl.NumberFormat('en-IN').format(makingCharges)}</td>
+                      </tr>
+                      {/* Tax */}
+                      <tr className="border-b border-[#381932]/10">
+                        <td className="py-4 font-bold text-[#381932]">TAX</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-right font-bold text-[#381932]">{new Intl.NumberFormat('en-IN').format(tax)}</td>
+                      </tr>
+                      {/* Total */}
+                      <tr>
+                        <td className="py-4 font-bold text-[#381932] text-[14px]">Total</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-[#381932]/60 font-semibold">-</td>
+                        <td className="py-4 text-right font-bold text-[#381932] text-[14px]">{new Intl.NumberFormat('en-IN').format(finalPriceAmount)}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Custom Interactive Configuration Form Panel */}
