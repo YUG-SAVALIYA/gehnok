@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import { repriceAllProducts } from './shopifyPricingUpdater';
 
 export interface DailyMetalRatesData {
   date: string;
@@ -108,6 +109,12 @@ export async function fetchDailyRatesFromAPI() {
 
       saveRates(newRates);
       console.log(`[MetalRates] Successfully fetched and saved new rates for ${istDate}`);
+      
+      // Fire and forget bulk repricing for auto-enabled products
+      repriceAllProducts().catch(err => {
+        console.error('[MetalRates] Background bulk repricing failed:', err);
+      });
+      
       return true;
     } else {
       throw new Error(`Invalid API response: ${JSON.stringify(result)}`);

@@ -4,6 +4,8 @@ import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 import dns from 'dns';
 import { initMetalRatesScheduler, getActiveRates, fetchDailyRatesFromAPI } from './src/backend/metalRatesScheduler';
+import { calculateProductPricing, ProductPricingConfig, getPricingHistory } from './src/backend/productPricingEngine';
+import { repriceVariant } from './src/backend/shopifyPricingUpdater';
 
 dns.setDefaultResultOrder('ipv4first');
 dotenv.config();
@@ -1012,6 +1014,54 @@ app.get('/api/metal-rates/debug', (req, res) => {
 app.post('/api/metal-rates/force-fetch', async (req, res) => {
   const success = await fetchDailyRatesFromAPI();
   res.json({ success, rates: getActiveRates() });
+});
+
+// API: Product Pricing Engine
+app.post('/api/products/:id/pricing/calculate', (req, res) => {
+  try {
+    const config: ProductPricingConfig = req.body.config;
+    if (!config) {
+      return res.status(400).json({ error: 'Pricing config is required.' });
+    }
+    const result = calculateProductPricing(config);
+    if (!result) {
+      return res.status(503).json({ error: 'Failed to calculate pricing. Are daily rates available and weight > 0?' });
+    }
+    res.json({ result });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/products/:id/pricing/reprice', async (req, res) => {
+  try {
+    const config: ProductPricingConfig = req.body.config;
+    if (!config) {
+      return res.status(400).json({ error: 'Pricing config is required.' });
+    }
+    const result = await repriceVariant(config);
+    res.json({ success: true, result });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/api/products/:id/pricing/history', (req, res) => {
+  try {
+    const history = getPricingHistory(req.params.id);
+    res.json({ history });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/products/reprice-all', async (req, res) => {
+  try {
+    const result = await repriceAllProducts();
+    res.json(result);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Configure Vite or Serve static site
