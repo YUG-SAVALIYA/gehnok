@@ -121,7 +121,7 @@ function metaDimension(metafield: ShopifyMetafield | null | undefined): string |
         if (typeof val === 'string') val = val.replace(/[^0-9.]/g, '').trim();
         return val;
       });
-      return `${vals[0]}x${vals[1]} (mm)`;
+      return `${vals[0]} mm x ${vals[1]} mm`;
     }
   } catch {}
   return v;

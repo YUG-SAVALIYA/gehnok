@@ -1819,7 +1819,7 @@ export default function ProductViewer({
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16">
                               <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
-                              <span className="font-bold text-[#381932]">{parts[1] || '-'}</span>
+                              <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16">
                               <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Dimond</span>
@@ -1852,11 +1852,11 @@ export default function ProductViewer({
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16">
                               <span className="text-[#381932]/60 font-bold min-w-[120px]">Size</span>
-                              <span className="font-bold text-[#381932]">{parts[1] || '-'}</span>
+                              <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/mm/i, '').trim()} mm` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16">
                               <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
-                              <span className="font-bold text-[#381932]">{parts[2] || '-'}</span>
+                              <span className="font-bold text-[#381932]">{parts[2] ? `${parts[2].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                           </div>
                         );
