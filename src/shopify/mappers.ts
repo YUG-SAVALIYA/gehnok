@@ -290,7 +290,7 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
   const sideStoneCarat = extractMetaobjectValue(product.side_stone_carat) || metaValue(product.side_stone_carat);
 
   // If no gemstone details are provided at all, return null
-  if (!gemstoneType && !caratParsed.raw && !totalDiamonds && !centerCarat && !sideCarat && !cut && !color && !clarity) {
+  if (!gemstoneType && !caratParsed.raw && !totalDiamonds && !centerCarat && !sideCarat && !cut && !color && !clarity && !sideStoneShape && !sideStoneColor && !sideStoneCarat) {
     return null;
   }
 
