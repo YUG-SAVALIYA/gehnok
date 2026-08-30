@@ -1,22 +1,71 @@
 import { ProductPricingConfig, calculateProductPricing, logPricingHistory, PricingResult } from './productPricingEngine';
 import { getActiveRates } from './metalRatesScheduler';
 
-const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
-// Needs Admin API Token to update variants (Storefront API is read-only)
-const SHOPIFY_ADMIN_TOKEN = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN;
-const SHOPIFY_API_VERSION = process.env.SHOPIFY_API_VERSION || '2024-01'; // Using stable version
+let cachedAccessToken: string | null = null;
+let tokenExpiresAt: number = 0;
+
+async function getAdminAccessToken(): Promise<string> {
+  const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
+  const SHOPIFY_CLIENT_ID = process.env.SHOPIFY_CLIENT_ID;
+  const SHOPIFY_CLIENT_SECRET = process.env.SHOPIFY_CLIENT_SECRET;
+
+  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CLIENT_ID || !SHOPIFY_CLIENT_SECRET) {
+    throw new Error('Shopify Client credentials (SHOPIFY_CLIENT_ID / SHOPIFY_CLIENT_SECRET) are not configured in .env');
+  }
+
+  // Use cached token if valid (buffer of 5 minutes)
+  if (cachedAccessToken && Date.now() < tokenExpiresAt - 300000) {
+    return cachedAccessToken;
+  }
+
+  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/admin/oauth/access_token`;
+  
+  const body = new URLSearchParams();
+  body.append('grant_type', 'client_credentials');
+  body.append('client_id', SHOPIFY_CLIENT_ID);
+  body.append('client_secret', SHOPIFY_CLIENT_SECRET);
+
+  const res = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: body.toString()
+  });
+
+  const json = await res.json();
+  if (json.error) {
+    throw new Error(`Shopify Token Error: ${json.error} - ${json.error_description}`);
+  }
+
+  if (!json.access_token) {
+    throw new Error('No access token received from Shopify');
+  }
+
+  cachedAccessToken = json.access_token;
+  // Typically expires in 24 hours. Fallback to 12 hours if expires_in is missing.
+  const expiresIn = json.expires_in || 43200; 
+  tokenExpiresAt = Date.now() + (expiresIn * 1000);
+
+  return cachedAccessToken;
+}
 
 async function shopifyAdminGraphQL(query: string, variables: any = {}) {
-  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_ADMIN_TOKEN) {
-    throw new Error('Shopify Admin credentials (SHOPIFY_ADMIN_ACCESS_TOKEN) are not configured in .env');
+  const SHOPIFY_STORE_DOMAIN = process.env.SHOPIFY_STORE_DOMAIN;
+  const SHOPIFY_API_VERSION = process.env.SHOPIFY_API_VERSION || '2024-01'; // Using stable version
+  
+  if (!SHOPIFY_STORE_DOMAIN) {
+    throw new Error('Shopify Store Domain is not configured in .env');
   }
+
+  const accessToken = await getAdminAccessToken();
 
   const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/admin/api/${SHOPIFY_API_VERSION}/graphql.json`;
   const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Access-Token': SHOPIFY_ADMIN_TOKEN,
+      'X-Shopify-Access-Token': accessToken,
     },
     body: JSON.stringify({ query, variables })
   });
@@ -31,11 +80,11 @@ async function shopifyAdminGraphQL(query: string, variables: any = {}) {
 /**
  * Updates a specific variant price in Shopify.
  */
-export async function updateShopifyVariantPrice(variantId: string, finalPrice: number) {
+export async function updateShopifyVariantPrice(productId: string, variantId: string, finalPrice: number) {
   const query = `
-    mutation productVariantUpdate($input: ProductVariantInput!) {
-      productVariantUpdate(input: $input) {
-        productVariant {
+    mutation productVariantsBulkUpdate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
+      productVariantsBulkUpdate(productId: $productId, variants: $variants) {
+        productVariants {
           id
           price
         }
@@ -50,16 +99,19 @@ export async function updateShopifyVariantPrice(variantId: string, finalPrice: n
   const priceString = finalPrice.toFixed(2);
 
   const variables = {
-    input: {
-      id: variantId.includes('gid://') ? variantId : `gid://shopify/ProductVariant/${variantId}`,
-      price: priceString
-    }
+    productId: productId.includes('gid://') ? productId : `gid://shopify/Product/${productId}`,
+    variants: [
+      {
+        id: variantId.includes('gid://') ? variantId : `gid://shopify/ProductVariant/${variantId}`,
+        price: priceString
+      }
+    ]
   };
 
   const data = await shopifyAdminGraphQL(query, variables);
   
-  if (data?.productVariantUpdate?.userErrors?.length > 0) {
-    throw new Error(`Failed to update variant price: ${JSON.stringify(data.productVariantUpdate.userErrors)}`);
+  if (data?.productVariantsBulkUpdate?.userErrors?.length > 0) {
+    throw new Error(`Failed to update variant price: ${JSON.stringify(data.productVariantsBulkUpdate.userErrors)}`);
   }
 
   return true;
@@ -146,7 +198,7 @@ export async function repriceVariant(config: ProductPricingConfig) {
   }
 
   // Update Shopify
-  await updateShopifyVariantPrice(config.variant_id, result.final_price);
+  await updateShopifyVariantPrice(config.product_id, config.variant_id, result.final_price);
 
   // Log to history
   const activeRates = getActiveRates();
@@ -174,8 +226,9 @@ export async function repriceVariant(config: ProductPricingConfig) {
 export async function getAutoPricedVariantsConfig(): Promise<ProductPricingConfig[]> {
   console.log('[ShopifyUpdater] Fetching products for bulk pricing from Shopify Admin API...');
   
-  if (!SHOPIFY_ADMIN_TOKEN) {
-    console.warn('[ShopifyUpdater] Missing SHOPIFY_ADMIN_ACCESS_TOKEN. Cannot fetch products.');
+  const SHOPIFY_CLIENT_ID = process.env.SHOPIFY_CLIENT_ID;
+  if (!SHOPIFY_CLIENT_ID) {
+    console.warn('[ShopifyUpdater] Missing SHOPIFY_CLIENT_ID. Cannot fetch products.');
     return [];
   }
 
@@ -199,6 +252,7 @@ export async function getAutoPricedVariantsConfig(): Promise<ProductPricingConfi
                 node {
                   id
                   price
+                  selectedOptions { name value }
                 }
               }
             }
@@ -218,15 +272,20 @@ export async function getAutoPricedVariantsConfig(): Promise<ProductPricingConfi
       const products = data?.products?.edges || [];
       
       for (const { node: product } of products) {
-        if (!product.metal?.value || !product.purity?.value || !product.weight?.value) {
-          continue; // Skip products without base pricing data
+        if (!product.weight?.value) {
+          continue; // Skip products without base weight
         }
 
         // Shopify weight metafield might be a list or a string. Parse it safely.
         let weightStr = product.weight.value;
         if (weightStr.startsWith('[')) {
           const arr = JSON.parse(weightStr);
-          weightStr = arr.length > 0 ? arr[0] : '0';
+          if (arr.length > 0) {
+             const obj = arr[0];
+             weightStr = obj.value ? obj.value.toString() : obj.toString();
+          } else {
+             weightStr = '0';
+          }
         }
         
         let metalWeight = parseFloat(weightStr);
@@ -236,11 +295,21 @@ export async function getAutoPricedVariantsConfig(): Promise<ProductPricingConfi
         const tax = product.tax?.value ? parseFloat(product.tax.value) : 0;
 
         for (const { node: variant } of product.variants.edges) {
+          const purityOpt = variant.selectedOptions?.find((o: any) => o.name.toLowerCase() === 'purity');
+          const colorOpt = variant.selectedOptions?.find((o: any) => o.name.toLowerCase() === 'color' || o.name.toLowerCase() === 'metal');
+          
+          if (!purityOpt) continue; // Skip variants that don't have a purity option
+
+          let metalType = "Gold";
+          if (colorOpt?.value?.toLowerCase().includes('silver') || purityOpt.value.includes('925')) {
+             metalType = "Silver";
+          }
+          
           configs.push({
             product_id: product.id,
             variant_id: variant.id,
-            metal_type: product.metal.value,
-            metal_purity: product.purity.value,
+            metal_type: metalType,
+            metal_purity: purityOpt.value,
             metal_weight_g: metalWeight,
             making_charge: makingCharge,
             tax: tax

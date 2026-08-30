@@ -131,6 +131,8 @@ export interface ShopifyProduct {
   custom_total_diamond?: ShopifyMetafield;
   custom_total_diamonds?: ShopifyMetafield;
   custom_diamond_quantity?: ShopifyMetafield;
+  diamonds?: ShopifyMetafield;
+  gemstones?: ShopifyMetafield;
   ring_type?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;

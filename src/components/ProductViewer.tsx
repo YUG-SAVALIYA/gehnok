@@ -1726,55 +1726,144 @@ export default function ProductViewer({
           <div className="w-full sticky top-32">
             <h4 className="font-serif text-[18px] text-[#381932] font-bold mb-4">Product Specifications</h4>
             <div className="bg-[#F5F5F5] rounded-[24px] p-6 md:p-8 w-full border border-[#381932]/5">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-[13px] font-sans">
-                {/* Left Column Data */}
-                <div className="space-y-4">
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Ring Style</span><span className="w-[55%] font-bold text-[#381932]">{product.ringType || product.collection}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Metal</span><span className="w-[55%] font-bold text-[#381932]">
-                    {(() => {
-                      const metalName = selectedMetal?.name || product.metal;
-                      if (metalName.toLowerCase().includes('silver')) {
-                        return '925 Fineness Silver';
-                      }
-                      return selectedMetal?.name || `${product.purity} ${product.metal}`;
-                    })()}
-                  </span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Dimenssion</span><span className="w-[55%] font-bold text-[#381932]">{product.dimension ? product.dimension.replace(/x/g, ' x ') : '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Weight</span><span className="w-[55%] font-bold text-[#381932]">
-                    {(() => {
-                      let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
-                      if (Array.isArray(product.weight) && selectedSize) {
-                        const sizeNum = parseInt(selectedSize, 10);
-                        if (!isNaN(sizeNum)) {
-                          if (sizeNum >= 13 && sizeNum <= 15) displayWeight = product.weight[0];
-                          else if (sizeNum >= 16 && sizeNum <= 18) displayWeight = product.weight[1] || product.weight[0];
-                        }
-                      }
-                      return displayWeight;
-                    })()}
-                  </span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Size</span><span className="w-[55%] font-bold text-[#381932]">{selectedSize || '14'}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Stone Type</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.type || '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[45%] text-[#381932]/60 font-bold">Stone Shape</span><span className="w-[55%] font-bold text-[#381932]">{product.gemstone?.cut || '-'}</span></div>
+              <div className="flex flex-col gap-y-6 text-[13px] font-sans">
+                
+                {/* METAL SECTION */}
+                <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
+                  <div className="col-span-12 md:col-span-4 flex items-start gap-2">
+                    <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                      METAL
+                    </span>
+                  </div>
+                  <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
+                    <div className="flex justify-between md:justify-start md:gap-16">
+                      <span className="text-[#381932]/60 font-bold min-w-[120px]">Metal</span>
+                      <span className="font-bold text-[#381932]">
+                        {(() => {
+                          const metalName = selectedMetal?.name || product.metal;
+                          if (metalName.toLowerCase().includes('silver')) return '925 Fineness Silver';
+                          return selectedMetal?.name || `${product.purity} ${product.metal}`;
+                        })()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between md:justify-start md:gap-16">
+                      <span className="text-[#381932]/60 font-bold min-w-[120px]">Net Weight</span>
+                      <span className="font-bold text-[#381932]">
+                        {(() => {
+                          let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
+                          if (Array.isArray(product.weight) && selectedSize) {
+                            const sizeNum = parseInt(selectedSize, 10);
+                            if (!isNaN(sizeNum)) {
+                              if (sizeNum >= 13 && sizeNum <= 15) displayWeight = product.weight[0];
+                              else if (sizeNum >= 16 && sizeNum <= 18) displayWeight = product.weight[1] || product.weight[0];
+                            }
+                          }
+                          return displayWeight;
+                        })()}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                {/* Right Column Data */}
-                <div className="space-y-4 border-t border-[#381932]/10 pt-4 md:pt-0 md:border-t-0 md:border-l md:pl-8">
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Stone Color</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.color ? `${product.gemstone.color} ${product.gemstone.clarity}`.trim() : '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Total Stone</span><span className="w-[45%] font-bold text-[#381932]">
-                    {product.gemstone?.totalDiamonds ? (
-                      Array.isArray(product.gemstone.totalDiamonds) && product.gemstone.totalDiamonds.length === 2
-                        ? `${product.gemstone.totalDiamonds[0]} Center, ${product.gemstone.totalDiamonds[1]} Side`
-                        : Array.isArray(product.gemstone.totalDiamonds)
-                          ? product.gemstone.totalDiamonds.join(', ')
-                          : product.gemstone.totalDiamonds
-                    ) : '-'}
-                  </span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Center Stone Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.centerDiamondCarat ? `${product.gemstone.centerDiamondCarat} ct` : (product.gemstone?.carat ? `${product.gemstone.carat} ct` : '-')}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Type</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneType || '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Shape</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneShape || '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Color</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneColor || '-'}</span></div>
-                  <div className="flex gap-4"><span className="w-[55%] text-[#381932]/60 font-bold">Side Stone Carat</span><span className="w-[45%] font-bold text-[#381932]">{product.gemstone?.sideStoneCarat ? `${product.gemstone.sideStoneCarat} ct` : (product.gemstone?.sideDiamondCarat ? `${product.gemstone.sideDiamondCarat} ct` : '-')}</span></div>
+
+                {/* DIMENSSION SECTION */}
+                <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
+                  <div className="col-span-12 md:col-span-4 flex items-start gap-2">
+                    <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                      DIMENSSION
+                    </span>
+                  </div>
+                  <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
+                    {(() => {
+                      const dimParts = product.dimension ? product.dimension.split('x').map(s => s.trim()) : [];
+                      const width = dimParts[0] || '-';
+                      const height = dimParts[1] || '-';
+                      return (
+                        <>
+                          <div className="flex justify-between md:justify-start md:gap-16">
+                            <span className="text-[#381932]/60 font-bold min-w-[120px]">Width</span>
+                            <span className="font-bold text-[#381932]">{width}</span>
+                          </div>
+                          <div className="flex justify-between md:justify-start md:gap-16">
+                            <span className="text-[#381932]/60 font-bold min-w-[120px]">Height</span>
+                            <span className="font-bold text-[#381932]">{height}</span>
+                          </div>
+                        </>
+                      );
+                    })()}
+                    <div className="flex justify-between md:justify-start md:gap-16">
+                      <span className="text-[#381932]/60 font-bold min-w-[120px]">GemStone Type</span>
+                      <span className="font-bold text-[#381932]">{product.gemstone?.type || '-'}</span>
+                    </div>
+                  </div>
                 </div>
+
+                {/* DIAMOND SECTION */}
+                {product.diamondsList && product.diamondsList.length > 0 && (
+                  <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
+                    <div className="col-span-12 md:col-span-4 flex items-start gap-2">
+                      <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                        DIMOND
+                      </span>
+                    </div>
+                    <div className="col-span-12 md:col-span-8 flex flex-col gap-6">
+                      {product.diamondsList.map((diamondRow, idx) => {
+                        const parts = diamondRow.split(',').map(s => s.trim());
+                        return (
+                          <div key={idx} className="flex flex-col gap-4">
+                            <div className="flex justify-between md:justify-start md:gap-16">
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Color/Clarity</span>
+                              <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
+                            </div>
+                            <div className="flex justify-between md:justify-start md:gap-16">
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
+                              <span className="font-bold text-[#381932]">{parts[1] || '-'}</span>
+                            </div>
+                            <div className="flex justify-between md:justify-start md:gap-16">
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Dimond</span>
+                              <span className="font-bold text-[#381932]">{parts[2] || '-'}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* GEMSTONE SECTION */}
+                {product.gemstonesList && product.gemstonesList.length > 0 && (
+                  <div className="grid grid-cols-12 gap-4">
+                    <div className="col-span-12 md:col-span-4 flex items-start gap-2">
+                      <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 16 8 12 14 8 8 12 2"></polygon><polyline points="8 8 2 12 8 16 12 22 16 16 22 12 16 8"></polyline></svg>
+                        GEMSTONE
+                      </span>
+                    </div>
+                    <div className="col-span-12 md:col-span-8 flex flex-col gap-6">
+                      {product.gemstonesList.map((gemRow, idx) => {
+                        const parts = gemRow.split(',').map(s => s.trim());
+                        return (
+                          <div key={idx} className="flex flex-col gap-4">
+                            <div className="flex justify-between md:justify-start md:gap-16">
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Gemstone</span>
+                              <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
+                            </div>
+                            <div className="flex justify-between md:justify-start md:gap-16">
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Size</span>
+                              <span className="font-bold text-[#381932]">{parts[1] || '-'}</span>
+                            </div>
+                            <div className="flex justify-between md:justify-start md:gap-16">
+                              <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
+                              <span className="font-bold text-[#381932]">{parts[2] || '-'}</span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

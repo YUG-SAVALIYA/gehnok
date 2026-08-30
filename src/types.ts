@@ -59,6 +59,8 @@ export interface Product {
   weight?: string | string[] | null;
   dimension?: string | null;
   ringType?: string | null;
+  diamondsList?: string[];
+  gemstonesList?: string[];
   images: string[];
   description: string;
   descriptionHtml?: string;

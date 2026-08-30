@@ -420,6 +420,8 @@ export function mapShopifyProductToProduct(shopifyProduct: ShopifyProduct): Prod
     description: shopifyProduct.description.replace(/Your browser does not support.*?(\.|<\/p>|<br>|$)/gi, '').trim(),
     descriptionHtml: shopifyProduct.descriptionHtml,
     story: metaValue(shopifyProduct.craft_story) || shopifyProduct.description.replace(/Your browser does not support.*?(\.|<\/p>|<br>|$)/gi, '').trim(),
+    diamondsList: metaJsonList(shopifyProduct.diamonds),
+    gemstonesList: metaJsonList(shopifyProduct.gemstones),
     gemstone,
     craftsmanship,
     certification: metaValue(shopifyProduct.certificate) || '',
