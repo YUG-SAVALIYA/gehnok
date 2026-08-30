@@ -136,6 +136,9 @@ export const SEARCH_PRODUCTS = /* GraphQL */ `
           weight: metafield(namespace: "custom", key: "weight") { ...MetafieldFragment }
           dimension: metafield(namespace: "custom", key: "dimension") { ...MetafieldFragment }
           carat: metafield(namespace: "custom", key: "carat") { ...MetafieldFragment }
+          side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...MetafieldFragment }
+          side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...MetafieldFragment }
+          side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...MetafieldFragment }
           ring_type: metafield(namespace: "custom", key: "ring_type") { ...MetafieldFragment }
           gemstone_type: metafield(namespace: "custom", key: "gemstone_type") { ...MetafieldFragment }
           reviews: metafield(namespace: "custom", key: "reviews") { ...MetafieldFragment }

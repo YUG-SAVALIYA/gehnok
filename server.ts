@@ -179,6 +179,9 @@ const PRODUCT_FRAG = `
     carat: metafield(namespace: "custom", key: "carat") { ...Meta }
     side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
     total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
+    side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
+    side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
+    side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
     category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...Meta }
     category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...Meta }
     category_gemstone_color: metafield(namespace: "shopify", key: "diamond_color") { ...Meta }
@@ -534,6 +537,9 @@ shopifyRouter.get('/search', async (req, res) => {
               carat: metafield(namespace: "custom", key: "carat") { ...Meta }
               side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
               total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
+              side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
+              side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
+              side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
               category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...Meta }
               category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...Meta }
               category_gemstone_color: metafield(namespace: "shopify", key: "diamond_color") { ...Meta }
