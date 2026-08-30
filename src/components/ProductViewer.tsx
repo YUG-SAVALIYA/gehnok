@@ -1725,6 +1725,7 @@ export default function ProductViewer({
 
           <div className="w-full sticky top-32">
             <h4 className="font-serif text-[18px] text-[#381932] font-bold mb-4">Product Specifications</h4>
+            {console.log('DEBUG PRODUCT:', { diamondsList: product.diamondsList, gemstonesList: product.gemstonesList })}
             <div className="bg-[#F5F5F5] rounded-[24px] p-6 md:p-8 w-full border border-[#381932]/5">
               <div className="flex flex-col gap-y-6 text-[13px] font-sans">
                 
@@ -1743,7 +1744,10 @@ export default function ProductViewer({
                         {(() => {
                           const metalName = selectedMetal?.name || product.metal;
                           if (metalName.toLowerCase().includes('silver')) return '925 Fineness Silver';
-                          return selectedMetal?.name || `${product.purity} ${product.metal}`;
+                          
+                          const purityName = selectedPurity?.name || product.purity;
+                          if (!purityName) return metalName;
+                          return `${purityName} ${metalName}`;
                         })()}
                       </span>
                     </div>
