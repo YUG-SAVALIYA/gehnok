@@ -136,7 +136,7 @@ async function shopifyFetch<T = unknown>(options: ShopifyFetchOptions): Promise<
 
 const MONEY_FRAG = `fragment Money on MoneyV2 { amount currencyCode }`;
 const IMAGE_FRAG = `fragment Img on Image { id url(transform: { maxWidth: 1200 }) altText width height }`;
-const META_FRAG = `fragment Meta on Metafield { id namespace key value type }`;
+const META_FRAG = `fragment Meta on Metafield { id namespace key value type reference { ... on Metaobject { handle fields { key value } } } }`;
 
 const VARIANT_FRAG = `
   fragment Variant on ProductVariant {

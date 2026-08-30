@@ -1798,6 +1798,24 @@ export default function ProductViewer({
                   </div>
                 </div>
 
+                {/* GEMSTONE TYPE SECTION (Single) */}
+                {product.gemstone?.type && !product.gemstone.type.includes('gid://') && (
+                  <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
+                    <div className="col-span-12 md:col-span-4 flex items-start gap-2">
+                      <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 16 8 12 14 8 8 12 2"></polygon><polyline points="8 8 2 12 8 16 12 22 16 16 22 12 16 8"></polyline></svg>
+                        GEMSTONE TYPE
+                      </span>
+                    </div>
+                    <div className="col-span-12 md:col-span-8 flex flex-col gap-3">
+                      <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                        <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Type</span>
+                        <span className="font-bold text-[#381932]">{product.gemstone.type}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* DIAMOND SECTION */}
                 {product.diamondsList && product.diamondsList.length > 0 && (
                   <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
