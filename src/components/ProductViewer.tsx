@@ -1731,8 +1731,8 @@ export default function ProductViewer({
                 {/* METAL SECTION */}
                 <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
                   <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                    <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+                    <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
                       METAL
                     </span>
                   </div>
@@ -1772,9 +1772,9 @@ export default function ProductViewer({
                 {/* DIMENSSION SECTION */}
                 <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
                   <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                    <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
-                      DIMENSSION
+                    <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
+                      DIMENSIONS
                     </span>
                   </div>
                   <div className="col-span-12 md:col-span-8 flex flex-col gap-3">
@@ -1802,9 +1802,9 @@ export default function ProductViewer({
                 {product.diamondsList && product.diamondsList.length > 0 && (
                   <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
                     <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                      <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
-                        DIMOND
+                    <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                      DIAMONDS
                       </span>
                     </div>
                     <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
@@ -1835,9 +1835,9 @@ export default function ProductViewer({
                 {product.gemstonesList && product.gemstonesList.length > 0 && (
                   <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                      <span className="font-bold text-[#381932] uppercase tracking-widest text-[11px] flex items-center gap-2">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 16 8 12 14 8 8 12 2"></polygon><polyline points="8 8 2 12 8 16 12 22 16 16 22 12 16 8"></polyline></svg>
-                        GEMSTONE
+                      <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 16 8 12 14 8 8 12 2"></polygon><polyline points="8 8 2 12 8 16 12 22 16 16 22 12 16 8"></polyline></svg>
+                        GEMSTONES
                       </span>
                     </div>
                     <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
