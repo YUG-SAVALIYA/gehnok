@@ -9,7 +9,7 @@ export default function AdminProductPricing() {
     metal_purity: '18K',
     metal_weight_g: 2.35,
     making_charge: 500,
-    tax_percentage: 3
+    tax: 300
   });
 
   const [preview, setPreview] = useState<PricingResult | null>(null);
@@ -123,8 +123,8 @@ export default function AdminProductPricing() {
           </div>
 
           <label className="flex flex-col border-t border-gray-200 pt-4">
-            Tax Percentage (%):
-            <input type="number" step="0.1" value={config.tax_percentage} onChange={e => setConfig({...config, tax_percentage: parseFloat(e.target.value)})} className="border p-1 mt-1 w-1/2" />
+            Tax (₹) (custom.tax):
+            <input type="number" step="1" value={config.tax} onChange={e => setConfig({...config, tax: parseFloat(e.target.value)})} className="border p-1 mt-1 w-1/2" />
           </label>
         </div>
       </div>
@@ -163,7 +163,7 @@ export default function AdminProductPricing() {
             </div>
 
             <div className="flex justify-between text-gray-500">
-              <span>Tax / GST ({config.tax_percentage}%):</span>
+              <span>Tax / GST:</span>
               <span>+ {formatINR(preview.tax)}</span>
             </div>
 

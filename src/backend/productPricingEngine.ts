@@ -12,7 +12,7 @@ export interface ProductPricingConfig {
   metal_weight_g: number; // From custom.weight
 
   making_charge: number; // From custom.making_charge (Fixed ₹ amount)
-  tax_percentage: number; // From custom.tax (Percentage, e.g. 3)
+  tax: number; // From custom.tax (Fixed ₹ amount, not percentage)
 }
 
 export interface PricingResult {
@@ -60,9 +60,8 @@ export function calculateProductPricing(config: ProductPricingConfig): PricingRe
   // 3. Subtotal
   const subtotal = metal_value + making_charge;
 
-  // 4. Tax (GST)
-  const tax_percentage = config.tax_percentage || 0;
-  const tax = subtotal * (tax_percentage / 100);
+  // 4. Tax (GST) - Fixed amount
+  const tax = config.tax || 0;
 
   // Final Price
   const final_price = subtotal + tax;
