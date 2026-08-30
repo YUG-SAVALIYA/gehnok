@@ -6,20 +6,10 @@ export default function AdminProductPricing() {
     product_id: 'gid://shopify/Product/123456',
     variant_id: 'gid://shopify/ProductVariant/654321',
     metal_type: 'Gold',
-    gold_color: 'Rose Gold',
-    gold_purity: '18K',
+    metal_purity: '18K',
     metal_weight_g: 2.35,
-    wastage_type: 'percentage',
-    wastage_value: 8,
-    making_charge_type: 'fixed',
-    making_charge_value: 500,
-    stone_cost: 1250,
-    other_cost: 0,
-    margin_type: 'none',
-    margin_value: 0,
-    discount_type: 'none',
-    discount_value: 0,
-    gst_percentage: 0,
+    making_charge: 500,
+    tax_percentage: 3,
     auto_pricing_enabled: false
   });
 
@@ -94,107 +84,48 @@ export default function AdminProductPricing() {
       
       {/* Configuration Form */}
       <div>
-        <h2 className="text-xl font-bold mb-4 border-b border-gray-300 pb-2">Product Pricing Config</h2>
-        
+        <h2 className="text-xl font-bold mb-4 border-b border-gray-300 pb-2">Product Pricing Config (Simplified)</h2>
+        <p className="text-xs text-gray-500 mb-4 font-sans">
+          Your product already uses custom.metal, custom.purity, and custom.weight.
+          To enable pricing, you only need to create 'making_charge' and 'auto_pricing_enabled' metafields!
+        </p>
+
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <label className="flex flex-col">
-              Metal Type:
-              <select value={config.metal_type} onChange={e => setConfig({...config, metal_type: e.target.value as any})} className="border p-1 mt-1">
+              Metal Type (custom.metal):
+              <select value={config.metal_type} onChange={e => setConfig({...config, metal_type: e.target.value})} className="border p-1 mt-1">
                 <option value="Gold">Gold</option>
                 <option value="Silver">Silver</option>
+                <option value="Rose Gold">Rose Gold</option>
+                <option value="White Gold">White Gold</option>
               </select>
             </label>
             <label className="flex flex-col">
-              Weight (g):
+              Weight (g) (custom.weight):
               <input type="number" step="0.01" value={config.metal_weight_g} onChange={e => setConfig({...config, metal_weight_g: parseFloat(e.target.value)})} className="border p-1 mt-1" />
             </label>
           </div>
 
-          {config.metal_type === 'Gold' && (
-            <div className="grid grid-cols-2 gap-4">
-              <label className="flex flex-col">
-                Gold Purity:
-                <select value={config.gold_purity} onChange={e => setConfig({...config, gold_purity: e.target.value as any})} className="border p-1 mt-1">
-                  <option value="9K">9K</option>
-                  <option value="12K">12K</option>
-                  <option value="14K">14K</option>
-                  <option value="18K">18K</option>
-                  <option value="22K">22K</option>
-                  <option value="24K">24K</option>
-                </select>
-              </label>
-              <label className="flex flex-col">
-                Gold Color:
-                <select value={config.gold_color} onChange={e => setConfig({...config, gold_color: e.target.value as any})} className="border p-1 mt-1">
-                  <option value="Yellow Gold">Yellow Gold</option>
-                  <option value="Rose Gold">Rose Gold</option>
-                  <option value="White Gold">White Gold</option>
-                </select>
-              </label>
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-4 border-t border-gray-200 pt-4">
-            <label className="flex flex-col">
-              Wastage Type:
-              <select value={config.wastage_type} onChange={e => setConfig({...config, wastage_type: e.target.value as any})} className="border p-1 mt-1">
-                <option value="percentage">%</option>
-                <option value="grams">Grams</option>
-                <option value="none">None</option>
-              </select>
-            </label>
-            <label className="flex flex-col">
-              Wastage Value:
-              <input type="number" step="0.01" value={config.wastage_value} onChange={e => setConfig({...config, wastage_value: parseFloat(e.target.value)})} className="border p-1 mt-1" />
-            </label>
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <label className="flex flex-col">
-              Making Charge Type:
-              <select value={config.making_charge_type} onChange={e => setConfig({...config, making_charge_type: e.target.value as any})} className="border p-1 mt-1">
-                <option value="fixed">Fixed (₹)</option>
-                <option value="per_gram">Per Gram (₹/g)</option>
-                <option value="percentage">Percentage (%)</option>
-                <option value="none">None</option>
+              Purity (custom.purity):
+              <select value={config.metal_purity} onChange={e => setConfig({...config, metal_purity: e.target.value})} className="border p-1 mt-1">
+                <option value="18K">18K</option>
+                <option value="14K">14K</option>
+                <option value="22K">22K</option>
+                <option value="925">925</option>
               </select>
             </label>
             <label className="flex flex-col">
-              Making Charge Value:
-              <input type="number" step="0.01" value={config.making_charge_value} onChange={e => setConfig({...config, making_charge_value: parseFloat(e.target.value)})} className="border p-1 mt-1" />
-            </label>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <label className="flex flex-col">
-              Stone Cost (₹):
-              <input type="number" value={config.stone_cost} onChange={e => setConfig({...config, stone_cost: parseFloat(e.target.value)})} className="border p-1 mt-1" />
-            </label>
-            <label className="flex flex-col">
-              Other Cost (₹):
-              <input type="number" value={config.other_cost} onChange={e => setConfig({...config, other_cost: parseFloat(e.target.value)})} className="border p-1 mt-1" />
-            </label>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 border-t border-gray-200 pt-4">
-            <label className="flex flex-col">
-              Margin Type:
-              <select value={config.margin_type} onChange={e => setConfig({...config, margin_type: e.target.value as any})} className="border p-1 mt-1">
-                <option value="percentage">%</option>
-                <option value="fixed">Fixed (₹)</option>
-                <option value="none">None</option>
-              </select>
-            </label>
-            <label className="flex flex-col">
-              Margin Value:
-              <input type="number" step="0.01" value={config.margin_value} onChange={e => setConfig({...config, margin_value: parseFloat(e.target.value)})} className="border p-1 mt-1" />
+              Making Charge (custom.making_charge):
+              <input type="number" step="0.01" value={config.making_charge} onChange={e => setConfig({...config, making_charge: parseFloat(e.target.value)})} className="border p-1 mt-1" />
             </label>
           </div>
 
           <label className="flex flex-col border-t border-gray-200 pt-4">
-            GST Percentage (%):
-            <input type="number" step="0.1" value={config.gst_percentage} onChange={e => setConfig({...config, gst_percentage: parseFloat(e.target.value)})} className="border p-1 mt-1 w-1/2" />
+            Tax Percentage (%):
+            <input type="number" step="0.1" value={config.tax_percentage} onChange={e => setConfig({...config, tax_percentage: parseFloat(e.target.value)})} className="border p-1 mt-1 w-1/2" />
           </label>
         </div>
       </div>
@@ -209,7 +140,7 @@ export default function AdminProductPricing() {
           <div className="bg-white p-6 border border-gray-200 shadow-sm text-sm space-y-3">
             <div className="flex justify-between border-b border-dashed border-gray-300 pb-2">
               <span className="font-bold">Specification:</span>
-              <span>{preview.metal.purity} {preview.metal.color || preview.metal.type} ({preview.metal.weight_g}g)</span>
+              <span>{preview.metal.purity} {preview.metal.type} ({preview.metal.weight_g}g)</span>
             </div>
             
             <div className="flex justify-between text-blue-800">
@@ -221,21 +152,10 @@ export default function AdminProductPricing() {
               <span>Metal Value:</span>
               <span>{formatINR(preview.metal.metal_value)}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Wastage Cost:</span>
-              <span>+ {formatINR(preview.wastage.cost)}</span>
-            </div>
+            
             <div className="flex justify-between">
               <span className="text-gray-500">Making Charge:</span>
-              <span>+ {formatINR(preview.making_charge.cost)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Stone Cost:</span>
-              <span>+ {formatINR(preview.stone_cost)}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-gray-500">Other Cost:</span>
-              <span>+ {formatINR(preview.other_cost)}</span>
+              <span>+ {formatINR(preview.making_charge)}</span>
             </div>
 
             <div className="flex justify-between font-bold border-t border-gray-300 pt-2">
@@ -244,18 +164,8 @@ export default function AdminProductPricing() {
             </div>
 
             <div className="flex justify-between text-gray-500">
-              <span>Margin:</span>
-              <span>+ {formatINR(preview.margin)}</span>
-            </div>
-
-            <div className="flex justify-between text-gray-500">
-              <span>Discount:</span>
-              <span>- {formatINR(preview.discount)}</span>
-            </div>
-
-            <div className="flex justify-between text-gray-500">
-              <span>GST ({config.gst_percentage}%):</span>
-              <span>+ {formatINR(preview.gst)}</span>
+              <span>Tax / GST ({config.tax_percentage}%):</span>
+              <span>+ {formatINR(preview.tax)}</span>
             </div>
 
             <div className="flex justify-between text-lg font-bold border-t-2 border-gray-800 pt-3 mt-3">

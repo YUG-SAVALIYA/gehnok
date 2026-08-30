@@ -94,13 +94,8 @@ export async function repriceVariant(config: ProductPricingConfig) {
     purity: result.metal.purity || '',
     metal_rate_used: result.metal.daily_rate,
     metal_weight: result.metal.weight_g,
-    wastage: result.wastage.cost,
-    making_charge: result.making_charge.cost,
-    stone_cost: result.stone_cost,
-    other_cost: result.other_cost,
-    margin: result.margin,
-    discount: result.discount,
-    gst: result.gst,
+    making_charge: result.making_charge,
+    tax: result.tax,
     final_price: result.final_price,
     updated_at: new Date().toISOString()
   });
