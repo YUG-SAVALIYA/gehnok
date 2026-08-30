@@ -46,6 +46,10 @@ export interface ShopifyMetafield {
     handle?: string;
     fields?: Array<{ key: string; value: string }>;
   };
+  references?: ShopifyConnection<{
+    handle?: string;
+    fields?: Array<{ key: string; value: string }>;
+  }>;
 }
 
 // ─── Product Variant ─────────────────────────────────────────────────────────
@@ -130,6 +134,9 @@ export interface ShopifyProduct {
   ring_type?: ShopifyMetafield;
   hallmark?: ShopifyMetafield;
   editorial_story?: ShopifyMetafield;
+  side_stone_shape?: ShopifyMetafield;
+  side_stone_color?: ShopifyMetafield;
+  side_stone_carat?: ShopifyMetafield;
   artisan_hours?: ShopifyMetafield;
   gemstone_type?: ShopifyMetafield;
   gemstone_cut?: ShopifyMetafield;

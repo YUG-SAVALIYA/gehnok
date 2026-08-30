@@ -284,6 +284,10 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
     
   const color = extractMetaobjectValue(product.category_gemstone_color) || metaValue(product.gemstone_color);
   const clarity = extractMetaobjectValue(product.category_gemstone_clarity) || metaValue(product.gemstone_clarity);
+  
+  const sideStoneShape = extractMetaobjectValue(product.side_stone_shape) || metaValue(product.side_stone_shape);
+  const sideStoneColor = extractMetaobjectValue(product.side_stone_color) || metaValue(product.side_stone_color);
+  const sideStoneCarat = extractMetaobjectValue(product.side_stone_carat) || metaValue(product.side_stone_carat);
 
   // If no gemstone details are provided at all, return null
   if (!gemstoneType && !caratParsed.raw && !totalDiamonds && !centerCarat && !sideCarat && !cut && !color && !clarity) {
@@ -300,6 +304,9 @@ function deriveGemstone(product: ShopifyProduct): GemstoneDetails | null {
     clarity: clarity || '',
     color: color || '',
     origin: metaValue(product.material_origin) || 'Ethically Sourced',
+    sideStoneShape: sideStoneShape || '',
+    sideStoneColor: sideStoneColor || '',
+    sideStoneCarat: sideStoneCarat || '',
   };
 }
 

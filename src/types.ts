@@ -8,6 +8,9 @@ export interface GemstoneDetails {
   color: string;
   clarity: string;
   origin: string;
+  sideStoneShape?: string;
+  sideStoneColor?: string;
+  sideStoneCarat?: string;
 }
 
 export interface CraftsmanshipStory {
