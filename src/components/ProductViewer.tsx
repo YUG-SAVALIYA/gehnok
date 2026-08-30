@@ -1739,7 +1739,7 @@ export default function ProductViewer({
                   <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
                     <div className="flex justify-between md:justify-start md:gap-16 items-center">
                       <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Metal</span>
-                      <span className="font-bold text-[#381932]">
+                      <span className="font-medium text-[#381932]">
                         {(() => {
                           const metalName = selectedMetal?.name || product.metal;
                           if (metalName.toLowerCase().includes('silver')) return '925 Fineness Silver';
@@ -1750,9 +1750,9 @@ export default function ProductViewer({
                         })()}
                       </span>
                     </div>
-                    <div className="flex justify-between md:justify-start md:gap-16">
-                      <span className="text-[#381932]/60 font-bold min-w-[120px]">Net Weight</span>
-                      <span className="font-bold text-[#381932]">
+                    <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                      <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Net Weight</span>
+                      <span className="font-medium text-[#381932]">
                         {(() => {
                           let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
                           if (Array.isArray(product.weight) && selectedSize) {
@@ -1786,11 +1786,11 @@ export default function ProductViewer({
                         <>
                           <div className="flex justify-between md:justify-start md:gap-16 items-center">
                             <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Width</span>
-                            <span className="font-bold text-[#381932]">{width}</span>
+                            <span className="font-medium text-[#381932]">{width}</span>
                           </div>
                           <div className="flex justify-between md:justify-start md:gap-16 items-center">
                             <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Height</span>
-                            <span className="font-bold text-[#381932]">{height}</span>
+                            <span className="font-medium text-[#381932]">{height}</span>
                           </div>
                         </>
                       );
@@ -1810,7 +1810,7 @@ export default function ProductViewer({
                     <div className="col-span-12 md:col-span-8 flex flex-col gap-3">
                       <div className="flex justify-between md:justify-start md:gap-16 items-center">
                         <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Type</span>
-                        <span className="font-bold text-[#381932]">{product.gemstone.type}</span>
+                        <span className="font-medium text-[#381932]">{product.gemstone.type}</span>
                       </div>
                     </div>
                   </div>
@@ -1832,15 +1832,15 @@ export default function ProductViewer({
                           <div key={idx} className="flex flex-col gap-4">
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Color/Clarity</span>
-                              <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
+                              <span className="font-medium text-[#381932]">{parts[0] || '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
-                              <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/ct/i, '').trim()} ct` : '-'}</span>
+                              <span className="font-medium text-[#381932]">{parts[1] ? `${parts[1].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Dimond</span>
-                              <span className="font-bold text-[#381932]">{parts[2] || '-'}</span>
+                              <span className="font-medium text-[#381932]">{parts[2] || '-'}</span>
                             </div>
                           </div>
                         );
@@ -1865,15 +1865,15 @@ export default function ProductViewer({
                           <div key={idx} className="flex flex-col gap-4">
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Gemstone</span>
-                              <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
+                              <span className="font-medium text-[#381932]">{parts[0] || '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Size</span>
-                              <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/mm/i, '').trim()} mm` : '-'}</span>
+                              <span className="font-medium text-[#381932]">{parts[1] ? `${parts[1].replace(/mm/i, '').trim()} mm` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
-                              <span className="font-bold text-[#381932]">{parts[2] ? `${parts[2].replace(/ct/i, '').trim()} ct` : '-'}</span>
+                              <span className="font-medium text-[#381932]">{parts[2] ? `${parts[2].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                           </div>
                         );
