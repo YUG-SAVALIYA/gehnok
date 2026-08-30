@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import dns from 'dns';
 import { initMetalRatesScheduler, getActiveRates, fetchDailyRatesFromAPI } from './src/backend/metalRatesScheduler';
 import { calculateProductPricing, ProductPricingConfig, getPricingHistory } from './src/backend/productPricingEngine';
-import { repriceVariant } from './src/backend/shopifyPricingUpdater';
+import { repriceVariant, repriceAllProducts } from './src/backend/shopifyPricingUpdater';
 
 dns.setDefaultResultOrder('ipv4first');
 dotenv.config();
