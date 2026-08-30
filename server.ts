@@ -3,6 +3,7 @@ import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import dotenv from 'dotenv';
 import dns from 'dns';
+import { initMetalRatesScheduler, getActiveRates, fetchDailyRatesFromAPI } from './src/backend/metalRatesScheduler';
 
 dns.setDefaultResultOrder('ipv4first');
 dotenv.config();
@@ -981,6 +982,38 @@ app.post('/api/concierge', async (req, res) => {
   return res.json(selectedSim);
 });
 
+// API: Metal Rates
+app.get('/api/metal-rates', (req, res) => {
+  const rates = getActiveRates();
+  if (!rates) {
+    return res.status(503).json({ error: 'Metal rates not available yet. Please try again later.' });
+  }
+  
+  // Return the format expected by the frontend
+  res.json({
+    date: rates.date,
+    source: rates.source,
+    currency: rates.currency,
+    unit: rates.unit,
+    updatedAt: new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date(rates.fetchedAt)) + ' IST',
+    gold: rates.gold,
+    silver: rates.silver
+  });
+});
+
+app.get('/api/metal-rates/debug', (req, res) => {
+  const rates = getActiveRates();
+  res.json({
+    rates,
+    env_configured: !!process.env.METALS_API_KEY
+  });
+});
+
+app.post('/api/metal-rates/force-fetch', async (req, res) => {
+  const success = await fetchDailyRatesFromAPI();
+  res.json({ success, rates: getActiveRates() });
+});
+
 // Configure Vite or Serve static site
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
@@ -998,6 +1031,7 @@ async function startServer() {
   }
 
   app.listen(PORT, 'localhost', () => {
+    initMetalRatesScheduler();
     console.log(`GEHNOK Digital Atelier backend running on http://localhost:${PORT}`);
   });
 }
