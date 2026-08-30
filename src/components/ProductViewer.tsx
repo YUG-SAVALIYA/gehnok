@@ -1745,7 +1745,7 @@ export default function ProductViewer({
                           const metalName = selectedMetal?.name || product.metal;
                           if (metalName.toLowerCase().includes('silver')) return '925 Fineness Silver';
                           
-                          const purityName = selectedPurity?.name || product.purity;
+                          const purityName = selectedPurity || product.purity;
                           if (!purityName) return metalName;
                           return `${purityName} ${metalName}`;
                         })()}
