@@ -3,13 +3,13 @@ import { ProductPricingConfig, PricingResult, PricingHistoryRecord } from '../ba
 
 export default function AdminProductPricing() {
   const [config, setConfig] = useState<ProductPricingConfig>({
-    product_id: 'gid://shopify/Product/123456',
-    variant_id: 'gid://shopify/ProductVariant/654321',
+    product_id: '',
+    variant_id: '',
     metal_type: 'Gold',
     metal_purity: '18K',
-    metal_weight_g: 2.35,
-    making_charge: 500,
-    tax: 300
+    metal_weight_g: 0,
+    making_charge: 0,
+    tax: 0
   });
 
   const [preview, setPreview] = useState<PricingResult | null>(null);
