@@ -1,7 +1,5 @@
-import { SHOPIFY_API_BASE } from '../api'; // Use existing base for fetch, or define our own
-
 // We'll define the base API path for our local/worker proxy
-const API_BASE = SHOPIFY_API_BASE.replace(/\/shopify$/, ''); // go up one level to /api
+const API_BASE = '/api';
 
 export interface DailyMetalRates {
   date: string;

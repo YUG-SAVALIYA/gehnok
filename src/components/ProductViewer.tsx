@@ -4,6 +4,7 @@ import { Product, CartItem } from '../types';
 import { lenis } from '../lib/lenis';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
+import { getDailyMetalRates, DailyMetalRates } from '../services/pricingService';
 import Gemstone3DViewer from './Gemstone3DViewer';
 import HoverVideo from './HoverVideo';
 import ImageWithSkeleton from './ImageWithSkeleton';
@@ -322,8 +323,13 @@ export default function ProductViewer({
 
   // Custom configuration states
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
+  const [metalRates, setMetalRates] = useState<DailyMetalRates | null>(null);
 
-
+  useEffect(() => {
+    getDailyMetalRates().then(rates => {
+      if (rates) setMetalRates(rates);
+    });
+  }, []);
 
   // Dynamic available metals from variants (100% data-driven from Shopify)
   const availableMetals = useMemo(() => {
@@ -667,11 +673,40 @@ export default function ProductViewer({
     return isMetalMatch && isPurityMatch && isSizeMatch && isOtherMatch;
   });
 
-  // Use the real Shopify variant price if available, fallback to product base price
-  const variantPriceAmount = selectedVariant 
+  // Calculate price dynamically from weight and metal rate
+  let variantPriceAmount = selectedVariant 
     ? selectedVariant.price 
     : product.price;
-  
+
+  let displayWeight = Array.isArray(product.weight) ? product.weight[0] : (product.weight || '-');
+  if (Array.isArray(product.weight) && selectedSize) {
+    const sizeNum = parseInt(selectedSize, 10);
+    if (!isNaN(sizeNum)) {
+      if (sizeNum >= 13 && sizeNum <= 15) displayWeight = product.weight[0];
+      else if (sizeNum >= 16 && sizeNum <= 18) displayWeight = product.weight[1] || product.weight[0];
+    }
+  }
+
+  if (metalRates) {
+    const parsedWeight = parseFloat(displayWeight);
+    const actualWeight = isNaN(parsedWeight) ? 25 : parsedWeight;
+    
+    const mName = (selectedMetal?.name || product.metal).toLowerCase();
+    
+    if (mName.includes('silver')) {
+      const rate = metalRates.silver['925'];
+      if (rate) variantPriceAmount = actualWeight * rate;
+    } else {
+      const activePurity = selectedPurity || product.purity;
+      let pKey = activePurity.toUpperCase().replace(/[^0-9K]/g, '') as keyof DailyMetalRates['gold'];
+      // Default to 18K if not found
+      if (!metalRates.gold[pKey]) pKey = '18K';
+      
+      const rate = metalRates.gold[pKey];
+      if (rate) variantPriceAmount = actualWeight * rate;
+    }
+  }
+
   const formattedPrice = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
