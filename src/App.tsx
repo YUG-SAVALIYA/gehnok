@@ -13,11 +13,12 @@ import Concierge from './components/Concierge';
 import Cart from './components/Cart';
 import AuthPage from './components/AuthPage';
 import AccountDashboard from './components/AccountDashboard';
+import AdminProductPricing from './components/AdminProductPricing';
 import { Heart, Eye, X, Compass } from 'lucide-react';
 import { useShopifyCart } from './hooks/useShopifyCart';
 import { lenis } from './lib/lenis'; // Initialize Lenis smooth scrolling globally
 
-export type View = 'home' | 'all-product' | 'collection' | 'contact-us' | 'journal' | 'policy' | 'auth' | 'account';
+export type View = 'home' | 'all-product' | 'collection' | 'contact-us' | 'journal' | 'policy' | 'auth' | 'account' | 'admin';
 export type PolicyType = 'privacyPolicy' | 'shippingPolicy' | 'termsOfService' | 'refundPolicy';
 
 export default function App() {
@@ -33,6 +34,7 @@ export default function App() {
     if (path.startsWith('/policies')) return 'policy';
     if (path === '/account/login' || path === '/account/register') return 'auth';
     if (path === '/account' || path === '/account/dashboard') return 'account';
+    if (path === '/admin/pricing') return 'admin';
     return 'home';
   });
 
@@ -156,6 +158,7 @@ export default function App() {
           break;
         case 'auth': path = '/account/login'; break;
         case 'account': path = '/account/dashboard'; break;
+        case 'admin': path = '/admin/pricing'; break;
       }
     }
 
@@ -215,6 +218,7 @@ export default function App() {
         }
         else if (path === '/account/login' || path === '/account/register') setCurrentView('auth');
         else if (path === '/account' || path === '/account/dashboard') setCurrentView('account');
+        else if (path === '/admin/pricing') setCurrentView('admin');
 
       }
     };
@@ -523,6 +527,13 @@ export default function App() {
                   setCurrentView('home');
                 }}
               />
+            )}
+
+            {/* 12. ADMIN PRICING */}
+            {currentView === 'admin' && (
+              <div className="pt-24 pb-12 min-h-screen">
+                <AdminProductPricing />
+              </div>
             )}
           </>
         )}
