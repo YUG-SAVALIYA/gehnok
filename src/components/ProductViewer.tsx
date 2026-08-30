@@ -1731,14 +1731,14 @@ export default function ProductViewer({
                 {/* METAL SECTION */}
                 <div className="grid grid-cols-12 gap-4 pb-6 border-b border-[#381932]/10">
                   <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                    <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                    <span className="font-inter font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
                       METAL
                     </span>
                   </div>
                   <div className="col-span-12 md:col-span-8 flex flex-col gap-4">
                     <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                      <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Metal</span>
+                      <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Metal</span>
                       <span className="font-bold text-[#381932]">
                         {(() => {
                           const metalName = selectedMetal?.name || product.metal;
@@ -1772,7 +1772,7 @@ export default function ProductViewer({
                 {/* DIMENSSION SECTION */}
                 <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
                   <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                    <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                    <span className="font-inter font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg>
                       DIMENSIONS
                     </span>
@@ -1785,11 +1785,11 @@ export default function ProductViewer({
                       return (
                         <>
                           <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                            <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Width</span>
+                            <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Width</span>
                             <span className="font-bold text-[#381932]">{width}</span>
                           </div>
                           <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                            <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Height</span>
+                            <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Height</span>
                             <span className="font-bold text-[#381932]">{height}</span>
                           </div>
                         </>
@@ -1802,14 +1802,14 @@ export default function ProductViewer({
                 {product.gemstone?.type && !product.gemstone.type.includes('gid://') && (
                   <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
                     <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                      <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                      <span className="font-inter font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 16 8 12 14 8 8 12 2"></polygon><polyline points="8 8 2 12 8 16 12 22 16 16 22 12 16 8"></polyline></svg>
                         GEMSTONE TYPE
                       </span>
                     </div>
                     <div className="col-span-12 md:col-span-8 flex flex-col gap-3">
                       <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                        <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Type</span>
+                        <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Type</span>
                         <span className="font-bold text-[#381932]">{product.gemstone.type}</span>
                       </div>
                     </div>
@@ -1820,7 +1820,7 @@ export default function ProductViewer({
                 {product.diamondsList && product.diamondsList.length > 0 && (
                   <div className="grid grid-cols-12 gap-4 pb-4 border-b border-[#381932]/10">
                     <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                    <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                    <span className="font-inter font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
                       DIAMONDS
                       </span>
@@ -1831,15 +1831,15 @@ export default function ProductViewer({
                         return (
                           <div key={idx} className="flex flex-col gap-4">
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Color/Clarity</span>
+                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Color/Clarity</span>
                               <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
+                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
                               <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Dimond</span>
+                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Dimond</span>
                               <span className="font-bold text-[#381932]">{parts[2] || '-'}</span>
                             </div>
                           </div>
@@ -1853,7 +1853,7 @@ export default function ProductViewer({
                 {product.gemstonesList && product.gemstonesList.length > 0 && (
                   <div className="grid grid-cols-12 gap-4">
                     <div className="col-span-12 md:col-span-4 flex items-start gap-2">
-                      <span className="font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
+                      <span className="font-inter font-black text-[#381932] uppercase tracking-[0.2em] text-[12px] flex items-center gap-2">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="12 2 16 8 12 14 8 8 12 2"></polygon><polyline points="8 8 2 12 8 16 12 22 16 16 22 12 16 8"></polyline></svg>
                         GEMSTONES
                       </span>
@@ -1864,15 +1864,15 @@ export default function ProductViewer({
                         return (
                           <div key={idx} className="flex flex-col gap-4">
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Gemstone</span>
+                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Gemstone</span>
                               <span className="font-bold text-[#381932]">{parts[0] || '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Size</span>
+                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Size</span>
                               <span className="font-bold text-[#381932]">{parts[1] ? `${parts[1].replace(/mm/i, '').trim()} mm` : '-'}</span>
                             </div>
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
-                              <span className="text-[#381932] font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
+                              <span className="text-[#381932] font-inter font-extrabold min-w-[120px] uppercase text-[11px] tracking-wider">Total Weight</span>
                               <span className="font-bold text-[#381932]">{parts[2] ? `${parts[2].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
                           </div>
