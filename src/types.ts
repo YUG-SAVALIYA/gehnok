@@ -54,8 +54,8 @@ export interface Product {
   name: string;
   collection: 'Rings' | 'Necklaces' | 'Earrings' | 'Bracelets' | 'Bespoke';
   price: number;
-  metal: 'Champagne Gold' | 'Platinum' | 'Rose Gold' | 'Amethyst Purple Gold';
-  purity: '18k' | '950 Platinum';
+  metal: 'Champagne Gold' | 'Platinum' | 'Rose Gold' | 'Amethyst Purple Gold' | 'Silver';
+  purity: '18k' | '950 Platinum' | '925 Silver';
   weight?: string | string[] | null;
   dimension?: string | null;
   ringType?: string | null;

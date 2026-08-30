@@ -235,6 +235,7 @@ function derivePurity(
   const raw = metaValue(purityMeta).toLowerCase();
   if (raw.includes('950') || raw.includes('platinum')) return '950 Platinum';
   if (metal === 'Platinum') return '950 Platinum';
+  if (metal === 'Silver' || raw.includes('925') || raw.includes('silver')) return '925 Silver';
   return '18k';
 }
 
