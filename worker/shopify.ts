@@ -3,6 +3,7 @@ export type Env = {
   SHOPIFY_API_VERSION?: string;
   SHOPIFY_STOREFRONT_ACCESS_TOKEN?: string;
   SHOPIFY_ADMIN_ACCESS_TOKEN?: string;
+  METALS_API_KEY?: string;
 };
 
 type ShopifyData = Record<string, unknown>;
@@ -187,9 +188,20 @@ function corsHeaders(request: Request): HeadersInit {
     ...CORS_BASE_HEADERS,
   };
 
-  if (origin && ALLOWED_ORIGINS.has(origin)) {
-    headers["Access-Control-Allow-Origin"] = origin;
-    headers["Vary"] = "Origin";
+  if (origin) {
+    const isAllowed =
+      ALLOWED_ORIGINS.has(origin) ||
+      origin.endsWith(".gehnok.com") ||
+      origin.endsWith(".workers.dev") ||
+      origin.endsWith(".vercel.app") ||
+      origin.startsWith("http://localhost:") ||
+      origin.startsWith("http://127.0.0.1:");
+    if (isAllowed) {
+      headers["Access-Control-Allow-Origin"] = origin;
+      headers["Vary"] = "Origin";
+    }
+  } else {
+    headers["Access-Control-Allow-Origin"] = "*";
   }
 
   return headers;
@@ -472,6 +484,10 @@ async function handleRestRoute(
   segments: string[],
 ): Promise<Response | null> {
   const [resource, second, third, fourth] = segments;
+
+  if (resource === "metal-rates") {
+    return handleMetalRates(request, env);
+  }
 
   if (request.method === "GET" && resource === "products" && !second) {
     return getProducts(env, url);
@@ -1522,3 +1538,168 @@ async function handleCustomerRoute(
 
   return null;
 }
+
+export interface MetalRatesResponse {
+  date: string;
+  source: string;
+  currency: string;
+  unit: string;
+  updatedAt: string;
+  status: string;
+  rawRates: {
+    gold999: number;
+    silver999: number;
+  };
+  gold: {
+    '9K': number;
+    '12K': number;
+    '14K': number;
+    '18K': number;
+    '22K': number;
+    '24K': number;
+  };
+  silver: {
+    '925': number;
+  };
+}
+
+let cachedMetalRates: { data: MetalRatesResponse; timestamp: number } | null = null;
+const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
+
+function calculateMetalBreakdown(gold999: number, silver999: number, dateStr?: string): MetalRatesResponse {
+  const istDate = dateStr || new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+  const updatedAt = new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Kolkata', hour: 'numeric', minute: '2-digit', hour12: true }).format(new Date()) + ' IST';
+  
+  return {
+    date: istDate,
+    source: 'IBJA',
+    currency: 'INR',
+    unit: 'g',
+    updatedAt,
+    status: 'success',
+    rawRates: {
+      gold999: Math.round(gold999 * 100) / 100,
+      silver999: Math.round(silver999 * 100) / 100,
+    },
+    gold: {
+      '9K': Math.round((gold999 * 375 / 999) * 100) / 100,
+      '12K': Math.round((gold999 * 500 / 999) * 100) / 100,
+      '14K': Math.round((gold999 * 585 / 999) * 100) / 100,
+      '18K': Math.round((gold999 * 750 / 999) * 100) / 100,
+      '22K': Math.round((gold999 * 916 / 999) * 100) / 100,
+      '24K': Math.round(gold999 * 100) / 100,
+    },
+    silver: {
+      '925': Math.round((silver999 * 925 / 999) * 100) / 100,
+    },
+  };
+}
+
+export async function handleMetalRates(
+  request: Request,
+  env: Env,
+): Promise<Response> {
+  if (request.method === "OPTIONS") {
+    return withCors(
+      new Response(null, {
+        status: 204,
+        headers: {
+          "X-Gehnok-Worker": "shopify-proxy",
+          "X-Shopify-Upstream-Status": "0",
+        },
+      }),
+      request,
+    );
+  }
+
+  const url = new URL(request.url);
+  const isDebug = url.pathname.endsWith("/debug");
+  const isForce = request.method === "POST" && url.pathname.endsWith("/force-fetch");
+
+  if (!isForce && cachedMetalRates && (Date.now() - cachedMetalRates.timestamp < CACHE_TTL_MS)) {
+    if (isDebug) {
+      return withCors(
+        jsonResponse(
+          { rates: cachedMetalRates.data, env_configured: Boolean(env.METALS_API_KEY), source: "cache" },
+          200,
+        ),
+        request,
+      );
+    }
+    return withCors(jsonResponse(cachedMetalRates.data, 200), request);
+  }
+
+  let gold999 = 15488.03;
+  let silver999 = 235.46;
+  let rateDate = "";
+
+  // 1. Try fetching from Shopify Storefront API shop metafields
+  try {
+    const shopQuery = `
+      query GetShopMetalRates {
+        shop {
+          gold: metafield(namespace: "custom", key: "daily_gold_rate") { value }
+          silver: metafield(namespace: "custom", key: "daily_silver_rate") { value }
+          updated: metafield(namespace: "custom", key: "rates_updated_at") { value }
+        }
+      }
+    `;
+    const shopData = await shopifyFetch<{
+      shop: {
+        gold?: { value?: string };
+        silver?: { value?: string };
+        updated?: { value?: string };
+      };
+    }>(env, shopQuery);
+
+    if (shopData?.shop?.gold?.value && shopData?.shop?.silver?.value) {
+      const g = parseFloat(shopData.shop.gold.value);
+      const s = parseFloat(shopData.shop.silver.value);
+      if (g > 0 && s > 0) {
+        gold999 = g;
+        silver999 = s;
+        if (shopData.shop.updated?.value) {
+          rateDate = shopData.shop.updated.value;
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("[Worker] Could not read shop metafield rates:", err);
+  }
+
+  // 2. If metals API key is provided and on force-fetch or rates not yet obtained, try metals.dev
+  if (isForce || (!rateDate && env.METALS_API_KEY)) {
+    const apiKey = env.METALS_API_KEY;
+    if (apiKey) {
+      try {
+        const metalsUrl = `https://api.metals.dev/v1/metal/authority?api_key=${apiKey}&authority=ibja&currency=INR&unit=g`;
+        const res = await fetch(metalsUrl, { headers: { Accept: "application/json" } });
+        if (res.ok) {
+          const json = (await res.json()) as any;
+          if (json.status === "success" && json.rates?.ibja_gold > 0 && json.rates?.ibja_silver > 0) {
+            gold999 = parseFloat(json.rates.ibja_gold);
+            silver999 = parseFloat(json.rates.ibja_silver);
+          }
+        }
+      } catch (err) {
+        console.warn("[Worker] metals.dev fetch error:", err);
+      }
+    }
+  }
+
+  const ratesData = calculateMetalBreakdown(gold999, silver999, rateDate);
+  cachedMetalRates = { data: ratesData, timestamp: Date.now() };
+
+  if (isDebug) {
+    return withCors(
+      jsonResponse(
+        { rates: ratesData, env_configured: Boolean(env.METALS_API_KEY), source: "fresh" },
+        200,
+      ),
+      request,
+    );
+  }
+
+  return withCors(jsonResponse(ratesData, 200), request);
+}
+

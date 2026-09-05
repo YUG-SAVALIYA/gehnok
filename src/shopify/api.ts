@@ -1,9 +1,12 @@
 const DEFAULT_SHOPIFY_API_BASE =
   "https://gehnok.gehnokjewels.workers.dev/api/shopify";
 
+const envApiBase =
+  (typeof import.meta !== "undefined" && import.meta.env?.VITE_SHOPIFY_API_BASE) ||
+  (typeof process !== "undefined" && process.env?.VITE_SHOPIFY_API_BASE);
+
 export const SHOPIFY_API_BASE = (
-  import.meta.env.VITE_SHOPIFY_API_BASE ||
-  DEFAULT_SHOPIFY_API_BASE
+  envApiBase || DEFAULT_SHOPIFY_API_BASE
 ).replace(/\/+$/, "");
 
 export function createShopifyApiUrl(path = ""): string {

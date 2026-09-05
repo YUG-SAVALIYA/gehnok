@@ -4,7 +4,7 @@ import { Product, CartItem } from '../types';
 import { lenis } from '../lib/lenis';
 import { useShopifyProducts } from '../hooks/useShopifyProducts';
 import { useShopifyMetaobject } from '../hooks/useShopifyMetaobject';
-import { getDailyMetalRates, DailyMetalRates } from '../services/pricingService';
+import { getDailyMetalRates, DailyMetalRates, DEFAULT_METAL_RATES } from '../services/pricingService';
 import Gemstone3DViewer from './Gemstone3DViewer';
 import HoverVideo from './HoverVideo';
 import ImageWithSkeleton from './ImageWithSkeleton';
@@ -323,7 +323,7 @@ export default function ProductViewer({
 
   // Custom configuration states
   const [selectedQuantity, setSelectedQuantity] = useState<number>(1);
-  const [metalRates, setMetalRates] = useState<DailyMetalRates | null>(null);
+  const [metalRates, setMetalRates] = useState<DailyMetalRates>(DEFAULT_METAL_RATES);
 
   useEffect(() => {
     getDailyMetalRates().then(rates => {
@@ -694,16 +694,16 @@ export default function ProductViewer({
     const parsedWeight = parseFloat(displayWeight);
     parsedWeightNum = isNaN(parsedWeight) ? 25 : parsedWeight;
     
-    const mName = (selectedMetal?.name || product.metal).toLowerCase();
+    const mName = (selectedMetal?.name || product.metal || '').toLowerCase();
     
     if (mName.includes('silver')) {
-      activeMetalRate = metalRates.silver['925'] || 0;
+      activeMetalRate = metalRates.silver?.['925'] || 218;
     } else {
-      const activePurity = selectedPurity || product.purity;
+      const activePurity = selectedPurity || product.purity || '18K';
       let pKey = activePurity.toUpperCase().replace(/[^0-9K]/g, '') as keyof DailyMetalRates['gold'];
-      if (!metalRates.gold[pKey]) pKey = '18K';
+      if (!metalRates.gold || !metalRates.gold[pKey]) pKey = '18K';
       
-      activeMetalRate = metalRates.gold[pKey] || 0;
+      activeMetalRate = metalRates.gold?.[pKey] || 11628;
     }
     baseMetalValue = parsedWeightNum * activeMetalRate;
   }
