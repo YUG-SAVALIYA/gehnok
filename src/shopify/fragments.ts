@@ -27,8 +27,8 @@ export const METAFIELD_FRAGMENT = /* GraphQL */ `
     key
     value
     type
-    reference { ... on Metaobject { handle } }
-    references(first: 10) { edges { node { ... on Metaobject { handle } } } }
+    reference { ... on Metaobject { handle fields { key value } } }
+    references(first: 10) { edges { node { ... on Metaobject { handle fields { key value } } } } }
   }
 `;
 
@@ -154,6 +154,8 @@ export const PRODUCT_FRAGMENT = /* GraphQL */ `
     custom_total_diamond: metafield(namespace: "custom", key: "total_diamond") { ...MetafieldFragment }
     custom_total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...MetafieldFragment }
     custom_diamond_quantity: metafield(namespace: "custom", key: "diamond_quantity") { ...MetafieldFragment }
+    diamonds: metafield(namespace: "custom", key: "diamonds") { ...MetafieldFragment }
+    gemstones: metafield(namespace: "custom", key: "gemstones") { ...MetafieldFragment }
     gemstone_carat: metafield(namespace: "custom", key: "gemstone_carat") { ...MetafieldFragment }
     gemstone_clarity: metafield(namespace: "custom", key: "gemstone_clarity") { ...MetafieldFragment }
     gemstone_color: metafield(namespace: "custom", key: "gemstone_color") { ...MetafieldFragment }

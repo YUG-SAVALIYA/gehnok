@@ -226,6 +226,8 @@ const PRODUCT_FRAG = `
     delivery_info: metafield(namespace: "custom", key: "delivery_info") { ...Meta }
     returns_info: metafield(namespace: "custom", key: "returns_info") { ...Meta }
     reviews: metafield(namespace: "custom", key: "reviews") { ...Meta }
+    rating: metafield(namespace: "reviews", key: "rating") { value }
+    ratingCount: metafield(namespace: "reviews", key: "rating_count") { value }
   }`;
 
 const CART_LINE_FRAG = `

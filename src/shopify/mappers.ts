@@ -131,11 +131,16 @@ function extractMetaobjectValue(metafield: ShopifyMetafield | null | undefined):
   if (!metafield) return null;
 
   if (metafield.references?.edges?.length) {
-    const handles = metafield.references.edges
-      .map(e => e.node?.handle)
-      .filter(Boolean)
-      .map(h => h!.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
-    if (handles.length > 0) return handles.join(', ');
+    const values = metafield.references.edges
+      .map(e => {
+        if (e.node?.fields?.length) {
+          const nameField = e.node.fields.find(f => f.key === 'name' || f.key === 'label' || f.key === 'title' || f.key === 'type');
+          if (nameField?.value) return nameField.value;
+        }
+        return e.node?.handle ? e.node.handle.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : null;
+      })
+      .filter(Boolean);
+    if (values.length > 0) return values.join(', ');
   }
 
   if (metafield.reference?.fields) {

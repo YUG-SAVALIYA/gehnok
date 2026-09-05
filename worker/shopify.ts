@@ -44,8 +44,8 @@ const IMAGE_FRAG =
 const META_FRAG = `
   fragment Meta on Metafield { 
     id namespace key value type 
-    reference { ... on Metaobject { handle } }
-    references(first: 10) { edges { node { ... on Metaobject { handle } } } }
+    reference { ... on Metaobject { handle fields { key value } } }
+    references(first: 10) { edges { node { ... on Metaobject { handle fields { key value } } } } }
   }`;
 
 const VARIANT_FRAG = `
@@ -90,6 +90,16 @@ const PRODUCT_FRAG = `
     weight: metafield(namespace: "custom", key: "weight") { ...Meta }
     dimension: metafield(namespace: "custom", key: "dimension") { ...Meta }
     carat: metafield(namespace: "custom", key: "carat") { ...Meta }
+    side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
+    total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
+    side_stone_type: metafield(namespace: "custom", key: "side_stone_type") { ...Meta }
+    side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
+    side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
+    side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
+    category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...Meta }
+    category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...Meta }
+    category_gemstone_color: metafield(namespace: "shopify", key: "diamond_color") { ...Meta }
+    category_gemstone_clarity: metafield(namespace: "shopify", key: "diamond_clarity") { ...Meta }
     ring_type: metafield(namespace: "custom", key: "ring_type") { ...Meta }
     hallmark: metafield(namespace: "custom", key: "hallmark") { ...Meta }
     editorial_story: metafield(namespace: "custom", key: "editorial_story") { ...Meta }
@@ -104,13 +114,11 @@ const PRODUCT_FRAG = `
     custom_side_diamond: metafield(namespace: "custom", key: "side_diamond") { ...Meta }
     custom_side_diamonds: metafield(namespace: "custom", key: "side_diamonds") { ...Meta }
     custom_side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
-    side_stone_type: metafield(namespace: "custom", key: "side_stone_type") { ...Meta }
-    side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
-    side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
-    side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
     custom_total_diamond: metafield(namespace: "custom", key: "total_diamond") { ...Meta }
     custom_total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
     custom_diamond_quantity: metafield(namespace: "custom", key: "diamond_quantity") { ...Meta }
+    diamonds: metafield(namespace: "custom", key: "diamonds") { ...Meta }
+    gemstones: metafield(namespace: "custom", key: "gemstones") { ...Meta }
     gemstone_carat: metafield(namespace: "custom", key: "gemstone_carat") { ...Meta }
     gemstone_clarity: metafield(namespace: "custom", key: "gemstone_clarity") { ...Meta }
     gemstone_color: metafield(namespace: "custom", key: "gemstone_color") { ...Meta }
@@ -947,13 +955,28 @@ async function searchProducts(env: Env, url: URL): Promise<Response> {
           weight: metafield(namespace: "custom", key: "weight") { ...Meta }
           dimension: metafield(namespace: "custom", key: "dimension") { ...Meta }
           carat: metafield(namespace: "custom", key: "carat") { ...Meta }
+          side_diamond_carat: metafield(namespace: "custom", key: "side_diamond_carat") { ...Meta }
+          total_diamonds: metafield(namespace: "custom", key: "total_diamonds") { ...Meta }
           side_stone_type: metafield(namespace: "custom", key: "side_stone_type") { ...Meta }
           side_stone_shape: metafield(namespace: "custom", key: "side_stone_shape") { ...Meta }
           side_stone_color: metafield(namespace: "custom", key: "side_stone_color") { ...Meta }
           side_stone_carat: metafield(namespace: "custom", key: "side_stone_carat") { ...Meta }
+          category_gemstone_type: metafield(namespace: "shopify", key: "gemstone_type") { ...Meta }
+          category_gemstone_shape: metafield(namespace: "shopify", key: "gemstone_shape") { ...Meta }
+          category_gemstone_color: metafield(namespace: "shopify", key: "diamond_color") { ...Meta }
+          category_gemstone_clarity: metafield(namespace: "shopify", key: "diamond_clarity") { ...Meta }
           ring_type: metafield(namespace: "custom", key: "ring_type") { ...Meta }
           gemstone: metafield(namespace: "custom", key: "gemstone") { ...Meta }
           gemstone_type: metafield(namespace: "custom", key: "gemstone_type") { ...Meta }
+          custom_stone_type: metafield(namespace: "custom", key: "stone_type") { ...Meta }
+          custom_stone_shape: metafield(namespace: "custom", key: "stone_shape") { ...Meta }
+          shopify_gemstone_type: metafield(namespace: "shopify", key: "gemstone-type") { ...Meta }
+          shopify_stone_shape: metafield(namespace: "shopify", key: "stone-shape") { ...Meta }
+          custom_side_diamond: metafield(namespace: "custom", key: "side_diamond") { ...Meta }
+          custom_side_diamonds: metafield(namespace: "custom", key: "side_diamonds") { ...Meta }
+          custom_total_diamond: metafield(namespace: "custom", key: "total_diamond") { ...Meta }
+          diamonds: metafield(namespace: "custom", key: "diamonds") { ...Meta }
+          gemstones: metafield(namespace: "custom", key: "gemstones") { ...Meta }
           reviews: metafield(namespace: "custom", key: "reviews") { ...Meta }
           rating: metafield(namespace: "reviews", key: "rating") { value }
           ratingCount: metafield(namespace: "reviews", key: "rating_count") { value }
