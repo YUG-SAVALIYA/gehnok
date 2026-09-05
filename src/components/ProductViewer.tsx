@@ -1931,6 +1931,9 @@ export default function ProductViewer({
                         const parts = diamondRow.split(',').map(s => s.trim());
                         return (
                           <div key={idx} className="flex flex-col gap-4">
+                            {idx > 0 && (
+                              <div className="w-1/2 max-w-[240px] border-t border-[#381932]/15 my-1" />
+                            )}
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932]/60 font-bold min-w-[120px]">Color/Clarity</span>
                               <span className="font-medium text-[#381932]">{parts[0] || '-'}</span>
@@ -1964,6 +1967,9 @@ export default function ProductViewer({
                         const parts = gemRow.split(',').map(s => s.trim());
                         return (
                           <div key={idx} className="flex flex-col gap-4">
+                            {idx > 0 && (
+                              <div className="w-1/2 max-w-[240px] border-t border-[#381932]/15 my-1" />
+                            )}
                             <div className="flex justify-between md:justify-start md:gap-16 items-center">
                               <span className="text-[#381932]/60 font-bold min-w-[120px]">Gemstone</span>
                               <span className="font-medium text-[#381932]">{parts[0] || '-'}</span>
