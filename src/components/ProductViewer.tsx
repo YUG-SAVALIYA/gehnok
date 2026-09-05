@@ -709,7 +709,7 @@ export default function ProductViewer({
   }
 
   // Parse stones for breakup
-  const stonesForBreakup: { name: string; count: string; carat: string; value: number }[] = [];
+  const stonesForBreakup: { name: string; count: string; carat: string; rate?: number; value: number }[] = [];
   let totalStoneValue = 0;
 
   if (product.diamondsList && product.diamondsList.length > 0) {
@@ -718,17 +718,66 @@ export default function ProductViewer({
       const type = parts[0] || 'Diamond';
       const caratStr = parts[1] || '';
       const countStr = parts[2] || '1';
+      const singlePriceStr = parts[3] || '';
       
       const caratNum = parseFloat(caratStr.replace(/[^\d.]/g, '')) || 0;
       const countNum = parseInt(countStr, 10) || 1;
-      // Mock diamond rate based on type
-      const mockRate = type.toLowerCase().includes('pear') ? 5900 : 3733; 
-      const val = caratNum > 0 ? (caratNum * mockRate) : (countNum * 1500); // fallback
+      const singlePriceNum = parseFloat(singlePriceStr.replace(/[^\d.]/g, '')) || 0;
+
+      let val = 0;
+      let rate = 0;
+
+      if (singlePriceNum > 0) {
+        rate = singlePriceNum;
+        val = countNum * singlePriceNum;
+      } else {
+        // Fallback diamond rate based on type if 4th value not provided
+        const mockRate = type.toLowerCase().includes('pear') ? 5900 : 3733; 
+        val = caratNum > 0 ? (caratNum * mockRate) : (countNum * 1500);
+        rate = countNum > 0 ? Math.round(val / countNum) : 0;
+      }
       
       stonesForBreakup.push({
         name: type + (countNum > 1 ? ` Diamond x ${countNum}` : ' Diamond x 1'),
         count: countStr,
         carat: caratStr,
+        rate: rate > 0 ? rate : undefined,
+        value: Math.round(val)
+      });
+      totalStoneValue += val;
+    });
+  }
+
+  if (product.gemstonesList && product.gemstonesList.length > 0) {
+    product.gemstonesList.forEach(gemRow => {
+      const parts = gemRow.split(',').map(s => s.trim());
+      const name = parts[0] || 'Gemstone';
+      const sizeStr = parts[1] || '';
+      const caratStr = parts[2] || '';
+      const priceStr = parts[3] || '';
+      const qtyStr = parts[4] || '1';
+
+      const caratNum = parseFloat(caratStr.replace(/[^\d.]/g, '')) || 0;
+      const priceNum = parseFloat(priceStr.replace(/[^\d.]/g, '')) || 0;
+      const countNum = parseInt(qtyStr, 10) || 1;
+
+      let val = 0;
+      let rate = 0;
+
+      if (priceNum > 0) {
+        rate = priceNum;
+        val = countNum * priceNum;
+      } else {
+        // Fallback gemstone rate if 4th/5th values not provided
+        val = caratNum > 0 ? (caratNum * 4000) : (countNum * 2000);
+        rate = countNum > 0 ? Math.round(val / countNum) : 0;
+      }
+
+      stonesForBreakup.push({
+        name: name + (countNum > 1 ? ` x ${countNum}` : ' x 1'),
+        count: qtyStr,
+        carat: caratStr || sizeStr,
+        rate: rate > 0 ? rate : undefined,
         value: Math.round(val)
       });
       totalStoneValue += val;
@@ -1927,6 +1976,12 @@ export default function ProductViewer({
                               <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Weight</span>
                               <span className="font-medium text-[#381932]">{parts[2] ? `${parts[2].replace(/ct/i, '').trim()} ct` : '-'}</span>
                             </div>
+                            {parts[4] && (
+                              <div className="flex justify-between md:justify-start md:gap-16 items-center">
+                                <span className="text-[#381932]/60 font-bold min-w-[120px]">Total Gemstone</span>
+                                <span className="font-medium text-[#381932]">{parts[4]}</span>
+                              </div>
+                            )}
                           </div>
                         );
                       })}
@@ -1970,9 +2025,19 @@ export default function ProductViewer({
                             {stonesForBreakup.map((stone, idx) => (
                               <div key={idx} className="flex text-[#381932]/60 mt-1">
                                 <span className="w-[40%] font-semibold">{stone.name}</span>
-                                <span className="w-[20%] font-semibold">{stone.carat ? `${stone.carat} ct` : '-'}</span>
-                                <span className="w-[20%] font-semibold">-</span>
-                                <span className="w-[20%] text-right font-semibold">{new Intl.NumberFormat('en-IN').format(stone.value)}</span>
+                                <span className="w-[20%] font-semibold">
+                                  {stone.carat 
+                                    ? (stone.carat.toLowerCase().includes('ct') || stone.carat.toLowerCase().includes('mm') 
+                                        ? stone.carat 
+                                        : `${stone.carat} ct`)
+                                    : '-'}
+                                </span>
+                                <span className="w-[20%] font-semibold">
+                                  {stone.rate ? new Intl.NumberFormat('en-IN').format(stone.rate) : '-'}
+                                </span>
+                                <span className="w-[20%] text-right font-semibold">
+                                  {new Intl.NumberFormat('en-IN').format(stone.value)}
+                                </span>
                               </div>
                             ))}
                           </td>
